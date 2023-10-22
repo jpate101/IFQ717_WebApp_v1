@@ -1,39 +1,62 @@
-import logo from './logo.svg';
-import './App.css';
-import "./style.css";//added
+import { useEffect, useState } from 'react';
+import { useCookies } from 'react-cookie';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Container } from 'react-bootstrap';
+import Header from './Components/Header';
+import Footer from './Components/Footer';
+import Home from './Home';
+import Login from './Login';
+import Dashboard from './Dashboard';
+import Callback from './Callback';
 
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-//import "bootstrap/dist/css/bootstrap.min.css";
-import Header from "./Components/Header";
-import Footer from "./Components/Footer";
+export default function App() {
+  const [cookies, setCookie, removeCookie] = useCookies(['token']);
+  const [isLoggedIn, setIsLoggedIn] = useState(!!cookies.token);
 
-import EmployeeManagement from "./EmployeeManagement";
+  useEffect(() => {
+    setIsLoggedIn(!!cookies.token);
+  }, [cookies.token]);
 
-const Login = () => {
-  return (
-    <div className="">
-      Login
-    </div>
-  );
- };
+  const handleLogOut = () => {
+    removeCookie('token');
+    setIsLoggedIn(false);
+    window.location.href = '/';
+  };
 
-function App() {
   return (
     <BrowserRouter>
-      <div className="App">
-          <Header />
-          {/* the content */}
-          <Routes className="">
-            <Route path="root/Login" element={<Login />} />
-            <Route path="root/EmployeeManagement/*" element={<EmployeeManagement />} />
+      <div className="d-flex flex-column bg-light" id="wrapper">
+        <Header isLoggedIn={isLoggedIn} handleLogOut={handleLogOut} />
+        <Container fluid className="pt-2">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                isLoggedIn ? <Navigate to="/dashboard" /> : <Home />
+              }
+            />
+            <Route
+              path="/home"
+              element={Home}
+            />
+            <Route
+              path="/dashboard"
+              element={
+                isLoggedIn ? <Dashboard /> : <Navigate to="/" />
+              }
+            />
+            <Route
+              path="/login"
+              element={<Login setIsLoggedIn={setIsLoggedIn} />}
+            />
+            <Route
+              path="/callback"
+              element={<Callback setIsLoggedIn={setIsLoggedIn} />}
+            />
           </Routes>
+        </Container>
         <Footer />
       </div>
     </BrowserRouter>
   );
 }
-
-
-
-
-export default App;
