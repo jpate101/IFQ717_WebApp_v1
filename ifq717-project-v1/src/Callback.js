@@ -76,7 +76,7 @@ export default function Callback({ setIsLoggedIn }) {
   return (
     <>
       <h1>Fetching token...</h1>
-      <p>make this page pretty! but dont allow user to navigate away</p>
+      <p>make this page pretty! consider options for navigating away on error</p>
     </>
   );
 }

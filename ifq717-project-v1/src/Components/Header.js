@@ -31,32 +31,32 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
           <Navbar.Collapse id="navbarSupportedContent">
             <Nav className="me-auto">
               <HighlightLink to="/" as={Link}>
-                Home
+                | Home 
               </HighlightLink>
               {isLoggedIn ? (
                 <>
                   <HighlightLink to="/teams" as={Link}>
-                    Teams
+                    | Teams 
                   </HighlightLink>
                   <HighlightLink to="/locations" as={Link}>
-                    Locations
+                    | Locations 
                   </HighlightLink>
                   <HighlightLink to="/users" as={Link}>
-                    Users
+                    | Users 
                   </HighlightLink>
                   <HighlightLink to="/onboard-users" as={Link}>
-                    Onboard users
+                    | Onboard users  
                   </HighlightLink>
                   <HighlightLink to="/create-rosters" as={Link}>
-                    Create
+                    | Create rosters 
                   </HighlightLink>
                   <HighlightLink to="/" as={Link} onClick={handleLogOut}>
-                    Logout
+                    | Logout
                   </HighlightLink>
                 </>
               ) : (
                 <HighlightLink to="/login" as={Link}>
-                  Login
+                  | Login 
                 </HighlightLink>
               )}
             </Nav>

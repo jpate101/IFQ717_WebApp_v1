@@ -26,7 +26,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <div className="d-flex flex-column bg-light" id="wrapper">
-        <Header isLoggedIn={isLoggedIn} handleLogOut={handleLogOut} />
+        <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} handleLogOut={handleLogOut} />
         <Container fluid className="pt-2">
           <Routes>
             <Route
