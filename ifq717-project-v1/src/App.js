@@ -7,6 +7,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 
+import EmployeeManagement from "./EmployeeManagement";
+
 const Login = () => {
   return (
     <div className="">
@@ -23,6 +25,7 @@ function App() {
           {/* the content */}
           <Routes className="">
             <Route path="root/Login" element={<Login />} />
+            <Route path="root/EmployeeManagement/*" element={<EmployeeManagement />} />
           </Routes>
         <Footer />
       </div>
