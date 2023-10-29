@@ -50,6 +50,9 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
                   <HighlightLink to="/create-rosters" as={Link}>
                     | Create rosters 
                   </HighlightLink>
+                  <HighlightLink to="root/EmployeeManagement/" as={Link}>
+                    | Employee Management
+                  </HighlightLink>
                   <HighlightLink to="/" as={Link} onClick={handleLogOut}>
                     | Logout
                   </HighlightLink>

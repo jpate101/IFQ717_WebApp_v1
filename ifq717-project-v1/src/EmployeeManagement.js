@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 
 function EmployeeManagement() {
@@ -11,6 +11,157 @@ function EmployeeManagement() {
     const [showUpadateUsers, setShowUpadateUsers] = useState(false);
     const [showUpadateLocations, setShowUpadateLocations] = useState(false);
     const [showUpadateTeams, setShowUpadateTeams] = useState(false);
+    const [showResult, setShowResult] = useState("");
+
+    //seach locations stuff 
+    const [locationsList, setLocationsList] = useState([
+    ]);
+    const [searchLocation, setSearchLocation] = useState(''); // State for search query
+    const [filteredLocations, setFilteredLocations] = useState([]); // State for filtered locations
+
+    const fetchLocations = async () => {
+        try {
+            const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
+            const response = await fetch(`https://my.tanda.co/api/v2/locations?platform=false&show_business_hours=false`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`,
+                },
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setFilteredLocations(data); // Update the filteredLocations state with the fetched locations
+                setLocationsList(data);
+            } else {
+                setShowResult('Failed to fetch locations');
+            }
+        } catch (error) {
+            setShowResult('Network error: ' + error.message);
+        }
+    };
+
+    useEffect(() => {
+        fetchLocations(); // Fetch locations when the component mounts
+    }, []);
+
+    useEffect(() => {
+        if (searchLocation.trim() === '') {
+            // If the query is empty, show all locations
+            setFilteredLocations(locationsList);
+        } else {
+            // Filter the locations based on the query
+            const filtered = locationsList.filter((location) => {
+                return (
+                    location.id.toString().includes(searchLocation) ||
+                    location.name.toLowerCase().includes(searchLocation.toLowerCase()) ||
+                    location.short_name.toLowerCase().includes(searchLocation.toLowerCase())
+                );
+            });
+            setFilteredLocations(filtered);
+        }
+    }, [searchLocation, locationsList]);
+    // search USers stuff 
+    const [usersList, setUsersList] = useState([]);
+    const [searchUsers, setSearchUsers] = useState('');
+    const [filteredUsers, setFilteredUsers] = useState([]);
+
+    const fetchUsers = async () => {
+        try {
+            const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
+            const response = await fetch(`https://my.tanda.co/api/v2/users?show_wages=false`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`,
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setFilteredUsers(data);
+                setUsersList(data);
+            } else {
+                setShowResult('Failed to fetch users');
+            }
+        } catch (error) {
+            setShowResult('Network error: ' + error.message);
+        }
+    };
+
+    useEffect(() => {
+        fetchUsers(); // Fetch users when the component mounts
+    }, []);
+
+    useEffect(() => {
+        if (searchUsers.trim() === '') {
+            // If the query is empty, show all users
+            setFilteredUsers(usersList);
+        } else {
+            // Filter the users based on the query
+            const filtered = usersList.filter((user) => {
+                return (
+                    user.id.toString().includes(searchUsers) ||
+                    user.name.toLowerCase().includes(searchUsers.toLowerCase())
+                );
+            });
+            setFilteredUsers(filtered);
+        }
+    }, [searchUsers, usersList]);
+
+
+    //search teams stuff 
+
+    const [teamsList, setTeamsList] = useState([]);
+    const [searchTeams, setSearchTeams] = useState('');
+    const [filteredTeams, setFilteredTeams] = useState([]);
+
+    const fetchTeams = async () => {
+        try {
+            console.log("fetch teams exe");
+            const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
+            const response = await fetch(`https://my.tanda.co/api/v2/departments`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`,
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setFilteredTeams(data);
+                setTeamsList(data);
+            } else {
+                setShowResult('Failed to fetch users');
+            }
+        } catch (error) {
+            setShowResult('Network error: ' + error.message);
+        }
+    };
+
+    useEffect(() => {
+        fetchTeams(); // Fetch users when the component mounts
+    }, []);
+
+    useEffect(() => {
+        if (searchTeams.trim() === '') {
+            // If the query is empty, show all users
+            setFilteredTeams(teamsList);
+        } else {
+            // Filter the users based on the query
+            const filtered = teamsList.filter((team) => {
+                return (
+                    team.id.toString().includes(searchTeams) ||
+                    team.name.toLowerCase().includes(searchTeams.toLowerCase())
+                );
+            });
+            setFilteredTeams(filtered);
+        }
+    }, [searchTeams, teamsList]);
+
+
+    //
 
     // display functions 
     const handleCreateLocationsClick = () => {
@@ -20,6 +171,7 @@ function EmployeeManagement() {
         setShowUpadateUsers(false);
         setShowUpadateLocations(false);
         setShowUpadateTeams(false);
+        setShowResult('');
     };
 
     const handleCreateTeamsClick = () => {
@@ -29,6 +181,7 @@ function EmployeeManagement() {
         setShowUpadateUsers(false);
         setShowUpadateLocations(false);
         setShowUpadateTeams(false);
+        setShowResult('');
     };
 
     const handleCreateUsersClick = () => {
@@ -38,6 +191,7 @@ function EmployeeManagement() {
         setShowUpadateUsers(false);
         setShowUpadateLocations(false);
         setShowUpadateTeams(false);
+        setShowResult('');
     };
     const handleUpadateUsersClick = () => {
         setShowUpadateUsers(true);
@@ -46,6 +200,7 @@ function EmployeeManagement() {
         setShowLocationForm(false);
         setShowTeamsForm(false);
         setShowEmployeeForm(false);
+        setShowResult('');
     }
     const handleUpadateLocationsClick = () => {
         setShowUpadateUsers(false);
@@ -54,6 +209,7 @@ function EmployeeManagement() {
         setShowLocationForm(false);
         setShowTeamsForm(false);
         setShowEmployeeForm(false);
+        setShowResult('');
     }
     const handleUpadateTeamsClick = () => {
         setShowUpadateUsers(false);
@@ -62,16 +218,18 @@ function EmployeeManagement() {
         setShowLocationForm(false);
         setShowTeamsForm(false);
         setShowEmployeeForm(false);
+        setShowResult('');
     }
 
     //form
     const [formDataLocation, setFormDataLocation] = useState({
+        locationsId: '',
         name: '',
         short_name: '',
         latitude: '',
         longitude: '',
         address: '',
-        public_holiday_regions: [''],  // Initialize as an empty array with one empty string
+        public_holiday_regions: [''],
         specific_holiday_dates: [
             { date: '' },
             { date: '', from: '', to: '' },
@@ -79,38 +237,45 @@ function EmployeeManagement() {
     });
 
     const [formDataTeams, setFormDataTeams] = useState({
+        Id: '',
         name: '',
         location_id: '',
         export_name: '',
         colour: '',
         team_group: '',
-        qualification_ids: [''],  // Initialize as an empty array with one empty string
+        qualification_ids: [''],
         user_ids: [''],
+        manager_ids: [''],
     });
 
     const [formDataEmployee, setFormDataEmployee] = useState({
+        Id: '',
         name: '',
         date_of_birth: '',
         employment_start_date: '',
         employee_id: '',
         passcode: '',
         department_ids: [''],
-        preferred_hours: 0,
-        part_time_fixed_hours: 0,
-        award_template_id: 0,
-        award_template_organisation_id: 0,
+        preferred_hours: null,
+        part_time_fixed_hours: null,
+        award_template_id: null,
+        award_template_organisation_id: null,
         award_tag_ids: [''],
-        report_department_id: 0,
+        report_department_id: null,
         managed_department_ids: [''],
         email: '',
         phone: '',
-        days_overtime_averaged_over: 0,
+        days_overtime_averaged_over: null,
         overtime_calculated_over_period_start: '',
         can_see_costs: false,
         user_levels: [''],
         hourly_rate: 0,
-        yearly_salary: 0,
-        next_pay_group_id: 0,
+        yearly_salary: null,
+        next_pay_group_id: null,
+        hourly_rate: null,
+        bank_details_bsb: null,
+        bank_details_account_number: null,
+        bank_details_account_name: null,
         address: {
             street_line_one: '',
             street_line_two: '',
@@ -140,8 +305,8 @@ function EmployeeManagement() {
             senior_marital_status: '',
         },
         bank_details: {
-            bsb: 0,
-            account_number: 0,
+            bsb: null,
+            account_number: null,
             account_name: '',
         },
         super_fund_membership: {
@@ -156,39 +321,204 @@ function EmployeeManagement() {
                 trustee_director: false,
                 member_number: '',
                 occupational_rating: '',
-                super_fund_id: 0,
+                super_fund_id: null,
             },
         },
         regular_hours: {
             start_date: '',
             schedules: {
-                week: 0,
+                week: null,
                 day: '',
                 start: '',
                 end: '',
                 breaks: '',
-                department_id: 0,
+                department_id: null,
             },
         },
         temporary_employee_type: '',
+        qualifications: [
+            {
+                qualification_id: null,
+                enabled: null,
+                license_number: "",
+                expires: "",
+                in_training: null,
+                file_id: ""
+            }
+        ],
+        enable_login: null,
+
+        
+
     });
     //button functions 
 
     function handleCreateLocationSubmit(e) {
         e.preventDefault();
 
-        // Validate the form fields
         if (!formDataLocation.name || !formDataLocation.latitude || !formDataLocation.longitude || !formDataLocation.address) {
-            alert("Please fill in all required fields.");
-            return; // Stop the submission if any field is empty
+            //alert("Please fill in all required fields.");
+            setShowResult("Please fill in all required fields.");
+            return;
         }
-        
-        // Create the request body with the form data
+
+
         const requestBody = {
             name: formDataLocation.name,
             short_name: formDataLocation.short_name,
-            latitude: parseFloat(formDataLocation.latitude), // Convert to a number
-            longitude: parseFloat(formDataLocation.longitude), // Convert to a number
+            latitude: parseFloat(formDataLocation.latitude),
+            longitude: parseFloat(formDataLocation.longitude),
+            address: formDataLocation.address,
+            public_holiday_regions: ['au'],
+            specific_holiday_dates: [
+                {
+                    date: '',
+                },
+                {
+                    date: '',
+                    from: null,
+                    to: null,
+                },
+            ],
+        };
+        const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
+        console.log(apiKey);
+
+        // Send a POST request to your API endpoint
+        fetch('https://my.tanda.co/api/v2/locations', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify(requestBody),
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Handle success
+                    console.log("Location created successfully!");
+                    setShowResult("Location created successfully!");
+                } else if (response.status === 403) {
+                    // Handle 403 error (forbidden)
+                    console.log("You do not have the required permissions to create a location.");
+                    setShowResult("You do not have the required permissions to create a location.");
+                } else {
+                    // Handle other errors
+                    console.log("Failed to create location");
+                    setShowResult("Failed to create location");
+                }
+            })
+            .catch(error => {
+                // Handle network errors
+                setShowResult("Network error: " + error.message);
+            });
+    }
+
+    function handleCreateTeamsSubmit(e) {
+        // Handle team creation here
+        e.preventDefault();
+
+
+
+        if (!formDataTeams.name || !formDataTeams.location_id) {
+            //alert("Please fill in all required fields.");
+            setShowResult("Please fill in all required fields.");
+            return;
+        }
+
+        const teamRequestBody = {
+            name: formDataTeams.name,
+            location_id: formDataTeams.location_id,
+        };
+
+        const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
+
+        // Send a POST request to create a team
+        fetch('https://my.tanda.co/api/v2/departments', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify(teamRequestBody),
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Handle success
+                    //console.log("Location created successfully!");
+                    setShowResult("Team created successfully!");
+                } else if (response.status === 403) {
+                    // Handle 403 error (forbidden)
+                    //console.log("You do not have the required permissions to create a location.");
+                    setShowResult("You do not have the required permissions to create a Team.");
+                } else {
+                    // Handle other errors
+                    //console.log("Failed to create location");
+                    setShowResult("Failed to create Team");
+                }
+            })
+            .catch(error => {
+                // Handle network errors
+                setShowResult("Network error: " + error.message);
+            });
+    }
+
+    function handleCreateEmployeeSubmit(e) {
+        e.preventDefault();
+
+        if (!formDataEmployee.name) {
+            setShowResult("Please fill in all required fields.");
+            return;
+        }
+        // Handle employee creation here
+        const employeeRequestBody = {
+            name: formDataEmployee.name,
+            // Include more properties here
+        };
+
+        const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
+
+        // Send a POST request to create an employee
+        fetch('https://my.tanda.co/api/v2/users', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify(employeeRequestBody),
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Handle success
+                    setShowResult("Employee created successfully!");
+                } else if (response.status === 403) {
+                    // Handle 403 error (forbidden)
+                    setShowResult("You do not have the required permissions to create a Employee.");
+                } else {
+                    // Handle errors
+                    setShowResult("Failed to create employee");
+                }
+            })
+            .catch(error => {
+                // Handle network errors
+                setShowResult("Network error: " + error.message);
+            });
+    }
+
+    function handleUpdateLocationSubmit(e) {
+        e.preventDefault();
+
+        if (!formDataLocation.locationsId) {
+            setShowResult("Please fill in all required fields.");
+            return;
+        }
+        const locationId = formDataLocation.locationsId;
+
+        const requestBody = {
+            name: formDataLocation.name,
+            short_name: formDataLocation.short_name,
+            latitude: parseFloat(formDataLocation.latitude),
+            longitude: parseFloat(formDataLocation.longitude),
             address: formDataLocation.address,
             public_holiday_regions: ['au'],
             specific_holiday_dates: [
@@ -203,142 +533,301 @@ function EmployeeManagement() {
             ],
         };
 
-        const apiKey = 'YOUR_API_KEY'; 
-    
-        // Send a POST request to your API endpoint
-        fetch('https://my.tanda.co/api/v2/locations', {
-            method: 'POST',
+        const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
+
+        // Send a POST request to create an employee
+        fetch(`https://my.tanda.co/api/v2/locations/${locationId}`, {
+            method: 'PUT', // Use PUT method for updating
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${apiKey}`,
             },
             body: JSON.stringify(requestBody),
         })
-        .then(response => {
-            if (response.ok) {
-                // Handle success
-                setContent("Location created successfully!");
-            } else {
-                // Handle errors
-                setContent("Failed to create location");
-            }
-        })
-        .catch(error => {
-            // Handle network errors
-            setContent("Network error: " + error.message);
-        });
-    }
-
-    function handleCreateTeamsSubmit(e) {
-        // Handle team creation here
-        e.preventDefault();
-        // ...
-
-        // Example of handling team creation
-        const teamRequestBody = {
-            name: formDataTeams.name,
-            location_id: formDataTeams.location_id,
-            export_name: formDataTeams.export_name,
-            colour: formDataTeams.colour,
-            team_group: formDataTeams.team_group,
-            qualification_ids: formDataTeams.qualification_ids,
-            user_ids: formDataTeams.user_ids,
-        };
-
-        const apiKey = 'YOUR_API_KEY';
-
-        // Send a POST request to create a team
-        fetch('https://my.tanda.co/api/v2/teams', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`,
-            },
-            body: JSON.stringify(teamRequestBody),
-        })
             .then(response => {
                 if (response.ok) {
-                    // Handle success
-                    setContent("Team created successfully!");
+                    console.log("Location updated successfully!");
+                    setShowResult("Location updated successfully!");
+                    // Handle any additional actions after successful update.
+                } else if (response.status === 403) {
+                    console.log("You do not have the required permissions to update this location.");
+                    setShowResult("You do not have the required permissions to update this location.");
                 } else {
-                    // Handle errors
-                    setContent("Failed to create team");
+                    console.log("Failed to update location");
+                    setShowResult("Failed to update location");
                 }
             })
             .catch(error => {
                 // Handle network errors
-                setContent("Network error: " + error.message);
+                setShowResult("Network error: " + error.message);
             });
     }
+    function handleUpdateTeamsSubmit(e) {
 
-    function handleCreateEmployeeSubmit(e) {
+    }
+    function handleUpdateName(e) {
+        console.log('Update Team Name button pressed');
+        // Perform the Update Team Name action
+        // You can put the relevant code here.
+
         e.preventDefault();
-        // Handle employee creation here
-        // ...
 
-        // Example of handling employee creation
-        const employeeRequestBody = {
-            name: formDataEmployee.name,
-            date_of_birth: formDataEmployee.date_of_birth,
-            // Include more properties here
+        if (!formDataTeams.Id) {
+            setShowResult("Please fill in all required fields.");
+            return;
+        }
+
+        const teamUpdateRequestName = {
+            name: formDataTeams.name,
+
+        };
+        const teamUpdateRequestUsersManagers = {
+            user_ids: formDataTeams.user_ids,
+            manager_ids: formDataTeams.manager_ids,
+        };
+        const teamUpdateRequestQualification = {
+            qualification_ids: formDataTeams.qualification_ids,
+
         };
 
-        const apiKey = 'YOUR_API_KEY';
+        const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
+        const teamId = parseInt(formDataTeams.Id); // Assuming formDataTeams.Id is the ID of the team to be updated
 
-        // Send a POST request to create an employee
-        fetch('https://my.tanda.co/api/v2/employees', {
-            method: 'POST',
+
+
+        fetch(`https://my.tanda.co/api/v2/departments/${teamId}`, {
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${apiKey}`,
             },
-            body: JSON.stringify(employeeRequestBody),
+            body: JSON.stringify(teamUpdateRequestName),
         })
-        .then(response => {
-            if (response.ok) {
-                // Handle success
-                setContent("Employee created successfully!");
-            } else {
-                // Handle errors
-                setContent("Failed to create employee");
-            }
-        })
-        .catch(error => {
-            // Handle network errors
-            setContent("Network error: " + error.message);
-        });
+            .then(response => {
+                if (response.ok) {
+                    setShowResult("Team Name updated successfully!");
+                    console.log("Success Response:", response);
+                } else {
+                    setShowResult("Failed to update team.");
+                }
+            })
+            .catch(error => {
+                setShowResult("Network error: " + error.message);
+            });
     }
+
+    function handleUpdateQualifications(e) {
+        console.log('Update Team Qualifications button pressed');
+        e.preventDefault(); // Prevent the default form submission
+
+        if (!formDataTeams.Id) {
+            setShowResult("Please fill in the Team ID field.");
+            return;
+        }
+
+        const teamUpdateRequestQualification = {
+            qualification_ids: formDataTeams.qualification_ids.map(Number), // Convert to integers
+        };
+
+        console.log(teamUpdateRequestQualification);
+
+        const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
+
+        const teamId = parseInt(formDataTeams.Id);
+
+        fetch(`https://my.tanda.co/api/v2/departments/${teamId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify(teamUpdateRequestQualification),
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error("Failed to update team.");
+                }
+            })
+            .then(data => {
+                setShowResult("Team Qualifications updated successfully!");
+                console.log("Success Response:", data);
+            })
+            .catch(error => {
+                setShowResult("Network error: " + error.message);
+            });
+    }
+
+    function handleUpdateUsersAndManagers(e) {
+        console.log('Update Team Users and Managers button pressed');
+        // Perform the Update Team Users and Managers action
+        // You can put the relevant code here.
+
+        e.preventDefault();
+
+        if (!formDataTeams.Id) {
+            setShowResult("Please fill in all required fields.");
+            return;
+        }
+
+        const teamUpdateRequestUsersManagers = {
+            user_ids: formDataTeams.user_ids.map(Number),
+            manager_ids: formDataTeams.manager_ids.map(Number),
+        };
+        console.log(teamUpdateRequestUsersManagers);
+
+        const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
+        const teamId = parseInt(formDataTeams.Id); 
+
+
+
+        fetch(`https://my.tanda.co/api/v2/departments/${teamId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify(teamUpdateRequestUsersManagers),
+        })
+            .then(response => {
+                if (response.ok) {
+                    setShowResult("Team Users and Managers updated successfully!");
+                    console.log("Success Response:", response);
+                } else {
+                    setShowResult("Failed to update team Users and Managers.");
+                }
+            })
+            .catch(error => {
+                setShowResult("Network error: " + error.message);
+            });
+    }
+
+    const handleUpdateEmployee = (e) => {
+        e.preventDefault();
+
+        if (!formDataEmployee.Id) {
+            setShowResult("Please fill in the Team ID field.");
+            return;
+        }
+
+        // Create a copy of the formDataEmployee object
+        //let updatedData = { ...formDataEmployee };
+
+        let updatedData = {
+            name: formDataEmployee.name,
+            employee_id: formDataEmployee.employee_id,
+            passcode: formDataEmployee.passcode,
+            phone: formDataEmployee.phone,
+            date_of_birth: formDataEmployee.date_of_birth,
+            employment_start_date: formDataEmployee.employment_start_date,
+            email: formDataEmployee.email,
+
+            hourly_rate: parseFloat(formDataEmployee.hourly_rate),
+            enable_login: formDataEmployee.enable_login,
+
+
+            //bank_details: {
+            //    bsb: parseFloat(formDataEmployee.bank_details_bsb),
+            //    account_number: parseFloat(formDataEmployee.bank_details_account_number),
+            //    account_name: parseFloat(formDataEmployee.bank_details_account_name),
+            //}
+            /*
+            //create seperate update for qualifications
+            qualifications: [//
+                {
+                    qualification_id: parseFloat(formDataEmployee.qualifications.qualification_id),
+                    enabled: formDataEmployee.qualifications.enabled,
+                    license_number: formDataEmployee.qualifications.license_number,
+                    expires: formDataEmployee.qualifications.expires,
+                    in_training: formDataEmployee.qualifications.in_training,
+                    file_id: formDataEmployee.qualifications.file_id
+                }
+            ]
+            */
+        }
+        if (updatedData.name === '') {
+            delete updatedData.name;
+        }
+        if (updatedData.enable_login === null) {
+            delete updatedData.enable_login;
+        }
+
+        for (let field in updatedData) {
+            //console.log(field);
+            if (typeof updatedData[field] === 'object') {
+                // Check if the property is an object (e.g., bank_details)
+                for (let subField in updatedData[field]) {
+                    if (field !== 'name' && (updatedData[field][subField] === "" || updatedData[field][subField]== null || isNaN(updatedData[field][subField]))) {
+                        delete updatedData[field][subField];
+                    }
+                }
+            }else if (field !== 'name' && (updatedData[field] === "" || updatedData[field] === null || isNaN(updatedData[field]))) {
+                delete updatedData[field];
+            }
+        }
+
+
+
+        console.log("bsb check:", updatedData.bank_details.bsb);
+        console.log(updatedData);
+        console.log("----------");
+
+        const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
+
+        // Send a fetch request to update the user's information
+        fetch(`https://my.tanda.co/api/v2/users/${formDataEmployee.Id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify(updatedData),
+        })
+            .then((response) => {
+                if (response.ok) {
+                    setShowResult("User updated successfully!");
+                    console.log("Success Response:", response);
+                } else {
+                    setShowResult("Failed to update User.");
+                }
+            })
+            .catch((error) => {
+                // Handle network or other errors
+                console.error(error);
+            });
+    };
 
     return (
         <div className="background" >
-          <h1 className="primary"> EmployeeManagement </h1>
-          <div className="flex-container" >
-            <div className="left-column-nav-EM">
-                <ul className="navEM" style={{ listStyleType: 'none' }}>
-                    <li>
-                        <a onClick={handleCreateTeamsClick}>Create Teams</a>
-                    </li>
-                    <li>
-                        <a onClick={handleUpadateTeamsClick}>Update Teams</a>
-                    </li>
-                    <li>
-                        <a onClick={handleCreateLocationsClick}>Create Locations</a>
-                    </li>
-                    <li>
-                        <a onClick={handleUpadateLocationsClick}>Update Locations</a>
-                    </li>
-                    <li>
-                        <a onClick={handleCreateUsersClick}>Create Users</a>
-                    </li>
-                    <li>
-                        <a onClick={handleUpadateUsersClick}>Update Users</a>
-                    </li>
-                </ul>
-            </div>
-            <div >
-            {showLocationForm ? (
-                            
-                            <form onSubmit={handleCreateLocationSubmit} style={{  padding: '30px'}} className="primary" >
+            <h1 className="primary"> EmployeeManagement </h1>
+            <div className="flex-container" >
+                <div className="left-column-nav-EM">
+                    <ul className="navEM" style={{ listStyleType: 'none' }}>
+                        <li>
+                            <a onClick={handleCreateLocationsClick}>Create Locations</a>
+                        </li>
+                        <li>
+                            <a onClick={handleUpadateLocationsClick}>Update Locations</a>
+                        </li>
+                        <li>
+                            <a onClick={handleCreateUsersClick}>Create Users</a>
+                        </li>
+                        <li>
+                            <a onClick={handleUpadateUsersClick}>Update Users</a>
+                        </li>
+                        <li>
+                            <a onClick={handleCreateTeamsClick}>Create Teams</a>
+                        </li>
+                        <li>
+                            <a onClick={handleUpadateTeamsClick}>Update Teams</a>
+                        </li>
+                    </ul>
+                </div>
+                <div >
+                    {showLocationForm ? (
+
+                        <form onSubmit={handleCreateLocationSubmit} style={{ padding: '30px' }} className="primary" >
                             <h2 className="secondary">Create location</h2>
                             <div>
                                 <h3 className="secondary">Set Location Name Details:</h3>
@@ -382,7 +871,7 @@ function EmployeeManagement() {
                                 <select
                                     value={formDataLocation.public_holiday_regions[0]}
                                     onChange={e => setFormDataLocation({ ...formDataLocation, public_holiday_regions: [e.target.value] })}
-                                    >
+                                >
                                     <option value="au">Australia</option>
                                     {/* Add more options for other regions if needed */}
                                 </select>
@@ -390,123 +879,442 @@ function EmployeeManagement() {
                             <div>
                                 <h3 className="secondary">Optional: Set Location Public Holiday Regions Details by Individual Dates</h3>
                                 <p>todo: add forms later</p>
-                                
-                        
-                                 
+
+
+
                             </div>
                             <button type="submit" style={{ margin: '10px' }} className="EM-button" >Create Location</button>
+                            {showResult && <p>{showResult}</p>}
                         </form>
-                ) : showTeamsForm ? (
-                    // Team form
-                    <form onSubmit={handleCreateTeamsSubmit} style={{ padding: '30px' }} className="primary">
-                        <h2 className="secondary">Create Team</h2>
-                        <div>
-                            <h3 className="secondary">Set Team Details:</h3>
-                            <input
-                                type="text"
-                                placeholder="Team Name"
-                                value={formDataTeams.name}
-                                onChange={e => setFormDataTeams({ ...formDataTeams, name: e.target.value })}
-                            /> 
+
+
+                    ) : showTeamsForm ? (
+                        // Team form
+                        <div className="flex-container">
+                            <form onSubmit={handleCreateTeamsSubmit} style={{ padding: '30px' }} className="primary">
+                                <h2 className="secondary">Create Team</h2>
+                                <div>
+                                    <h3 className="secondary">Set Team Details:</h3>
+                                    <input
+                                        type="text"
+                                        placeholder="Team Name"
+                                        value={formDataTeams.name}
+                                        onChange={e => setFormDataTeams({ ...formDataTeams, name: e.target.value })}
+                                    />
+                                </div>
+                                <div>
+                                    <input
+                                        type="text"
+                                        placeholder="Location ID"
+                                        value={formDataTeams.location_id}
+                                        onChange={e => setFormDataTeams({ ...formDataTeams, location_id: e.target.value })}
+                                    />
+                                </div>
+
+
+                                <button type="submit" style={{ margin: '10px' }} className="EM-button">Create Team</button>
+                                {showResult && <p>{showResult}</p>}
+                            </form>
+                            <div className="location-list">
+                                <input
+                                    type="text"
+                                    placeholder="Search Locations"
+                                    value={searchLocation}
+                                    onChange={(e) => setSearchLocation(e.target.value)}
+                                />
+                                <ul>
+                                    {filteredLocations.map((location) => (
+                                        <li key={location.id}>
+                                            <p>ID: {location.id}</p>
+                                            <p>Name: {location.name}</p>
+                                            <p>Short Name: {location.short_name}</p>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
                         </div>
-                        <div>
-                             <input
-                                type="text"
-                                placeholder="Location ID"
-                                value={formDataTeams.location_id}
-                                onChange={e => setFormDataTeams({ ...formDataTeams, location_id: e.target.value })}
-                            />
+                    ) : showEmployeeForm ? (
+                        <form onSubmit={handleCreateEmployeeSubmit} style={{ padding: '30px' }} className="primary">
+                            <h2 className="secondary">Create Employee</h2>
+                            <div>
+                                <h3 className="secondary">Employee Details:</h3>
+                                <input
+                                    type="text"
+                                    placeholder="Name"
+                                    value={formDataEmployee.name}
+                                    onChange={e => setFormDataEmployee({ ...formDataEmployee, name: e.target.value })}
+                                />
+                            </div>
+
+                            <button type="submit" style={{ margin: '10px' }} className="EM-button">Create Employee</button>
+                            {showResult && <p>{showResult}</p>}
+                        </form>
+                    ) : showUpadateLocations ? (
+                        <div className="flex-container">
+                            <form
+                                onSubmit={handleUpdateLocationSubmit}
+                                style={{ padding: '30px' }}
+                                className="primary"
+                            >
+                                <h2 className="secondary">Update Location</h2>
+                                <h3 className="secondary">Update fields that you wish to change</h3>
+                                <p>ID must be provided</p>
+
+                                <input
+                                    type="text"
+                                    placeholder="Location ID"
+                                    value={formDataLocation.locationsId}
+                                    onChange={(e) =>
+                                        setFormDataLocation({ ...formDataLocation, locationsId: e.target.value })
+                                    }
+                                />
+
+                                <div>
+                                    <h3 className="secondary">Set Location Name Details:</h3>
+                                    <input
+                                        type="text"
+                                        placeholder="Name"
+                                        value={formDataLocation.name}
+                                        onChange={(e) =>
+                                            setFormDataLocation({ ...formDataLocation, name: e.target.value })
+                                        }
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="Short_Name"
+                                        value={formDataLocation.short_name}
+                                        onChange={(e) =>
+                                            setFormDataLocation({ ...formDataLocation, short_name: e.target.value })
+                                        }
+                                    />
+                                </div>
+                                <div>
+                                    <h3 className="secondary">Set Location Geotag Details:</h3>
+                                    <input
+                                        type="number"
+                                        placeholder="Latitude"
+                                        value={formDataLocation.latitude}
+                                        onChange={(e) =>
+                                            setFormDataLocation({ ...formDataLocation, latitude: e.target.value })
+                                        }
+                                    />
+                                    <input
+                                        type="number"
+                                        placeholder="Longitude"
+                                        value={formDataLocation.longitude}
+                                        onChange={(e) =>
+                                            setFormDataLocation({ ...formDataLocation, longitude: e.target.value })
+                                        }
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="Address"
+                                        value={formDataLocation.address}
+                                        onChange={(e) =>
+                                            setFormDataLocation({ ...formDataLocation, address: e.target.value })
+                                        }
+                                    />
+                                </div>
+                                <div>
+                                    <h3 className="secondary">Set Location Public Holiday Regions Details:</h3>
+                                    <select
+                                        value={formDataLocation.public_holiday_regions[0]}
+                                        onChange={(e) =>
+                                            setFormDataLocation({ ...formDataLocation, public_holiday_regions: [e.target.value] })
+                                        }
+                                    >
+                                        <option value="au">Australia</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <h3 className="secondary">Optional: Set Location Public Holiday Regions Details by Individual Dates</h3>
+                                    <p>todo: add forms later</p>
+                                </div>
+                                <button type="submit" style={{ margin: '10px' }} className="EM-button">
+                                    Update Location
+                                </button>
+                                {showResult && <p>{showResult}</p>}
+                            </form>
+
+                            <div className="location-list">
+                                <input
+                                    type="text"
+                                    placeholder="Search Locations"
+                                    value={searchLocation}
+                                    onChange={(e) => setSearchLocation(e.target.value)}
+                                />
+                                <ul>
+                                    {filteredLocations.map((location) => (
+                                        <li key={location.id}>
+                                            <p>ID: {location.id}</p>
+                                            <p>Name: {location.name}</p>
+                                            <p>Short Name: {location.short_name}</p>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
                         </div>
-                        <div>
-                             <input
-                                type="text"
-                                placeholder="Export Name"
-                                value={formDataTeams.export_name}
-                                onChange={e => setFormDataTeams({  ...formDataTeams, export_name: e.target.value  })}
-                            />
+                    ) : showUpadateTeams ? (
+                        <div className="flex-container">
+                            <form onSubmit={handleUpdateTeamsSubmit} style={{ padding: '30px' }} className="primary">
+                                <h2 className="secondary">Update Teams</h2>
+                                <p>todo - users and managers update still doesnt work </p>
+
+                                <div>
+                                    <h3 className="secondary">Team Id:</h3>
+                                    <input
+                                        type="text"
+                                        placeholder="Team ID"
+                                        value={formDataTeams.Id}
+                                        onChange={e => setFormDataTeams({ ...formDataTeams, Id: e.target.value })}
+                                    />
+                                </div>
+
+
+                                <div>
+                                    <h3 className="secondary">Set Team Details:</h3>
+                                    <input
+                                        type="text"
+                                        placeholder="Team Name"
+                                        value={formDataTeams.name}
+                                        onChange={e => setFormDataTeams({ ...formDataTeams, name: e.target.value })}
+                                    />
+                                </div>
+                                <button onClick={handleUpdateName} type="submit" style={{ margin: '10px' }} className="EM-button">Update Team Name</button>
+                                <div>
+                                    <input
+                                        type="text"
+                                        placeholder="Qualification IDs (comma-separated)"
+                                        value={formDataTeams.qualification_ids.join(',')} // Join the array for display
+                                        onChange={(e) => setFormDataTeams({ ...formDataTeams, qualification_ids: e.target.value.split(',') })}
+                                    />
+                                </div>
+                                <button onClick={handleUpdateQualifications} type="submit" style={{ margin: '10px' }} className="EM-button">Update Team Qualifications</button>
+                                <div>
+                                    <input
+                                        type="text"
+                                        placeholder="User IDs (comma-separated)"
+                                        value={formDataTeams.user_ids.join(',')} // Join the array for display
+                                        onChange={(e) => setFormDataTeams({ ...formDataTeams, user_ids: e.target.value.split(',') })}
+                                    />
+                                </div>
+                                <div>
+                                    <input
+                                        type="text"
+                                        placeholder="Manager IDs (comma-separated)"
+                                        value={formDataTeams.manager_ids.join(',')} // Join the array for display
+                                        onChange={(e) => setFormDataTeams({ ...formDataTeams, manager_ids: e.target.value.split(',') })}
+                                    />
+                                </div>
+
+
+                                <button onClick={handleUpdateUsersAndManagers} type="submit" style={{ margin: '10px' }} className="EM-button">Update Team Users and managers</button>
+                                {showResult && <p>{showResult}</p>}
+                            </form>
+                            <div className="Teams-list">
+                                <input
+                                    type="text"
+                                    placeholder="Search Teams"
+                                    value={searchTeams}
+                                    onChange={(e) => setSearchTeams(e.target.value)}
+                                />
+                                <ul>
+                                    {filteredTeams.map((Teams) => (
+                                        <li key={Teams.id}>
+                                            <p>ID: {Teams.id}</p>
+                                            <p>Name: {Teams.name}</p>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                            <div className="location-list">
+                                <input
+                                    type="text"
+                                    placeholder="Search Locations"
+                                    value={searchLocation}
+                                    onChange={(e) => setSearchLocation(e.target.value)}
+                                />
+                                <ul>
+                                    {filteredLocations.map((location) => (
+                                        <li key={location.id}>
+                                            <p>ID: {location.id}</p>
+                                            <p>Name: {location.name}</p>
+                                            <p>Short Name: {location.short_name}</p>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                            <div className="Users-list">
+                                <input
+                                    type="text"
+                                    placeholder="Search Users"
+                                    value={searchUsers}
+                                    onChange={(e) => setSearchUsers(e.target.value)}
+                                />
+                                <ul>
+                                    {filteredUsers.map((Users) => (
+                                        <li key={Users.id}>
+                                            <p>ID: {Users.id}</p>
+                                            <p>Name: {Users.name}</p>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
                         </div>
-                        <div>
-                            <input
-                            type="text"
-                            placeholder="Colour"
-                            value={formDataTeams.colour}
-                            onChange={e => setFormDataTeams({ ...formDataTeams, colour: e.target.value })}
-                            />
-                        </div>
-                        <div>
-                            <input
-                            type="text"
-                            placeholder="Team Group"
-                            value={formDataTeams.team_group}
-                            onChange={e => setFormDataTeams({ ...formDataTeams, team_group: e.target.value })}
-                             />  
-                        </div>
-                        <div>
-                            <input
-                            type="text"
-                            placeholder="Qualification IDs (comma-separated)"
-                            value={Array.isArray(formDataTeams.qualification_ids) ? formDataTeams.qualification_ids.join(',') : ''}
-                            onChange={e => setFormDataTeams({ ...formDataTeams, qualification_ids: e.target.value.split(',') })}
-                            />
-                        </div>
-                        <div>
-                           <input
-                                type="text"
-                                placeholder="Manager IDs (comma-separated)"
-                                value={Array.isArray(formDataTeams.qualification_ids) ? formDataTeams.qualification_ids.join(',') : ''}
-                                onChange={e => setFormDataTeams({ ...formDataTeams, manager_ids: e.target.value.split(',') })}
-                             />
+                    ) : showUpadateUsers ? (
+                        <div className="flex-container">
+                            <form onSubmit={handleUpdateEmployee} style={{ padding: '30px' }} className="primary">
+                                <h2 className="secondary">Update User</h2>
+                                <p>Id field is Mandatory</p>
+                                <p>Other fields are Optional</p>
+
+                                <div>
+                                    <h3 className="secondary">User Id:</h3>
+                                    <input
+                                        type="text"
+                                        placeholder="User ID"
+                                        value={formDataEmployee.Id}
+                                        onChange={e => setFormDataEmployee({ ...formDataEmployee, Id: e.target.value })}
+                                    />
+                                </div>
+                                <h3 className="secondary">Set User/Employee Details:</h3>
+                                <div>
+                                    <input
+                                        type="text"
+                                        placeholder="User Name"
+                                        value={formDataEmployee.name}
+                                        onChange={e => setFormDataEmployee({ ...formDataEmployee, name: e.target.value })}
+                                    />
+                                </div>
+                                <div>
+                                    <input
+                                        type="text"
+                                        placeholder="User ID"
+                                        value={formDataEmployee.employee_id}
+                                        onChange={e => setFormDataEmployee({ ...formDataEmployee, employee_id: e.target.value })}
+                                    />
+                                </div>
+                                <div>
+                                    <input
+                                        type="text"
+                                        placeholder="Passcode"
+                                        value={formDataEmployee.passcode}
+                                        onChange={e => setFormDataEmployee({ ...formDataEmployee, passcode: e.target.value })}
+                                    />
+                                </div>
+
+                                <div>
+                                    <input
+                                        type="text"
+                                        placeholder="Phone"
+                                        value={formDataEmployee.phone}
+                                        onChange={e => setFormDataEmployee({ ...formDataEmployee, phone: e.target.value })}
+                                    />
+                                </div>
+
+                                <div>
+                                    <h4 className="secondary">Date of Birth:</h4>
+                                    <input
+                                        type="date"
+                                        placeholder="Date of Birth"
+                                        value={formDataEmployee.date_of_birth}
+                                        onChange={e => setFormDataEmployee({ ...formDataEmployee, date_of_birth: e.target.value })}
+                                    />
+                                </div>
+
+                                <div>
+                                    <h4 className="secondary">Employment Start Date:</h4>
+                                    <input
+                                        type="date"
+                                        placeholder="Employment Start Date"
+                                        value={formDataEmployee.employment_start_date}
+                                        onChange={e => setFormDataEmployee({ ...formDataEmployee, employment_start_date: e.target.value })}
+                                    />
+                                </div>
+
+                                <div>
+                                    <input
+                                        type="text"
+                                        placeholder="Email"
+                                        value={formDataEmployee.email}
+                                        onChange={e => setFormDataEmployee({ ...formDataEmployee, email: e.target.value })}
+                                    />
+                                </div>
+
+                                <div>
+                                    <input
+                                        type="text"
+                                        placeholder="Hourly Rate"
+                                        value={formDataEmployee.hourly_rate}
+                                        onChange={e => setFormDataEmployee({ ...formDataEmployee, hourly_rate: e.target.value })}
+                                    />
+                                </div>
+                                <div>
+                                    <h3 className="secondary">Enable Login:</h3>
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            value="true"
+                                            checked={formDataEmployee.enable_login === true}
+                                            onChange={() => setFormDataEmployee({ ...formDataEmployee, enable_login: true })}
+                                        />
+                                        True
+                                    </label>
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            value="false"
+                                            checked={formDataEmployee.enable_login === false}
+                                            onChange={() => setFormDataEmployee({ ...formDataEmployee, enable_login: false })}
+                                        />
+                                        False
+                                    </label>
+                                </div>
+
+                                {/*<div>
+                                    <h3 className="secondary">Bank Details:</h3>
+                                    <div>
+                                        <input
+                                            type="text"
+                                            placeholder="BSB"
+                                            value={formDataEmployee.bank_details_bsb}
+                                            onChange={e => setFormDataEmployee({ ...formDataEmployee, bank_details_bsb: e.target.value })}
+                                        />
+                                    </div>
+                                 </div>*/}
+
+
+
+
+                                <button type="submit" style={{ margin: '10px' }} className="EM-button">Update Users Submit</button>
+                            </form>
+                            <div className="Users-list">
+                                <input
+                                    type="text"
+                                    placeholder="Search Users"
+                                    value={searchUsers}
+                                    onChange={(e) => setSearchUsers(e.target.value)}
+                                />
+                                <ul>
+                                    {filteredUsers.map((Users) => (
+                                        <li key={Users.id}>
+                                            <p>ID: {Users.id}</p>
+                                            <p>Name: {Users.name}</p>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
                         </div>
 
-                        <button type="submit" style={{ margin: '10px' }} className="EM-button">Create Team</button>
-                    </form>
-                ) : showEmployeeForm ? (
-                    <form onSubmit={handleCreateEmployeeSubmit} style={{  padding: '30px'}} className="primary">
-                        <h2 className="secondary">Create Employee</h2>
-                        <div>
-                        <h3 className="secondary">Employee Details:</h3>
-                        <input
-                            type="text"
-                            placeholder="Name"
-                            value={formDataEmployee.name}
-                            onChange={e => setFormDataEmployee({ ...formDataEmployee, name: e.target.value })}
-                        />
-                        </div>
-                        <div>
-                        <input
-                            type="text"
-                            placeholder="Date of Birth"
-                            value={formDataEmployee.date_of_birth}
-                            onChange={e => setFormDataEmployee({ ...formDataEmployee, date_of_birth: e.target.value })}
-                        />
-                        </div>
-                        <div>
-                        <h3 className="secondary">Employment Start Date:</h3>
-                        <input
-                            type="date" // You can use the date input type for date values
-                            id="employment_start_date"
-                            name="employment_start_date"
-                            value={formDataEmployee.employment_start_date}
-                            onChange={e => setFormDataEmployee({ ...formDataEmployee, employment_start_date: e.target.value })}
-                        />
-                        </div>
-                        <button type="submit" style={{ margin: '10px' }} className="EM-button">Create Employee</button>
-                    </form>
-                ) :showUpadateUsers ? (
-                    content
-                ) :showUpadateLocations ? (
-                    content
-                ) :showUpadateTeams ? (
-                    content
-                ) : (
-                    content 
-                )
-            }
+                    ) : (
+                        content
+                    )
+                    }
+                </div>
+
             </div>
-
-          </div>
         </div>
-      );
+    );
 }
 
 export default EmployeeManagement;
