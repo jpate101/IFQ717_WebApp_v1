@@ -53,6 +53,10 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
                   <HighlightLink to="/" as={Link} onClick={handleLogOut}>
                     | Logout
                   </HighlightLink>
+                  <HighlightLink to="root/EmployeeManagement/" as={Link}>
+                    | Employee Management
+                  </HighlightLink>
+
                 </>
               ) : (
                 <HighlightLink to="/login" as={Link}>
