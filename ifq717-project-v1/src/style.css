@@ -2,6 +2,12 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+:root {
+  --primary-color: #3b82f6;
+  --secondary-color: #1e40af;
+  --background-color: #f9fafb;
+}
+
 
 .flex-container {
     display: flex;
@@ -80,5 +86,14 @@ input:focus {
 
 .left-column-nav-EM {
     width: 20%; /* Adjust the width as needed */
+  }
+
+  .nav-link {
+    color: var(--primary-color);
+    font-weight: bold;
+  }
+  
+  .nav-link:hover {
+    color: var(--secondary-color);
   }
   
