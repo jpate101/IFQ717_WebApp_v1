@@ -7,7 +7,6 @@ import Footer from './Components/Footer';
 import Home from './Home';
 import Login from './Login';
 import Dashboard from './Dashboard';
-import Callback from './Callback';
 
 import EmployeeManagement from './EmployeeManagement';
 
@@ -50,10 +49,6 @@ export default function App() {
             <Route
               path="/login"
               element={<Login setIsLoggedIn={setIsLoggedIn} />}
-            />
-            <Route
-              path="/callback"
-              element={<Callback setIsLoggedIn={setIsLoggedIn} />}
             />
             <Route path="root/EmployeeManagement/*" element={<EmployeeManagement />} />
           </Routes>
