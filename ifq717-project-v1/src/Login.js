@@ -21,7 +21,7 @@ export default function Login() {
 
     // call the /token end point with provided username and password and scopes me, user & department
     const tokenUrl = process.env.REACT_APP_TANDA_TOKEN_URL;
-    const scopes = 'me user department';
+    const scopes = 'me user department cost financial';
     const grantType = 'password';
 
     fetch(tokenUrl, {
