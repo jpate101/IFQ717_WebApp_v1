@@ -37,7 +37,7 @@ export default function Login() {
               <Button onClick={() => {
                 // Redirect user to the authorization endpoint
                 const authorizationUrl =
-                  `https://my.tanda.co/api/oauth/authorize?scope=me+user+department&client_id=${process.env.REACT_APP_CLIENT_ID}&redirect_uri=http://localhost:3000/callback&response_type=code`; 
+                  `https://my.tanda.co/api/oauth/authorize?scope=me+user+department+cost+financial&client_id=${process.env.REACT_APP_CLIENT_ID}&redirect_uri=http://localhost:3000/callback&response_type=code`; 
                 window.location.href = authorizationUrl;
               }} variant="primary" className="mt-3 login-button">
                 Login

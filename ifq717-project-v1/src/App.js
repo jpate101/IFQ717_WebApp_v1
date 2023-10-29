@@ -9,6 +9,8 @@ import Login from './Login';
 import Dashboard from './Dashboard';
 import Callback from './Callback';
 
+import EmployeeManagement from './EmployeeManagement';
+
 export default function App() {
   const [cookies, setCookie, removeCookie] = useCookies(['token']);
   const [isLoggedIn, setIsLoggedIn] = useState(!!cookies.token);
@@ -53,6 +55,7 @@ export default function App() {
               path="/callback"
               element={<Callback setIsLoggedIn={setIsLoggedIn} />}
             />
+            <Route path="root/EmployeeManagement/*" element={<EmployeeManagement />} />
           </Routes>
         </Container>
         <Footer />
