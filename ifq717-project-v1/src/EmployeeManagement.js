@@ -620,26 +620,21 @@ function EmployeeManagement() {
         console.log('Update Team Qualifications button pressed');
         e.preventDefault(); // Prevent the default form submission
 
-        // Check if the team ID is provided
         if (!formDataTeams.Id) {
             setShowResult("Please fill in the Team ID field.");
             return;
         }
 
-        // Create the request payload for updating qualifications
         const teamUpdateRequestQualification = {
             qualification_ids: formDataTeams.qualification_ids.map(Number), // Convert to integers
         };
 
         console.log(teamUpdateRequestQualification);
 
-        // Get the API key from cookies or your authentication method
         const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
 
-        // Parse the team ID as an integer
         const teamId = parseInt(formDataTeams.Id);
 
-        // Send the PUT request to update qualifications
         fetch(`https://my.tanda.co/api/v2/departments/${teamId}`, {
             method: 'PUT',
             headers: {
@@ -683,7 +678,7 @@ function EmployeeManagement() {
         console.log(teamUpdateRequestUsersManagers);
 
         const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
-        const teamId = parseInt(formDataTeams.Id); // Assuming formDataTeams.Id is the ID of the team to be updated
+        const teamId = parseInt(formDataTeams.Id); 
 
 
 
