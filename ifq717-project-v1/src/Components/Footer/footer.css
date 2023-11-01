@@ -1,0 +1,46 @@
+/* Footer.css */
+
+:root {
+    --primary-color: #3b82f6;
+    --secondary-color: #1e40af;
+    --background-color: #f9fafb;
+  }
+
+.footer-grid {
+    display: flex; 
+    align-items: flex-start; 
+    justify-content: space-between; 
+    padding: 10px; 
+  }
+  
+  .footer-column {
+    width: 30%;
+    color: var(--primary-color); 
+  }
+  
+  
+  .footer-column ul {
+    list-style-type: none; 
+    padding-left: 0; 
+  }
+ 
+  .footer-column ul a {
+    text-decoration: none;
+    color: var(--primary-color);
+  }
+
+  .footer-column ul a:hover {
+    color: var(--secondary-color) !important; 
+  }
+
+  .footer-column .chat-icon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .chat-icon {
+    width: 90px;
+    height: 90px;
+  }
+  

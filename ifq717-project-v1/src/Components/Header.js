@@ -23,7 +23,7 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
   }
 
   return (
-    <header className="admin-header">
+    <header className="admin-header bg-background text-primary">
       <Navbar expand="md" variant="dark">
         <Container fluid>
           <Navbar.Brand href="#">Tanda</Navbar.Brand>
@@ -50,13 +50,12 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
                   <HighlightLink to="/create-rosters" as={Link}>
                     | Create rosters 
                   </HighlightLink>
-                  <HighlightLink to="/" as={Link} onClick={handleLogOut}>
-                    | Logout
-                  </HighlightLink>
                   <HighlightLink to="root/EmployeeManagement/" as={Link}>
                     | Employee Management
                   </HighlightLink>
-
+                  <HighlightLink to="/" as={Link} onClick={handleLogOut}>
+                    | Logout
+                  </HighlightLink>
                 </>
               ) : (
                 <HighlightLink to="/login" as={Link}>
