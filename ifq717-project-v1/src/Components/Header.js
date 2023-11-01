@@ -23,7 +23,7 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
   }
 
   return (
-    <header className="admin-header">
+    <header className="admin-header bg-background text-primary">
       <Navbar expand="md" variant="dark">
         <Container fluid>
           <Navbar.Brand href="#">Tanda</Navbar.Brand>
