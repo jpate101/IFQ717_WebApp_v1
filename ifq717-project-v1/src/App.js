@@ -5,7 +5,7 @@ import { Container } from 'react-bootstrap';
 import Header from './Components/Header';
 import Footer from './Components/Footer';
 import Home from './Home';
-import Login from './Login';
+import Login from './Login/Login';
 import Dashboard from './Dashboard';
 
 import EmployeeManagement from './EmployeeManagement';

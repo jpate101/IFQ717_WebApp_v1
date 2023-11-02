@@ -1,29 +1,35 @@
-import { Col, Form } from "react-bootstrap";
+import { Col, Form, FormGroup } from "react-bootstrap";
 
 export default function TextField({
-  text,
+  label,
   placeholder,
   type,
   size,
   Component = Form.Control,
   value,
   onChange,
+  id,
+  className,
+  width
 }) {
-  let id = `input${text}`;
   return (
     <Col md={size}>
-      <Form.Label htmlFor={id} column="sm-2">
-        {text}
-      </Form.Label>
+      <FormGroup className="form-group">
+      <Form.Label htmlFor={id} block>
+        {label}
+        </Form.Label>
       <Component
-        type={type}
+        type={type} 
         id={id}
         placeholder={placeholder}
         value={value}
         onChange={(event) => {
           onChange(event.target.value);
         }}
+        className={`${className} text-field-component`}
+        style={{ width: `${width}`}}
       />
+      </FormGroup>
     </Col>
   );
 }
