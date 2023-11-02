@@ -36,3 +36,106 @@
     transform: rotate(360deg);
   }
 }
+
+.App {
+  text-align: center;
+  padding: 20px; /* Adds space around the app to prevent the table from reaching the edge */
+}
+
+.scheduler {
+  display: flex;
+  justify-content: space-between; /* Adjusted to space-between for consistent spacing */
+  width: 100%;
+  overflow: hidden;
+}
+
+.day {
+  flex: 1;
+  min-width: 60px; /* Reduced minimum width to fit more on smaller screens */
+  border: 1px solid #ccc;
+  text-align: center;
+  padding: 1rem;
+  box-sizing: border-box; /* To ensure padding and border are included in the width */
+}
+
+@media (max-width: 600px) {
+  .day {
+    font-size: 0.7rem;
+    padding: 0.5rem; /* Reduced padding on smaller screens */
+  }
+}
+
+.tanda-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-right: 0.5rem;
+  color: #19b3d9;
+}
+
+.dropdown {
+  width: 300px;
+}
+
+.tanda-dropdown .ant-select-item-option:hover {
+  background-color: #19b3d9;
+ }
+
+/* Also, consider the focused state set by AntD */
+
+.ant-select-focused .ant-select-selector {
+  border-color: #19b3d9 !important;
+  box-shadow: 0 0 0 .5px rgb(25,179,217) !important;
+}
+
+.ant-select:hover .ant-select-selector {
+  border-color: #19b3d9 !important;
+  box-shadow: 0 0 0 .5px rgb(25,179,217) !important;
+}
+
+.timepicker:hover {
+  border-color: #19b3d9 !important;
+  box-shadow: 0 0 0 .5px rgb(25,179,217) !important; 
+}
+
+.timepicker-panel {
+  border-color: #19b3d9 !important;
+  box-shadow: 0 0 0 .5px rgb(25,179,217) !important; 
+
+}
+
+.ant-picker:hover {
+  border-color: #19b3d9 !important;
+  box-shadow: 0 0 0 .5px rgb(25,179,217) !important; 
+}
+
+.ant-picker:focus {
+  border-color: #19b3d9 !important;
+  box-shadow: 0 0 0 .5px rgb(25,179,217) !important;
+}
+
+.ant-picker-focused.ant-picker {
+  border-color: #19b3d9 !important;
+}
+
+textarea:focus {
+  outline-color: #19b3d9;
+}
+
+/* Hide the header for the week column */
+.ant-picker-content thead th:first-child {
+  display: none;
+}
+
+/* Hide each week cell in the rows */
+.ant-picker-cell-week {
+  display: none;
+}
+
+.ant-picker-dropdown .ant-picker-week-panel-row-selected td.ant-picker-cell:before {
+  background: #19b3d9;
+}
+
+.ant-picker-focused.ant-picker {
+  border-color: #19b3d9;
+  box-shadow: 0 0 0 .5px rgb(25,179,217) !important;
+}
