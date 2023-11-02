@@ -1,0 +1,77 @@
+/* CSS specifically for the Login Screen */
+
+/* Column 1 Styles - Column 1 displays on small, medium, large devices */
+
+.login-container .row {
+    align-items: start;
+}
+
+.login-form {
+    width: 100%;
+    align-items: top;
+    margin-top: 2rem;
+  }
+
+  .login-button:focus {
+    outline: none !important;
+  }
+
+.login-button {
+  background-color: var(--button-green); 
+  font-size: large;
+  padding: 5px;
+  color: white;
+  border: 2px solid var(--button-green); 
+  width: 100%;
+  margin: 20 20%;
+}
+
+.login-button:hover {
+    background-color: var(--button-green-hover);
+    border-color: var(--button-green-hover);
+}
+  
+.login-button:active {
+    background-color: var(--button-green-active) important!;
+    border-color: var(--button-green-active) important!;
+  }
+
+.login-fields {
+    background-color: var(--background-color);
+}
+
+.login-alert {
+    text-align: left;
+    margin-bottom: 1rem;
+}
+
+
+
+/* column 2 Styles - Column 2 displays only on large devices */
+
+.background-image-container {
+    background-image: url('../Resources/iStock-Chefs.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 70vh;
+    position: relative;
+  }
+
+  @media (min-width: 992px) {
+    .login-screen-column-2  {
+      display: grid;
+      grid-template-columns: 1fr 1fr; 
+      gap: 1rem; 
+    }
+  }
+
+  .login-enticer-logo {
+    width: 20%;
+    position: absolute;
+    bottom: 2.5%;
+    right: 2.5%;
+    opacity: 0.9;
+  }
+

@@ -6,6 +6,11 @@
   --primary-color: #3b82f6;
   --secondary-color: #1e40af;
   --background-color: #f9fafb;
+  --button-green: #93c732;
+  --button-green-hover: #7fb329;
+  --button-green-active: #6ea127;
+  --accent: rgba(50, 157, 199);
+  --subtle-highlight: rgba(50, 157, 199, 0.1);
 }
 
 
@@ -96,4 +101,64 @@ input:focus {
   .nav-link:hover {
     color: var(--secondary-color);
   }
+
+  /* FORM FIELD STYLING, APPLIED ON LOGIN FORM TO START */
+
+.form-label {
+  font-weight: bolder;
+  font-size: small;
+}
+
+.text-field-component:focus {
+  background-color: var(--subtle-highlight);
+  color: black;
+  font-weight: normal;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.form-group label {
+  margin-bottom: 0.25rem;
+}
+
+.form-group input {
+  padding: 10px;
+  margin-bottom: 0.25rem;
+}
+
+.form-group input::placeholder {
+  font-weight: lighter;
+}
+
+/* NAV BAR STYLING FOR HEADER */
+
+.admin-header {
+  background-color: var(--background-color)
+}
+
+.admin-header .navbar-brand {
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+.admin-header .nav-link:hover,
+.admin-header .nav-link:active,
+.admin-header .nav-link .show,
+#navbarSupportedContent > div > a.nav-link.active {
+  color: var(--secondary-color);
+}
+
+.admin-header .nav-link:not(.active):not(:hover) {
+  color: var(--primary-color);
+}
+
+.admin-header-logo {
+  height: 50px;
+  padding: 10px;
+}
   
