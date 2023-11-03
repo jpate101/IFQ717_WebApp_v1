@@ -818,15 +818,17 @@ function EmployeeManagement() {
 
                         <form onSubmit={handleCreateLocationSubmit} style={{ padding: '30px' }} className="primary" >
                             <h2 className="secondary h2-EM">Create location</h2>
-                            <div>
+                            <div >
                                 <h3 className="secondary">Set Location Name Details:</h3>
                                 <input
+                                    style={{ margin: '5px'}}
                                     type="text"
                                     placeholder="Name"
                                     value={formDataLocation.name}
                                     onChange={e => setFormDataLocation({ ...formDataLocation, name: e.target.value })}
                                 />
                                 <input
+                                    style={{ margin: '5px'}}
                                     type="text"
                                     placeholder="Short_Name"
                                     value={formDataLocation.short_name}
@@ -837,12 +839,14 @@ function EmployeeManagement() {
                                 <h3 className="secondary">Set Location Geotag Details:</h3>
                                 <input
                                     type="number"
+                                    style={{ margin: '5px'}}
                                     placeholder="Latitude"
                                     value={formDataLocation.latitude}
                                     onChange={e => setFormDataLocation({ ...formDataLocation, latitude: e.target.value })}
                                 />
                                 <input
                                     type="number"
+                                    style={{ margin: '5px'}}
                                     placeholder="Longitude"
                                     value={formDataLocation.longitude}
                                     onChange={e => setFormDataLocation({ ...formDataLocation, longitude: e.target.value })}
@@ -850,6 +854,7 @@ function EmployeeManagement() {
                                 <input
                                     type="text"
                                     placeholder="Address"
+                                    style={{ margin: '5px'}}
                                     value={formDataLocation.address}
                                     onChange={e => setFormDataLocation({ ...formDataLocation, address: e.target.value })}
                                 />
@@ -886,6 +891,7 @@ function EmployeeManagement() {
                                     <h3 className="secondary">Set Team Details:</h3>
                                     <input
                                         type="text"
+                                        style={{ margin: '5px'}}
                                         placeholder="Team Name"
                                         value={formDataTeams.name}
                                         onChange={e => setFormDataTeams({ ...formDataTeams, name: e.target.value })}
@@ -894,6 +900,7 @@ function EmployeeManagement() {
                                 <div>
                                     <input
                                         type="text"
+                                        style={{ margin: '5px'}}
                                         placeholder="Location ID"
                                         value={formDataTeams.location_id}
                                         onChange={e => setFormDataTeams({ ...formDataTeams, location_id: e.target.value })}
@@ -907,6 +914,7 @@ function EmployeeManagement() {
                             <div className="location-list">
                                 <input
                                     type="text"
+                                    style={{ margin: '5px'}}
                                     placeholder="Search Locations"
                                     value={searchLocation}
                                     onChange={(e) => setSearchLocation(e.target.value)}
@@ -914,7 +922,7 @@ function EmployeeManagement() {
                                 {searchLocation && ( 
                                 <ul>
                                     {filteredLocations.map((location) => (
-                                        <li key={location.id}>
+                                        <li key={location.id} className='li-EM '>
                                             <p>ID: {location.id}</p>
                                             <p>Name: {location.name}</p>
                                             <p>Short Name: {location.short_name}</p>
@@ -930,7 +938,9 @@ function EmployeeManagement() {
                             <div>
                                 <h3 className="secondary">Employee Details:</h3>
                                 <input
+                                
                                     type="text"
+                                    style={{ margin: '5px'}}
                                     placeholder="Name"
                                     value={formDataEmployee.name}
                                     onChange={e => setFormDataEmployee({ ...formDataEmployee, name: e.target.value })}
@@ -964,6 +974,7 @@ function EmployeeManagement() {
                                     <h3 className="secondary">Set Location Name Details:</h3>
                                     <input
                                         type="text"
+                                        style={{ margin: '5px'}}
                                         placeholder="Name"
                                         value={formDataLocation.name}
                                         onChange={(e) =>
@@ -972,6 +983,7 @@ function EmployeeManagement() {
                                     />
                                     <input
                                         type="text"
+                                        style={{ margin: '5px'}}
                                         placeholder="Short_Name"
                                         value={formDataLocation.short_name}
                                         onChange={(e) =>
@@ -983,6 +995,7 @@ function EmployeeManagement() {
                                     <h3 className="secondary">Set Location Geotag Details:</h3>
                                     <input
                                         type="number"
+                                        style={{ margin: '5px'}}
                                         placeholder="Latitude"
                                         value={formDataLocation.latitude}
                                         onChange={(e) =>
@@ -992,6 +1005,7 @@ function EmployeeManagement() {
                                     <input
                                         type="number"
                                         placeholder="Longitude"
+                                        style={{ margin: '5px'}}
                                         value={formDataLocation.longitude}
                                         onChange={(e) =>
                                             setFormDataLocation({ ...formDataLocation, longitude: e.target.value })
@@ -1000,6 +1014,7 @@ function EmployeeManagement() {
                                     <input
                                         type="text"
                                         placeholder="Address"
+                                        style={{ margin: '5px'}}
                                         value={formDataLocation.address}
                                         onChange={(e) =>
                                             setFormDataLocation({ ...formDataLocation, address: e.target.value })
@@ -1031,13 +1046,14 @@ function EmployeeManagement() {
                                 <input
                                     type="text"
                                     placeholder="Search Locations"
+                                    style={{ margin: '5px'}}
                                     value={searchLocation}
                                     onChange={(e) => setSearchLocation(e.target.value)}
                                 />
                                 {searchLocation && ( 
                                 <ul>
                                     {filteredLocations.map((location) => (
-                                        <li key={location.id}>
+                                        <li key={location.id} className='li-EM '>
                                             <p>ID: {location.id}</p>
                                             <p>Name: {location.name}</p>
                                             <p>Short Name: {location.short_name}</p>
@@ -1057,6 +1073,7 @@ function EmployeeManagement() {
                                     <h3 className="secondary">Team Id:</h3>
                                     <input
                                         type="text"
+                                        style={{ margin: '5px'}}
                                         placeholder="Team ID"
                                         value={formDataTeams.Id}
                                         onChange={e => setFormDataTeams({ ...formDataTeams, Id: e.target.value })}
@@ -1069,6 +1086,7 @@ function EmployeeManagement() {
                                     <input
                                         type="text"
                                         placeholder="Team Name"
+                                        style={{ margin: '5px'}}
                                         value={formDataTeams.name}
                                         onChange={e => setFormDataTeams({ ...formDataTeams, name: e.target.value })}
                                     />
@@ -1078,15 +1096,17 @@ function EmployeeManagement() {
                                     <input
                                         type="text"
                                         placeholder="Qualification IDs (comma-separated)"
+                                        style={{ margin: '5px'}}
                                         value={formDataTeams.qualification_ids.join(',')} // Join the array for display
                                         onChange={(e) => setFormDataTeams({ ...formDataTeams, qualification_ids: e.target.value.split(',') })}
                                     />
                                 </div>
                                 <button onClick={handleUpdateQualifications} type="submit" style={{ margin: '10px' }} className="EM-button">Update Team Qualifications</button>
-                                <div>
+                                <div >
                                     <input
                                         type="text"
                                         placeholder="User IDs (comma-separated)"
+                                        style={{ margin: '5px'}}
                                         value={formDataTeams.user_ids.join(',')} // Join the array for display
                                         onChange={(e) => setFormDataTeams({ ...formDataTeams, user_ids: e.target.value.split(',') })}
                                     />
@@ -1095,6 +1115,7 @@ function EmployeeManagement() {
                                     <input
                                         type="text"
                                         placeholder="Manager IDs (comma-separated)"
+                                        style={{ margin: '5px'}}
                                         value={formDataTeams.manager_ids.join(',')} // Join the array for display
                                         onChange={(e) => setFormDataTeams({ ...formDataTeams, manager_ids: e.target.value.split(',') })}
                                     />
@@ -1108,13 +1129,14 @@ function EmployeeManagement() {
                                 <input
                                     type="text"
                                     placeholder="Search Teams"
+                                    style={{ margin: '5px'}}
                                     value={searchTeams}
                                     onChange={(e) => setSearchTeams(e.target.value)}
                                 />
                                  {searchTeams && ( 
                                 <ul>
                                     {filteredTeams.map((Teams) => (
-                                        <li key={Teams.id}>
+                                        <li key={Teams.id}  className='li-EM '>
                                             <p>ID: {Teams.id}</p>
                                             <p>Name: {Teams.name}</p>
                                         </li>
@@ -1126,13 +1148,14 @@ function EmployeeManagement() {
                                 <input
                                     type="text"
                                     placeholder="Search Locations"
+                                    style={{ margin: '5px'}}
                                     value={searchLocation}
                                     onChange={(e) => setSearchLocation(e.target.value)}
                                 />
                                  {searchLocation && ( 
                                 <ul>
                                     {filteredLocations.map((location) => (
-                                        <li key={location.id}>
+                                        <li key={location.id}  className='li-EM '>
                                             <p>ID: {location.id}</p>
                                             <p>Name: {location.name}</p>
                                             <p>Short Name: {location.short_name}</p>
@@ -1144,14 +1167,15 @@ function EmployeeManagement() {
                             <div className="Users-list">
                                 <input
                                     type="text"
+                                    style={{ margin: '5px'}}
                                     placeholder="Search Users"
                                     value={searchUsers}
                                     onChange={(e) => setSearchUsers(e.target.value)}
                                 />
                                 {searchUsers && ( 
-                                <ul>
+                                <ul >
                                     {filteredUsers.map((Users) => (
-                                        <li key={Users.id}>
+                                        <li key={Users.id} className='li-EM '>
                                             <p>ID: {Users.id}</p>
                                             <p>Name: {Users.name}</p>
                                         </li>
@@ -1172,6 +1196,7 @@ function EmployeeManagement() {
                                     <input
                                         type="text"
                                         placeholder="User ID"
+                                        style={{ margin: '5px'}}
                                         value={formDataEmployee.Id}
                                         onChange={e => setFormDataEmployee({ ...formDataEmployee, Id: e.target.value })}
                                     />
@@ -1181,6 +1206,7 @@ function EmployeeManagement() {
                                     <input
                                         type="text"
                                         placeholder="User Name"
+                                        style={{ margin: '5px'}}
                                         value={formDataEmployee.name}
                                         onChange={e => setFormDataEmployee({ ...formDataEmployee, name: e.target.value })}
                                     />
@@ -1188,6 +1214,7 @@ function EmployeeManagement() {
                                 <div>
                                     <input
                                         type="text"
+                                        style={{ margin: '5px'}}
                                         placeholder="User ID"
                                         value={formDataEmployee.employee_id}
                                         onChange={e => setFormDataEmployee({ ...formDataEmployee, employee_id: e.target.value })}
@@ -1197,6 +1224,7 @@ function EmployeeManagement() {
                                     <input
                                         type="text"
                                         placeholder="Passcode"
+                                        style={{ margin: '5px'}}
                                         value={formDataEmployee.passcode}
                                         onChange={e => setFormDataEmployee({ ...formDataEmployee, passcode: e.target.value })}
                                     />
@@ -1206,6 +1234,7 @@ function EmployeeManagement() {
                                     <input
                                         type="text"
                                         placeholder="Phone"
+                                        style={{ margin: '5px'}}
                                         value={formDataEmployee.phone}
                                         onChange={e => setFormDataEmployee({ ...formDataEmployee, phone: e.target.value })}
                                     />
@@ -1215,6 +1244,7 @@ function EmployeeManagement() {
                                     <h4 className="secondary">Date of Birth:</h4>
                                     <input
                                         type="date"
+                                        style={{ margin: '5px'}}
                                         placeholder="Date of Birth"
                                         value={formDataEmployee.date_of_birth}
                                         onChange={e => setFormDataEmployee({ ...formDataEmployee, date_of_birth: e.target.value })}
@@ -1225,6 +1255,7 @@ function EmployeeManagement() {
                                     <h4 className="secondary">Employment Start Date:</h4>
                                     <input
                                         type="date"
+                                        style={{ margin: '5px'}}
                                         placeholder="Employment Start Date"
                                         value={formDataEmployee.employment_start_date}
                                         onChange={e => setFormDataEmployee({ ...formDataEmployee, employment_start_date: e.target.value })}
@@ -1235,6 +1266,7 @@ function EmployeeManagement() {
                                     <input
                                         type="text"
                                         placeholder="Email"
+                                        style={{ margin: '5px'}}
                                         value={formDataEmployee.email}
                                         onChange={e => setFormDataEmployee({ ...formDataEmployee, email: e.target.value })}
                                     />
@@ -1253,6 +1285,7 @@ function EmployeeManagement() {
                                     <label>
                                         <input
                                             type="radio"
+                                            style={{ margin: '5px'}}
                                             value="true"
                                             checked={formDataEmployee.enable_login === true}
                                             onChange={() => setFormDataEmployee({ ...formDataEmployee, enable_login: true })}
@@ -1263,6 +1296,7 @@ function EmployeeManagement() {
                                         <input
                                             type="radio"
                                             value="false"
+                                            style={{ margin: '5px'}}
                                             checked={formDataEmployee.enable_login === false}
                                             onChange={() => setFormDataEmployee({ ...formDataEmployee, enable_login: false })}
                                         />
@@ -1290,6 +1324,7 @@ function EmployeeManagement() {
                             <div className="Users-list">
                                 <input
                                     type="text"
+                                    style={{ margin: '5px'}}
                                     placeholder="Search Users"
                                     value={searchUsers}
                                     onChange={(e) => setSearchUsers(e.target.value)}
@@ -1297,7 +1332,7 @@ function EmployeeManagement() {
                                 {searchUsers && ( 
                                 <ul>
                                     {filteredUsers.map((Users) => (
-                                        <li key={Users.id}>
+                                        <li key={Users.id} className='li-EM '>
                                             <p>ID: {Users.id}</p>
                                             <p>Name: {Users.name}</p>
                                         </li>
