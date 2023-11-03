@@ -239,7 +239,7 @@ function FormItemWrapper({ children, icon}) {
   const [selectedShift, setSelectedShift] = useState(null);
   const [employees, setEmployees] = useState([]);
   const [teams, setTeams] = useState([]);
-  const [setSelectedUserId] = useState([]);
+  const [setselectedUser, setSelectedUserId] = useState([]);
   const [hoursWorked, setHoursWorked] = useState(null);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [selectedTeam, setSelectedTeam] = useState(null);
@@ -278,6 +278,8 @@ const employeeIdToName = employees.reduce((acc, employee) => {
   return acc;
 }, {});
 
+console.log(`Token being used for request: ${token}`);
+
 const fetchShifts = useCallback(async () => {
   console.log('Starting to fetch shifts...');
   
@@ -297,9 +299,6 @@ const fetchShifts = useCallback(async () => {
 
     const data = await response.json();
     console.log('Raw shift data fetched:', data);
-    
-    const responseData = await response.text();
-    console.log("Response data:", responseData);
 
     // Process the shifts data here
     const processedShifts = data.reduce((acc, shift) => {
@@ -383,7 +382,7 @@ const handleSaveShift = async () => {
       method: method,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer $${token}`
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify(shiftData),
     });
@@ -414,7 +413,7 @@ async function deleteShift(shiftId) {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer $${token}`,
+      'Authorization': `Bearer ${token}`,
     },
   });
 
@@ -458,7 +457,7 @@ useEffect(() => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer $${token}`
+          'Authorization': `Bearer ${token}`
         },
       });
 
@@ -489,7 +488,7 @@ useEffect(() => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer $${token}`
+          'Authorization': `Bearer ${token}`
         },
       });
 
