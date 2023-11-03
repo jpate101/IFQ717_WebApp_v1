@@ -24,7 +24,7 @@ export default function Login() {
 
     // call the /token end point with provided username and password and scopes me, user & department
     const tokenUrl = process.env.REACT_APP_TANDA_TOKEN_URL;
-    const scopes = 'me user department cost financial';
+    const scopes = 'me user department cost financial roster timesheet leave unavailability qualifications settings sms platform';
     const grantType = 'password';
 
     fetch(tokenUrl, {
@@ -43,7 +43,7 @@ export default function Login() {
       if (res.ok) {
         return res.json();
       } else {
-        throw new Error('Token exchange failed');
+        throw new Error(`Token exchange failed with status: ${res.status} - ${res.statusText}`);
       }
     }).then((data) => {
       console.log('Token exchange response: ', data);

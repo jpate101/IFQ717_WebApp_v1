@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useMemo, useCallback} from 'react';
 import {TimePicker, DatePicker, Select} from 'antd';
+import {Login} from './Login/Login';
 import './App.css';
 import './index.css';
 import './Tailwind.css';
@@ -8,7 +9,6 @@ import locale from 'antd/es/date-picker/locale/en_GB'
 import 'dayjs/locale/en-gb';
 import isoWeekday from 'dayjs/plugin/isoWeek';
 dayjs.extend(isoWeekday);
-
 
 const { Option } = Select;
 
@@ -230,21 +230,24 @@ function FormItemWrapper({ children, icon}) {
   );
 }
 
-function Scheduler() {
+ export default function Scheduler() {
+
+  // Set token to the cookie when you receive it after login
+  const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, "$1");
 
   const [shifts, setShifts] = useState([]);
   const [selectedShift, setSelectedShift] = useState(null);
   const [employees, setEmployees] = useState([]);
   const [teams, setTeams] = useState([]);
-  const [selectedUserId, setSelectedUserId] = useState([]);
+  const [setSelectedUserId] = useState([]);
   const [hoursWorked, setHoursWorked] = useState(null);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [selectedTeam, setSelectedTeam] = useState(null);
-  const [employeeData, setEmployeeData] = useState(null);
+  const [employeeData] = useState(null);
   const [view, setView] = useState('week')
   const [selectedDate, setSelectedDate] = useState(dayjs().toDate());
-  const [selectedRowIndex, setSelectedRowIndex] = useState(null);
-  const [shiftDate, setShiftDate] = useState(null);
+  const [setSelectedRowIndex] = useState(null);
+  const [setShiftDate] = useState(null);
   const fromDate = dayjs(selectedDate).startOf(view).format('YYYY-MM-DD');
   const toDate = dayjs(selectedDate).endOf(view).format('YYYY-MM-DD');
 
@@ -277,15 +280,15 @@ const employeeIdToName = employees.reduce((acc, employee) => {
 
 const fetchShifts = useCallback(async () => {
   console.log('Starting to fetch shifts...');
+  
   try {
     const response = await fetch(`https://my.tanda.co/api/v2/shifts?from=${fromDate}&to=${toDate}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.REACT_APP_TANDA_TOKEN}`
+        'Authorization': `Bearer ${token}`
       },
     });
-    
 
     console.log('Fetch attempted, response status:', response.status);
     if (!response.ok) {
@@ -295,6 +298,9 @@ const fetchShifts = useCallback(async () => {
     const data = await response.json();
     console.log('Raw shift data fetched:', data);
     
+    const responseData = await response.text();
+    console.log("Response data:", responseData);
+
     // Process the shifts data here
     const processedShifts = data.reduce((acc, shift) => {
       console.log('Processing shift:', shift);
@@ -311,7 +317,7 @@ const fetchShifts = useCallback(async () => {
   } catch (error) {
     console.error("There was an error fetching the shifts:", error);
   }
-}, [fromDate, toDate]);
+}, [fromDate, toDate, token]);
 
 // Use useEffect to call fetchShifts when the component mounts or when dependencies change
 useEffect(() => {
@@ -377,7 +383,7 @@ const handleSaveShift = async () => {
       method: method,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.REACT_APP_TANDA_TOKEN}`
+        'Authorization': `Bearer $${token}`
       },
       body: JSON.stringify(shiftData),
     });
@@ -408,7 +414,7 @@ async function deleteShift(shiftId) {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${process.env.REACT_APP_TANDA_TOKEN}`,
+      'Authorization': `Bearer $${token}`,
     },
   });
 
@@ -452,7 +458,7 @@ useEffect(() => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.REACT_APP_TANDA_TOKEN}`
+          'Authorization': `Bearer $${token}`
         },
       });
 
@@ -483,7 +489,7 @@ useEffect(() => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.REACT_APP_TANDA_TOKEN}`
+          'Authorization': `Bearer $${token}`
         },
       });
 
@@ -789,4 +795,3 @@ const handleTodayButtonClick = () => {
     </div>
   );  
 }
-export default Scheduler;
