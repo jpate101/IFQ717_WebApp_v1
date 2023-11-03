@@ -1,7 +1,10 @@
-import { Container, Row, Col, Form, Button, Alert } from "react-bootstrap";
-import TextField from "./Components/TextField";
+import { Container, Row, Col, Form, Button, Alert, Image, Card } from "react-bootstrap";
+import TextField from "../Components/TextField";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import './login.css';
+import '../Resources/iStock-Chefs.jpg';
+import '../Resources/logo-white.svg';
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -21,7 +24,7 @@ export default function Login() {
 
     // call the /token end point with provided username and password and scopes me, user & department
     const tokenUrl = process.env.REACT_APP_TANDA_TOKEN_URL;
-    const scopes = 'me user department cost financial';
+    const scopes = 'me user department cost financial roster timesheet leave unavailability qualifications settings sms platform';
     const grantType = 'password';
 
     fetch(tokenUrl, {
@@ -40,7 +43,7 @@ export default function Login() {
       if (res.ok) {
         return res.json();
       } else {
-        throw new Error('Token exchange failed');
+        throw new Error(`Token exchange failed with status: ${res.status} - ${res.statusText}`);
       }
     }).then((data) => {
       console.log('Token exchange response: ', data);
@@ -70,36 +73,65 @@ export default function Login() {
 
   // my basic login page //TODO: move to own component
   return (
-    <Container key={key} fluid="lg" className="pt-2">
-      <main className="flex-grow-1">
-        <Row className="viewport-height-75 align-items-center">
-          <Col md={{ span: 6, offset: 3 }}>
-            <h1 className="mb-4 text-center">Login</h1>
+    <Container fluid="lg" className="login-container">
+      <Row>
+        {/* Column 1 (visible on all devices) */}
+        <Col xs={12} lg={6} className="d-flex align-items-center justify-content-center login-screen-column-1">
+          <div className = "login-form">
             {message ? (
               <Alert variant="danger">
                 {message}
               </Alert>
             ) : null}
-            <Form onSubmit={handleLogin}>
+            <Form onSubmit={handleLogin} >
               <TextField
-                text="Username"
-                type="text"
-                onChange={setUsername}
                 value={username}
+                label="Username:"
+                placeholder="Enter username (valid email address)"
+                id="Username"
+                type="input"
+                onChange={setUsername}
+                className="login-fields"
+                
               />
               <TextField
                 value={password}
-                text="Password"
+                label="Password:"
+                placeholder="Enter password"
+                id="Password"
                 type="password"
                 onChange={setPassword}
+                className="login-fields"
+               
               />
               <Button type="submit" variant="primary" className="mt-3 login-button">
                 Login
               </Button>
             </Form>
-          </Col>
-        </Row>
-      </main>
+          </div>
+        </Col>
+
+        {/* Column 2 (visible on large devices) */}
+        <Col lg={6} className="d-none d-lg-block">
+          <div className="d-flex flex-column justify-content-center h-100">
+            <div className="background-image-container">
+              <Image src={require('../Resources/logo-white.svg').default} alt="Logo" className="login-enticer-logo" />
+              <Card className="mb-4" style={{ maxWidth: '50%' }}>
+                <Card.Body>
+                  <Card.Title>Card 1</Card.Title>
+                  <Card.Text>Content for Card 1.</Card.Text>
+                </Card.Body>
+              </Card>
+              <Card style={{ maxWidth: '50%' }}>
+                <Card.Body>
+                  <Card.Title>Card 2</Card.Title>
+                  <Card.Text>Content for Card 2.</Card.Text>
+                </Card.Body>
+              </Card>
+            </div>
+          </div>
+        </Col>
+      </Row>
     </Container>
   );
 }

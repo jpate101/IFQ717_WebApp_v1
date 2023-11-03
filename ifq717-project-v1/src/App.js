@@ -5,9 +5,9 @@ import { Container } from 'react-bootstrap';
 import Header from './Components/Header';
 import Footer from './Components/Footer';
 import Home from './Home';
-import Login from './Login';
+import Login from './Login/Login';
 import Dashboard from './Dashboard';
-
+import Scheduler from './Scheduler';
 import EmployeeManagement from './EmployeeManagement';
 
 export default function App() {
@@ -51,6 +51,10 @@ export default function App() {
               element={<Login setIsLoggedIn={setIsLoggedIn} />}
             />
             <Route path="root/EmployeeManagement/*" element={<EmployeeManagement />} />
+            <Route
+              path="/scheduler"
+              element={<Scheduler setIsLoggedIn={setIsLoggedIn} />}
+            />
           </Routes>
         </Container>
         <Footer />
