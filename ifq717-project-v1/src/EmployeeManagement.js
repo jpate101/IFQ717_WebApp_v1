@@ -118,7 +118,7 @@ function EmployeeManagement() {
 
     const fetchTeams = async () => {
         try {
-            console.log("fetch teams exe");
+            //console.log("fetch teams exe");
             const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
             const response = await fetch(`https://my.tanda.co/api/v2/departments`, {
                 method: 'GET',
@@ -446,6 +446,9 @@ function EmployeeManagement() {
                     // Handle success
                     //console.log("Location created successfully!");
                     setShowResult("Team created successfully!");
+                    fetchLocations();
+                    fetchTeams();
+                    fetchUsers();
                 } else if (response.status === 403) {
                     // Handle 403 error (forbidden)
                     //console.log("You do not have the required permissions to create a location.");
@@ -490,6 +493,9 @@ function EmployeeManagement() {
                 if (response.ok) {
                     // Handle success
                     setShowResult("Employee created successfully!");
+                    fetchLocations();
+                    fetchTeams();
+                    fetchUsers();
                 } else if (response.status === 403) {
                     // Handle 403 error (forbidden)
                     setShowResult("You do not have the required permissions to create a Employee.");
@@ -547,6 +553,9 @@ function EmployeeManagement() {
                 if (response.ok) {
                     console.log("Location updated successfully!");
                     setShowResult("Location updated successfully!");
+                    fetchLocations();
+                    fetchTeams();
+                    fetchUsers();
                     // Handle any additional actions after successful update.
                 } else if (response.status === 403) {
                     console.log("You do not have the required permissions to update this location.");
@@ -598,6 +607,9 @@ function EmployeeManagement() {
                 if (response.ok) {
                     setShowResult("Team Name updated successfully!");
                     console.log("Success Response:", response);
+                    fetchLocations();
+                    fetchTeams();
+                    fetchUsers();
                 } else {
                     setShowResult("Failed to update team.");
                 }
@@ -644,6 +656,9 @@ function EmployeeManagement() {
             .then(data => {
                 setShowResult("Team Qualifications updated successfully!");
                 console.log("Success Response:", data);
+                fetchLocations();
+                fetchTeams();
+                fetchUsers();
             })
             .catch(error => {
                 setShowResult("Network error: " + error.message);
@@ -775,8 +790,12 @@ function EmployeeManagement() {
         })
             .then((response) => {
                 if (response.ok) {
-                    setShowResult("User updated successfully!");
+                    setShowResult("User updated successfully!. Please reload page to see updated search results");
                     console.log("Success Response:", response);
+                    fetchLocations();
+                    fetchTeams();
+                    fetchUsers();
+                    
                 } else {
                     setShowResult("Failed to update User.");
                 }
