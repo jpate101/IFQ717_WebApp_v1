@@ -269,7 +269,6 @@ function EmployeeManagement() {
         overtime_calculated_over_period_start: '',
         can_see_costs: false,
         user_levels: [''],
-        hourly_rate: 0,
         yearly_salary: null,
         next_pay_group_id: null,
         hourly_rate: null,
@@ -581,14 +580,6 @@ function EmployeeManagement() {
             name: formDataTeams.name,
 
         };
-        const teamUpdateRequestUsersManagers = {
-            user_ids: formDataTeams.user_ids,
-            manager_ids: formDataTeams.manager_ids,
-        };
-        const teamUpdateRequestQualification = {
-            qualification_ids: formDataTeams.qualification_ids,
-
-        };
 
         const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
         const teamId = parseInt(formDataTeams.Id); // Assuming formDataTeams.Id is the ID of the team to be updated
@@ -661,8 +652,6 @@ function EmployeeManagement() {
 
     function handleUpdateUsersAndManagers(e) {
         console.log('Update Team Users and Managers button pressed');
-        // Perform the Update Team Users and Managers action
-        // You can put the relevant code here.
 
         e.preventDefault();
 
@@ -769,9 +758,9 @@ function EmployeeManagement() {
 
 
 
-        console.log("bsb check:", updatedData.bank_details.bsb);
-        console.log(updatedData);
-        console.log("----------");
+       // console.log("bsb check:", updatedData.bank_details.bsb);
+        //console.log(updatedData);
+        //console.log("----------");
 
         const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
 
@@ -800,7 +789,7 @@ function EmployeeManagement() {
 
     return (
         <div className="background" >
-            <h1 className="primary"> EmployeeManagement </h1>
+            <h1 className="primary title-EM "> Employee Management </h1>
             <div className="flex-container" >
                 <div className="left-column-nav-EM">
                     <ul className="navEM" style={{ listStyleType: 'none' }}>
@@ -828,7 +817,7 @@ function EmployeeManagement() {
                     {showLocationForm ? (
 
                         <form onSubmit={handleCreateLocationSubmit} style={{ padding: '30px' }} className="primary" >
-                            <h2 className="secondary">Create location</h2>
+                            <h2 className="secondary h2-EM">Create location</h2>
                             <div>
                                 <h3 className="secondary">Set Location Name Details:</h3>
                                 <input
@@ -892,7 +881,7 @@ function EmployeeManagement() {
                         // Team form
                         <div className="flex-container">
                             <form onSubmit={handleCreateTeamsSubmit} style={{ padding: '30px' }} className="primary">
-                                <h2 className="secondary">Create Team</h2>
+                                <h2 className="secondary h2-EM">Create Team</h2>
                                 <div>
                                     <h3 className="secondary">Set Team Details:</h3>
                                     <input
@@ -922,6 +911,7 @@ function EmployeeManagement() {
                                     value={searchLocation}
                                     onChange={(e) => setSearchLocation(e.target.value)}
                                 />
+                                {searchLocation && ( 
                                 <ul>
                                     {filteredLocations.map((location) => (
                                         <li key={location.id}>
@@ -931,11 +921,12 @@ function EmployeeManagement() {
                                         </li>
                                     ))}
                                 </ul>
+                                )}
                             </div>
                         </div>
                     ) : showEmployeeForm ? (
                         <form onSubmit={handleCreateEmployeeSubmit} style={{ padding: '30px' }} className="primary">
-                            <h2 className="secondary">Create Employee</h2>
+                            <h2 className="secondary h2-EM">Create Employee</h2>
                             <div>
                                 <h3 className="secondary">Employee Details:</h3>
                                 <input
@@ -956,7 +947,7 @@ function EmployeeManagement() {
                                 style={{ padding: '30px' }}
                                 className="primary"
                             >
-                                <h2 className="secondary">Update Location</h2>
+                                <h2 className="secondary h2-EM">Update Location</h2>
                                 <h3 className="secondary">Update fields that you wish to change</h3>
                                 <p>ID must be provided</p>
 
@@ -1043,6 +1034,7 @@ function EmployeeManagement() {
                                     value={searchLocation}
                                     onChange={(e) => setSearchLocation(e.target.value)}
                                 />
+                                {searchLocation && ( 
                                 <ul>
                                     {filteredLocations.map((location) => (
                                         <li key={location.id}>
@@ -1052,12 +1044,13 @@ function EmployeeManagement() {
                                         </li>
                                     ))}
                                 </ul>
+                                )}
                             </div>
                         </div>
                     ) : showUpadateTeams ? (
                         <div className="flex-container">
                             <form onSubmit={handleUpdateTeamsSubmit} style={{ padding: '30px' }} className="primary">
-                                <h2 className="secondary">Update Teams</h2>
+                                <h2 className="secondary h2-EM">Update Teams</h2>
                                 <p>todo - users and managers update still doesnt work </p>
 
                                 <div>
@@ -1118,6 +1111,7 @@ function EmployeeManagement() {
                                     value={searchTeams}
                                     onChange={(e) => setSearchTeams(e.target.value)}
                                 />
+                                 {searchTeams && ( 
                                 <ul>
                                     {filteredTeams.map((Teams) => (
                                         <li key={Teams.id}>
@@ -1126,6 +1120,7 @@ function EmployeeManagement() {
                                         </li>
                                     ))}
                                 </ul>
+                                )}
                             </div>
                             <div className="location-list">
                                 <input
@@ -1134,6 +1129,7 @@ function EmployeeManagement() {
                                     value={searchLocation}
                                     onChange={(e) => setSearchLocation(e.target.value)}
                                 />
+                                 {searchLocation && ( 
                                 <ul>
                                     {filteredLocations.map((location) => (
                                         <li key={location.id}>
@@ -1143,6 +1139,7 @@ function EmployeeManagement() {
                                         </li>
                                     ))}
                                 </ul>
+                                 )}
                             </div>
                             <div className="Users-list">
                                 <input
@@ -1151,6 +1148,7 @@ function EmployeeManagement() {
                                     value={searchUsers}
                                     onChange={(e) => setSearchUsers(e.target.value)}
                                 />
+                                {searchUsers && ( 
                                 <ul>
                                     {filteredUsers.map((Users) => (
                                         <li key={Users.id}>
@@ -1159,12 +1157,13 @@ function EmployeeManagement() {
                                         </li>
                                     ))}
                                 </ul>
+                                  )}
                             </div>
                         </div>
                     ) : showUpadateUsers ? (
                         <div className="flex-container">
                             <form onSubmit={handleUpdateEmployee} style={{ padding: '30px' }} className="primary">
-                                <h2 className="secondary">Update User</h2>
+                                <h2 className="secondary h2-EM">Update User</h2>
                                 <p>Id field is Mandatory</p>
                                 <p>Other fields are Optional</p>
 
@@ -1295,6 +1294,7 @@ function EmployeeManagement() {
                                     value={searchUsers}
                                     onChange={(e) => setSearchUsers(e.target.value)}
                                 />
+                                {searchUsers && ( 
                                 <ul>
                                     {filteredUsers.map((Users) => (
                                         <li key={Users.id}>
@@ -1303,11 +1303,14 @@ function EmployeeManagement() {
                                         </li>
                                     ))}
                                 </ul>
+                                )}
                             </div>
                         </div>
 
                     ) : (
-                        content
+                        <div>
+                            <p>Under construction not really sure what to put here \n maybe like a checklist for the onboarding process</p>
+                        </div>
                     )
                     }
                 </div>

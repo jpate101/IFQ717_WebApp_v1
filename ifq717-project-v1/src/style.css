@@ -18,16 +18,20 @@
     display: flex;
 }
 
+
 .primary {
-    color: rgb(30, 64, 175); 
+    /*color: rgb(30, 64, 175); */
+    color: #3b82f6;
   }
   
 .secondary {
-    color: rgb(0, 0, 0); 
+    /*color: rgb(0, 0, 0); */
+    color: #1e40af;
   }
 
 .background {
-    background-color: rgb(249, 250, 251);
+    /*background-color: rgb(249, 250, 251);*/
+    background-color:#f9fafb;
   }
   
 .left-column-nav-EM {
@@ -37,6 +41,13 @@
 h3 {
     font-size: 1.2em;
   }
+
+.h2-EM {
+    font-size: 1.5rem; /* Adjust the font size as needed */
+    font-weight: bold;
+    margin: 10px 0; /* Add top and bottom margin */
+    letter-spacing: 1px; /* Adjust letter spacing as needed */
+}
   
 input {
     color: rgb(30, 64, 175); /* Change to blue text color */
@@ -102,6 +113,7 @@ input:focus {
     color: var(--secondary-color);
   }
 
+
   /* FORM FIELD STYLING, APPLIED ON LOGIN FORM TO START */
 
 .form-label {
@@ -160,5 +172,64 @@ input:focus {
 .admin-header-logo {
   height: 50px;
   padding: 10px;
+
+  .title-EM {
+    font-size: 2.5rem; 
+    text-align: center; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 10vh; 
+}
+/* phone testing */
+
+@media (max-width: 768px) {
+  .flex-container {
+      flex-direction: column; 
+
+  }
+
+  .left-column-nav-EM {
+    width: 100%; 
+
+  }
+  .location-list {
+    padding-left: 30px;
+    padding-top: 5px;
+  }
+  .Users-list{
+    padding-left: 30px;
+    padding-top: 5px;
+  }
+  .Teams-list{
+    padding-left: 30px;
+    padding-top: 5px;
+  }
+
+}
+
+@media (max-width: 576px) {
+  .left-column-nav-EM {
+      width: 100%; 
+  }
+  .title-EM {
+    padding-bottom: 50px;
+    padding-top: 50px;
+  }
+  .location-list {
+    padding-left: 30px;
+    padding-top: 5px;
+  }
+  .Users-list{
+    padding-left: 30px;
+    padding-top: 5px;
+  }
+  .Teams-list{
+    padding-left: 30px;
+    padding-top: 5px;
+  }
+  
+
+
 }
   
