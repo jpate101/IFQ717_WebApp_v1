@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useMemo, useCallback} from 'react';
 import {TimePicker, DatePicker, Select} from 'antd';
-import {Login} from './Login/Login';
 import './App.css';
 import './index.css';
 import './Tailwind.css';
