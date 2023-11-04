@@ -782,7 +782,7 @@ function EmployeeManagement() {
             */
 
         }
-        console.log(updatedData.email);
+        console.log(updatedData.employment_start_date);
         
         if (updatedData.name === '') {
             delete updatedData.name;
@@ -792,6 +792,12 @@ function EmployeeManagement() {
         }
         if (updatedData.enable_login === null) {
             delete updatedData.enable_login;
+        }
+        if (updatedData.date_of_birth === "") {
+            delete updatedData.date_of_birth ;
+        }
+        if (updatedData.employment_start_date === '') {
+            delete updatedData.employment_start_date ;
         }
 
         for (let field in updatedData) {
@@ -803,7 +809,7 @@ function EmployeeManagement() {
                         delete updatedData[field][subField];
                     }
                 }
-            } else if (field !== 'name' && field !== 'email' && (updatedData[field] === "" || updatedData[field] === null || isNaN(updatedData[field]))) {
+            } else if (field !== 'name' && field !== 'email' && field !== 'date_of_birth' && field !== 'employment_start_date' && (updatedData[field] === "" || updatedData[field] === null || isNaN(updatedData[field]))) {
                 delete updatedData[field];
             }
         }
@@ -1361,7 +1367,7 @@ function EmployeeManagement() {
                                     <input
                                         type="text"
                                         style={{ margin: '5px' }}
-                                        placeholder="User ID"
+                                        placeholder="Employee ID"
                                         value={formDataEmployee.employee_id}
                                         onChange={e => setFormDataEmployee({ ...formDataEmployee, employee_id: e.target.value })}
                                     />
