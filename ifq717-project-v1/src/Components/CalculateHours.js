@@ -1,0 +1,32 @@
+import dayjs from 'dayjs';
+
+export function formatShiftTime(epochTime) {
+    return dayjs(epochTime * 1000).format('h:mma'); // This will format the time as e.g. "9:00a"
+}
+
+export function calculateHours(startTime, finishTime) {
+    if (!startTime || !finishTime) {
+      return "";
+    }
+    // Extract hours and minutes from the start and finish times
+    const [startHour, startMinute] = startTime.split(':').map(Number);
+    const [finishHour, finishMinute] = finishTime.split(':').map(Number);
+  
+    // Calculate total start and finish minutes
+    const totalStartMinutes = (startHour * 60) + startMinute;
+    const totalFinishMinutes = (finishHour * 60) + finishMinute;
+  
+    // Calculate the difference in minutes
+    let diffMinutes = totalFinishMinutes - totalStartMinutes;
+  
+    // Convert the difference to hours and minutes
+    const hours = Math.floor(diffMinutes / 60);
+    diffMinutes %= 60;
+  
+    // Return the formatted result
+    if (diffMinutes === 0) {
+      return `${hours}h `;
+    } else {
+      return `${hours}h ${diffMinutes}m`;  // Convert minutes to tenth of an hour
+    }
+  }

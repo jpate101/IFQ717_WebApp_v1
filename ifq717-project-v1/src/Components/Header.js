@@ -42,7 +42,10 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
                   <HighlightLink to="/onboard-users" as={Link}>
                     Onboard users
                   </HighlightLink>
-                  <HighlightLink to="/scheduler" as={Link}>
+                  <HighlightLink to ="/Timesheets/approveTimesheets" as={Link}>
+                    Approve Timesheets
+                  </HighlightLink>
+``                  <HighlightLink to="/scheduler" as={Link}>
                     Create schedules
                   </HighlightLink>
                   <HighlightLink to="root/EmployeeManagement/" as={Link}>

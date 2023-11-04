@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useMemo, useCallback} from 'react';
 import {TimePicker, DatePicker, Select} from 'antd';
-import {Login} from './Login/Login';
 import './App.css';
 import './index.css';
 import './Tailwind.css';
@@ -243,11 +242,11 @@ function FormItemWrapper({ children, icon}) {
   const [hoursWorked, setHoursWorked] = useState(null);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [selectedTeam, setSelectedTeam] = useState(null);
-  const [employeeData] = useState(null);
+  const [employeeData, setEmployeeData] = useState(null);
   const [view, setView] = useState('week')
   const [selectedDate, setSelectedDate] = useState(dayjs().toDate());
-  const [setSelectedRowIndex] = useState(null);
-  const [setShiftDate] = useState(null);
+  const [selectedRowIndex, setSelectedRowIndex] = useState(null);
+  const [shiftDate, setShiftDate] = useState(null);
   const fromDate = dayjs(selectedDate).startOf(view).format('YYYY-MM-DD');
   const toDate = dayjs(selectedDate).endOf(view).format('YYYY-MM-DD');
 
