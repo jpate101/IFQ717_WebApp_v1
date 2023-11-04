@@ -9,6 +9,7 @@ import Login from './Login/Login';
 import Dashboard from './Dashboard';
 import Scheduler from './Scheduler';
 import EmployeeManagement from './EmployeeManagement';
+import ApproveTimesheets from './Timesheets/approveTimesheets';
 
 export default function App() {
   const [cookies, setCookie, removeCookie] = useCookies(['token']);
@@ -54,6 +55,10 @@ export default function App() {
             <Route
               path="/scheduler"
               element={<Scheduler setIsLoggedIn={setIsLoggedIn} />}
+            />
+            <Route
+              path="/Timesheets/approveTimesheets"
+              element={<ApproveTimesheets setIsLoggedIn={setIsLoggedIn}/>}
             />
           </Routes>
         </Container>
