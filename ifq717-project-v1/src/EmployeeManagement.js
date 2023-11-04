@@ -3,6 +3,7 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 
 
+
 function EmployeeManagement() {
     const [content, setContent] = useState("under construction");
     const [showLocationForm, setShowLocationForm] = useState(false);
@@ -1500,8 +1501,14 @@ function EmployeeManagement() {
                             </form>
                         </div>
                     ) : (
-                        <div>
-                            <p>Under construction not really sure what to put here \n maybe like a checklist for the onboarding process</p>
+                        <div style={{ paddingLeft: '20px' }}>
+                            <h2 className="secondary h2-EM">Welcome to Employee Management</h2>
+                            <p>
+                                We're excited to have you on board! This is your Employee Management system, where you can manage employee data, locations, teams, and more.
+                            </p>
+                            <p>
+                                Use the navigation on the left to get started. If you have any questions or need assistance, feel free to reach out to our support team.
+                            </p>
                         </div>
                     )
                     }
