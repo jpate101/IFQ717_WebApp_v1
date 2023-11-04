@@ -676,8 +676,8 @@ function EmployeeManagement() {
         }
 
         const teamUpdateRequestUsersManagers = {
-            user_ids: formDataTeams.user_ids.map(Number),
-            manager_ids: formDataTeams.manager_ids.map(Number),
+            //user_ids: formDataTeams.user_ids.map(Number),
+            manager_ids: formDataTeams.manager_ids.map(Number), 
         };
         console.log(teamUpdateRequestUsersManagers);
 
@@ -808,7 +808,7 @@ function EmployeeManagement() {
 
     return (
         <div className="background" >
-            <h1 className="primary title-EM "> Employee Management </h1>
+            <h1 className="title-EM primary  "> Employee Management </h1>
             <div className="flex-container" >
                 <div className="left-column-nav-EM">
                     <ul className="navEM" style={{ listStyleType: 'none' }}>
@@ -1121,7 +1121,7 @@ function EmployeeManagement() {
                                     />
                                 </div>
                                 <button onClick={handleUpdateQualifications} type="submit" style={{ margin: '10px' }} className="EM-button">Update Team Qualifications</button>
-                                <div >
+                                {/* <div >
                                     <input
                                         type="text"
                                         placeholder="User IDs (comma-separated)"
@@ -1129,7 +1129,7 @@ function EmployeeManagement() {
                                         value={formDataTeams.user_ids.join(',')} // Join the array for display
                                         onChange={(e) => setFormDataTeams({ ...formDataTeams, user_ids: e.target.value.split(',') })}
                                     />
-                                </div>
+                                </div>*/}
                                 <div>
                                     <input
                                         type="text"
@@ -1339,6 +1339,7 @@ function EmployeeManagement() {
 
 
                                 <button type="submit" style={{ margin: '10px' }} className="EM-button">Update Users Submit</button>
+                                {showResult && <p>{showResult}</p>}
                             </form>
                             <div className="Users-list">
                                 <input
