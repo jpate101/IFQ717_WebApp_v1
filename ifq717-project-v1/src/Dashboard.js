@@ -18,18 +18,21 @@ export default function Dashboard() {
 
   return (
     <main className="flex-grow-1">
-      <h4>Dashboard. This is what we would see when we are logged in as tanda sandbox user</h4>
-      <div>Bearer Token: {token}</div>
+      <h4>Dashboard placeholder. Coming soon.</h4>
       {user && (
         <div>
-          <h5>Sandbox User Details:</h5>
-          <div>Name: {user.name}</div>
-          <div>Email: {user.email}</div>
-          <div>User ID: {user.user_ids}</div>
-          <div>Organisations: {user.organisation}</div>
-          <div>Permissions: {user.permissions.join(', ')}</div>
-          <div>Platform role IDs: {user.platform_role_ids.join(', ')}</div>
+        <h1>Organisation Onboarding Overview (placeholder)</h1>
+        <div className="container d-flex justify-content-center">
+          <div className="card">
+            <div className="card-header">Overall progress</div>
+            <div className="card-body">{user.organisation} onboarding status placeholder</div>
+          </div>
+          <div className="card">
+            <div className="card-header">Progress Bar</div>
+            <div className="card-body">This is the text for card 2. </div>
+          </div>
         </div>
+      </div>
       )}
     </main>
   );
