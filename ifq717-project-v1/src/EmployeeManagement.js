@@ -369,6 +369,15 @@ function EmployeeManagement() {
 
 
     });
+
+    const [formDataOnboarding, setFormDataOnboarding] = useState({
+        Id: '',
+        Name: '',
+        Email: '',
+        Phone: '',
+        Custom_Message: '',
+
+    });
     //button functions 
 
     function handleCreateLocationSubmit(e) {
@@ -771,9 +780,15 @@ function EmployeeManagement() {
                 }
             ]
             */
+
         }
+        console.log(updatedData.email);
+        
         if (updatedData.name === '') {
             delete updatedData.name;
+        }
+        if (updatedData.email === '') {
+            delete updatedData.email;
         }
         if (updatedData.enable_login === null) {
             delete updatedData.enable_login;
@@ -788,7 +803,7 @@ function EmployeeManagement() {
                         delete updatedData[field][subField];
                     }
                 }
-            } else if (field !== 'name' && (updatedData[field] === "" || updatedData[field] === null || isNaN(updatedData[field]))) {
+            } else if (field !== 'name' && field !== 'email' && (updatedData[field] === "" || updatedData[field] === null || isNaN(updatedData[field]))) {
                 delete updatedData[field];
             }
         }
@@ -796,7 +811,7 @@ function EmployeeManagement() {
 
 
         // console.log("bsb check:", updatedData.bank_details.bsb);
-        //console.log(updatedData);
+        console.log(updatedData);
         //console.log("----------");
 
         const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
@@ -827,15 +842,6 @@ function EmployeeManagement() {
                 console.error(error);
             });
     };
-
-    const [formDataOnboarding, setFormDataOnboarding] = useState({
-        Id: '',
-        Name: '',
-        Email: '',
-        Phone: '',
-        Custom_Message: '',
-
-    });
 
     function handleOnboardNewUserSubmit(e) {
         e.preventDefault();
@@ -873,6 +879,45 @@ function EmployeeManagement() {
                 } else {
                     return response.json().then((errorData) => {
                         const errorMessage = errorData.error || 'Failed to onboard new user.';
+                        setShowResult(errorMessage);
+                        console.error("Error Response:", errorData);
+                    });
+                }
+            })
+            .catch((error) => {
+                setShowResult("Network error: " + error.message);
+            });
+    }
+
+    function handleOnboardExistingUserSubmit(e) {
+        console.log('Onboard Existing User button pressed');
+        e.preventDefault();
+    
+        if (!formDataOnboarding.Id) {
+            setShowResult("Please fill in the User ID field.");
+            return;
+        }
+    
+        const userId = formDataOnboarding.Id;
+        const apiKey = document.cookie.replace(
+            /(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/,
+            "$1"
+        );
+    
+        fetch(`https://my.tanda.co/api/v2/users/${userId}/onboard`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+            }
+        })
+            .then((response) => {
+                if (response.status === 201) {
+                    setShowResult("Existing user onboarded successfully!");
+                    console.log("Success Response:", response);
+                } else {
+                    return response.json().then((errorData) => {
+                        const errorMessage = errorData.error || 'Failed to onboard existing user.';
                         setShowResult(errorMessage);
                         console.error("Error Response:", errorData);
                     });
@@ -1342,6 +1387,17 @@ function EmployeeManagement() {
                                 </div>
 
                                 <div>
+                                    <input
+                                        type="text"
+                                        placeholder="Email"
+                                        style={{ margin: '5px' }}
+                                        value={formDataEmployee.email}
+                                        onChange={e => setFormDataEmployee({ ...formDataEmployee, email: e.target.value })}
+                                    />
+                                </div>
+                                
+
+                                <div>
                                     <h4 className="secondary">Date of Birth:</h4>
                                     <input
                                         type="date"
@@ -1363,15 +1419,7 @@ function EmployeeManagement() {
                                     />
                                 </div>
 
-                                <div>
-                                    <input
-                                        type="text"
-                                        placeholder="Email"
-                                        style={{ margin: '5px' }}
-                                        value={formDataEmployee.email}
-                                        onChange={e => setFormDataEmployee({ ...formDataEmployee, email: e.target.value })}
-                                    />
-                                </div>
+                        
 
                                 <div>
                                     <input
@@ -1499,6 +1547,46 @@ function EmployeeManagement() {
 
                                 {showResult && <p>{showResult}</p>}
                             </form>
+                            <form style={{ padding: '30px' }} className="primary">
+                                <h2 className="secondary h2-EM">Onboard A Existing User</h2>
+
+                                <div>
+                                    <h3 className="secondary">User ID:</h3>
+                                    <input
+                                        type="text"
+                                        style={{ margin: '5px' }}
+                                        placeholder="User ID"
+                                        value={formDataOnboarding.Id}
+                                        onChange={e => setFormDataOnboarding({ ...formDataOnboarding, Id: e.target.value })}
+                                    />
+                                </div>
+
+
+                                <button onClick={handleOnboardExistingUserSubmit} type="submit" style={{ margin: '10px' }} className="EM-button">
+                                    Onboard New User
+                                </button>
+
+                                {showResult && <p>{showResult}</p>}
+                            </form>
+                            <div className="Users-list">
+                                <input
+                                    type="text"
+                                    style={{ margin: '5px' }}
+                                    placeholder="Search Users"
+                                    value={searchUsers}
+                                    onChange={(e) => setSearchUsers(e.target.value)}
+                                />
+                                {searchUsers && (
+                                    <ul>
+                                        {filteredUsers.map((Users) => (
+                                            <li key={Users.id} className='li-EM '>
+                                                <p>ID: {Users.id}</p>
+                                                <p>Name: {Users.name}</p>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
                         </div>
                     ) : (
                         <div style={{ paddingLeft: '20px' }}>
