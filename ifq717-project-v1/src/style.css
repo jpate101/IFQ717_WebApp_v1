@@ -53,8 +53,8 @@ input {
     color: rgb(30, 64, 175); /* Change to blue text color */
     border: 1px solid rgb(30, 64, 175); /* Add blue outline */
     font-size: 16px; /* Adjust font size as needed */
-    padding: 10px; /* Adjust padding as needed */
-    margin: 2px;
+    padding: 10px;
+    margin: 10px; 
     background-color: rgb(249, 250, 251); /* Background color same as container */
     border-radius: 5px; /* Rounded edges */
     transition: color 0.3s; /* Smooth color transition */
@@ -65,19 +65,20 @@ input:focus {
     background-color: rgb(30, 64, 175);
   }
   
+  
 .EM-button {
-    color: rgb(249, 250, 251); /* Text color same as container */
-    background-color: rgb(30, 64, 175); /* Blue background */
-    border: 1px solid rgb(30, 64, 175); /* Blue border */
-    font-size: 16px; /* Adjust font size as needed */
-    padding: 8px; /* Adjust padding as needed */
-    border-radius: 5px; /* Rounded edges */
-    transition: background-color 0.3s, color 0.3s; /* Smooth color transition */
+  color: #1e40af; /* Text color same as container */
+  background-color: #1e40af; /* Blue background */
+  border: 1px solid #1e40af; /* Blue border */
+  font-size: 16px; /* Adjust font size as needed */
+  padding: 8px; /* Adjust padding as needed */
+  border-radius: 5px; /* Rounded edges */
+  transition: background-color 0.3s, color 0.3s; /* Smooth color transition */
   }
   
 .EM-button:hover {
-    color: rgb(30, 64, 175);
-    background-color: rgb(249, 250, 251);
+  color: rgb(249, 250, 251);
+  background-color: rgb(30, 64, 175);
   }
   
 
@@ -111,6 +112,21 @@ input:focus {
   
   .nav-link:hover {
     color: var(--secondary-color);
+  }
+
+  .li-EM {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 10px 0;
+    margin-right: 10px;
+    background: #f9fafb;
+    border-color: #3b82f6;
+  }
+  
+  .li-EM p {
+    font-weight: bold;
+    color:  #1e40af;
   }
 
 
@@ -174,6 +190,7 @@ input:focus {
   padding: 10px;
 }
 
+
 .title-EM {
     font-size: 2.5rem; 
     text-align: center; 
@@ -232,5 +249,5 @@ input:focus {
   
 
 
-}
+  }
   

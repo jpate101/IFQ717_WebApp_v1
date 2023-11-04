@@ -3,6 +3,7 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 
 
+
 function EmployeeManagement() {
     const [content, setContent] = useState("under construction");
     const [showLocationForm, setShowLocationForm] = useState(false);
@@ -11,6 +12,7 @@ function EmployeeManagement() {
     const [showUpadateUsers, setShowUpadateUsers] = useState(false);
     const [showUpadateLocations, setShowUpadateLocations] = useState(false);
     const [showUpadateTeams, setShowUpadateTeams] = useState(false);
+    const [showOnboardNewUser, setShowOnboardNewUser] = useState(false);
     const [showResult, setShowResult] = useState("");
 
     //seach locations stuff 
@@ -118,7 +120,7 @@ function EmployeeManagement() {
 
     const fetchTeams = async () => {
         try {
-            console.log("fetch teams exe");
+            //console.log("fetch teams exe");
             const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
             const response = await fetch(`https://my.tanda.co/api/v2/departments`, {
                 method: 'GET',
@@ -171,6 +173,7 @@ function EmployeeManagement() {
         setShowUpadateUsers(false);
         setShowUpadateLocations(false);
         setShowUpadateTeams(false);
+        setShowOnboardNewUser(false);
         setShowResult('');
     };
 
@@ -181,6 +184,7 @@ function EmployeeManagement() {
         setShowUpadateUsers(false);
         setShowUpadateLocations(false);
         setShowUpadateTeams(false);
+        setShowOnboardNewUser(false);
         setShowResult('');
     };
 
@@ -191,6 +195,7 @@ function EmployeeManagement() {
         setShowUpadateUsers(false);
         setShowUpadateLocations(false);
         setShowUpadateTeams(false);
+        setShowOnboardNewUser(false);
         setShowResult('');
     };
     const handleUpadateUsersClick = () => {
@@ -200,6 +205,7 @@ function EmployeeManagement() {
         setShowLocationForm(false);
         setShowTeamsForm(false);
         setShowEmployeeForm(false);
+        setShowOnboardNewUser(false);
         setShowResult('');
     }
     const handleUpadateLocationsClick = () => {
@@ -209,6 +215,7 @@ function EmployeeManagement() {
         setShowLocationForm(false);
         setShowTeamsForm(false);
         setShowEmployeeForm(false);
+        setShowOnboardNewUser(false);
         setShowResult('');
     }
     const handleUpadateTeamsClick = () => {
@@ -218,8 +225,20 @@ function EmployeeManagement() {
         setShowLocationForm(false);
         setShowTeamsForm(false);
         setShowEmployeeForm(false);
+        setShowOnboardNewUser(false);
         setShowResult('');
     }
+    const handleOnbooardNewUserClick = () => {
+        setShowUpadateUsers(false);
+        setShowUpadateLocations(false);
+        setShowUpadateTeams(false);
+        setShowLocationForm(false);
+        setShowTeamsForm(false);
+        setShowEmployeeForm(false);
+        setShowOnboardNewUser(true);
+        setShowResult('');
+    }
+
 
     //form
     const [formDataLocation, setFormDataLocation] = useState({
@@ -347,7 +366,16 @@ function EmployeeManagement() {
         ],
         enable_login: null,
 
-        
+
+
+    });
+
+    const [formDataOnboarding, setFormDataOnboarding] = useState({
+        Id: '',
+        Name: '',
+        Email: '',
+        Phone: '',
+        Custom_Message: '',
 
     });
     //button functions 
@@ -446,6 +474,9 @@ function EmployeeManagement() {
                     // Handle success
                     //console.log("Location created successfully!");
                     setShowResult("Team created successfully!");
+                    fetchLocations();
+                    fetchTeams();
+                    fetchUsers();
                 } else if (response.status === 403) {
                     // Handle 403 error (forbidden)
                     //console.log("You do not have the required permissions to create a location.");
@@ -472,6 +503,9 @@ function EmployeeManagement() {
         // Handle employee creation here
         const employeeRequestBody = {
             name: formDataEmployee.name,
+            //email: "homer.simpson@springfieldpowerplant.com",
+            //phone: "0404 123 123",
+
             // Include more properties here
         };
 
@@ -490,6 +524,9 @@ function EmployeeManagement() {
                 if (response.ok) {
                     // Handle success
                     setShowResult("Employee created successfully!");
+                    fetchLocations();
+                    fetchTeams();
+                    fetchUsers();
                 } else if (response.status === 403) {
                     // Handle 403 error (forbidden)
                     setShowResult("You do not have the required permissions to create a Employee.");
@@ -547,6 +584,9 @@ function EmployeeManagement() {
                 if (response.ok) {
                     console.log("Location updated successfully!");
                     setShowResult("Location updated successfully!");
+                    fetchLocations();
+                    fetchTeams();
+                    fetchUsers();
                     // Handle any additional actions after successful update.
                 } else if (response.status === 403) {
                     console.log("You do not have the required permissions to update this location.");
@@ -598,6 +638,9 @@ function EmployeeManagement() {
                 if (response.ok) {
                     setShowResult("Team Name updated successfully!");
                     console.log("Success Response:", response);
+                    fetchLocations();
+                    fetchTeams();
+                    fetchUsers();
                 } else {
                     setShowResult("Failed to update team.");
                 }
@@ -644,6 +687,9 @@ function EmployeeManagement() {
             .then(data => {
                 setShowResult("Team Qualifications updated successfully!");
                 console.log("Success Response:", data);
+                fetchLocations();
+                fetchTeams();
+                fetchUsers();
             })
             .catch(error => {
                 setShowResult("Network error: " + error.message);
@@ -661,13 +707,13 @@ function EmployeeManagement() {
         }
 
         const teamUpdateRequestUsersManagers = {
-            user_ids: formDataTeams.user_ids.map(Number),
+            //user_ids: formDataTeams.user_ids.map(Number),
             manager_ids: formDataTeams.manager_ids.map(Number),
         };
         console.log(teamUpdateRequestUsersManagers);
 
         const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
-        const teamId = parseInt(formDataTeams.Id); 
+        const teamId = parseInt(formDataTeams.Id);
 
 
 
@@ -734,12 +780,24 @@ function EmployeeManagement() {
                 }
             ]
             */
+
         }
+        console.log(updatedData.employment_start_date);
+        
         if (updatedData.name === '') {
             delete updatedData.name;
         }
+        if (updatedData.email === '') {
+            delete updatedData.email;
+        }
         if (updatedData.enable_login === null) {
             delete updatedData.enable_login;
+        }
+        if (updatedData.date_of_birth === "") {
+            delete updatedData.date_of_birth ;
+        }
+        if (updatedData.employment_start_date === '') {
+            delete updatedData.employment_start_date ;
         }
 
         for (let field in updatedData) {
@@ -747,19 +805,19 @@ function EmployeeManagement() {
             if (typeof updatedData[field] === 'object') {
                 // Check if the property is an object (e.g., bank_details)
                 for (let subField in updatedData[field]) {
-                    if (field !== 'name' && (updatedData[field][subField] === "" || updatedData[field][subField]== null || isNaN(updatedData[field][subField]))) {
+                    if (field !== 'name' && (updatedData[field][subField] === "" || updatedData[field][subField] == null || isNaN(updatedData[field][subField]))) {
                         delete updatedData[field][subField];
                     }
                 }
-            }else if (field !== 'name' && (updatedData[field] === "" || updatedData[field] === null || isNaN(updatedData[field]))) {
+            } else if (field !== 'name' && field !== 'email' && field !== 'date_of_birth' && field !== 'employment_start_date' && (updatedData[field] === "" || updatedData[field] === null || isNaN(updatedData[field]))) {
                 delete updatedData[field];
             }
         }
 
 
 
-       // console.log("bsb check:", updatedData.bank_details.bsb);
-        //console.log(updatedData);
+        // console.log("bsb check:", updatedData.bank_details.bsb);
+        console.log(updatedData);
         //console.log("----------");
 
         const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
@@ -775,8 +833,12 @@ function EmployeeManagement() {
         })
             .then((response) => {
                 if (response.ok) {
-                    setShowResult("User updated successfully!");
+                    setShowResult("User updated successfully!. Please reload page to see updated search results");
                     console.log("Success Response:", response);
+                    fetchLocations();
+                    fetchTeams();
+                    fetchUsers();
+
                 } else {
                     setShowResult("Failed to update User.");
                 }
@@ -787,9 +849,96 @@ function EmployeeManagement() {
             });
     };
 
+    function handleOnboardNewUserSubmit(e) {
+        e.preventDefault();
+        //console.log('Onboard New User button pressed ');
+
+        if (!formDataOnboarding.Name || !formDataOnboarding.Email || !formDataOnboarding.Phone || !formDataOnboarding.Custom_Message) {
+            setShowResult("Please fill in all required fields.");
+            return;
+        }
+
+        const onboardRequestData = {
+            name: formDataOnboarding.Name,
+            email: formDataOnboarding.Email,
+            phone: formDataOnboarding.Phone,
+            custom_message: formDataOnboarding.Custom_Message,
+        };
+
+        const apiKey = document.cookie.replace(
+            /(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/,
+            "$1"
+        );
+
+        fetch('https://my.tanda.co/api/v2/users/onboarding', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify(onboardRequestData),
+        })
+            .then((response) => {
+                if (response.status === 201) {
+                    setShowResult("New user onboarded successfully!");
+                    console.log("Success Response:", response);
+                } else {
+                    return response.json().then((errorData) => {
+                        const errorMessage = errorData.error || 'Failed to onboard new user.';
+                        setShowResult(errorMessage);
+                        console.error("Error Response:", errorData);
+                    });
+                }
+            })
+            .catch((error) => {
+                setShowResult("Network error: " + error.message);
+            });
+    }
+
+    function handleOnboardExistingUserSubmit(e) {
+        console.log('Onboard Existing User button pressed');
+        e.preventDefault();
+    
+        if (!formDataOnboarding.Id) {
+            setShowResult("Please fill in the User ID field.");
+            return;
+        }
+    
+        const userId = formDataOnboarding.Id;
+        const apiKey = document.cookie.replace(
+            /(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/,
+            "$1"
+        );
+    
+        fetch(`https://my.tanda.co/api/v2/users/${userId}/onboard`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+            }
+        })
+            .then((response) => {
+                if (response.status === 201) {
+                    setShowResult("Existing user onboarded successfully!");
+                    console.log("Success Response:", response);
+                } else {
+                    return response.json().then((errorData) => {
+                        const errorMessage = errorData.error || 'Failed to onboard existing user.';
+                        setShowResult(errorMessage);
+                        console.error("Error Response:", errorData);
+                    });
+                }
+            })
+            .catch((error) => {
+                setShowResult("Network error: " + error.message);
+            });
+    }
+
+
+
     return (
         <div className="background" >
-            <h1 className="primary title-EM "> Employee Management </h1>
+            <h1 className="title-EM primary  "> Employee Management </h1>
             <div className="flex-container" >
                 <div className="left-column-nav-EM">
                     <ul className="navEM" style={{ listStyleType: 'none' }}>
@@ -811,6 +960,9 @@ function EmployeeManagement() {
                         <li>
                             <a onClick={handleUpadateTeamsClick}>Update Teams</a>
                         </li>
+                        <li>
+                            <a onClick={handleOnbooardNewUserClick}>Onboard users</a>
+                        </li>
                     </ul>
                 </div>
                 <div >
@@ -818,15 +970,17 @@ function EmployeeManagement() {
 
                         <form onSubmit={handleCreateLocationSubmit} style={{ padding: '30px' }} className="primary" >
                             <h2 className="secondary h2-EM">Create location</h2>
-                            <div>
+                            <div >
                                 <h3 className="secondary">Set Location Name Details:</h3>
                                 <input
+                                    style={{ margin: '5px' }}
                                     type="text"
                                     placeholder="Name"
                                     value={formDataLocation.name}
                                     onChange={e => setFormDataLocation({ ...formDataLocation, name: e.target.value })}
                                 />
                                 <input
+                                    style={{ margin: '5px' }}
                                     type="text"
                                     placeholder="Short_Name"
                                     value={formDataLocation.short_name}
@@ -837,12 +991,14 @@ function EmployeeManagement() {
                                 <h3 className="secondary">Set Location Geotag Details:</h3>
                                 <input
                                     type="number"
+                                    style={{ margin: '5px' }}
                                     placeholder="Latitude"
                                     value={formDataLocation.latitude}
                                     onChange={e => setFormDataLocation({ ...formDataLocation, latitude: e.target.value })}
                                 />
                                 <input
                                     type="number"
+                                    style={{ margin: '5px' }}
                                     placeholder="Longitude"
                                     value={formDataLocation.longitude}
                                     onChange={e => setFormDataLocation({ ...formDataLocation, longitude: e.target.value })}
@@ -850,6 +1006,7 @@ function EmployeeManagement() {
                                 <input
                                     type="text"
                                     placeholder="Address"
+                                    style={{ margin: '5px' }}
                                     value={formDataLocation.address}
                                     onChange={e => setFormDataLocation({ ...formDataLocation, address: e.target.value })}
                                 />
@@ -886,6 +1043,7 @@ function EmployeeManagement() {
                                     <h3 className="secondary">Set Team Details:</h3>
                                     <input
                                         type="text"
+                                        style={{ margin: '5px' }}
                                         placeholder="Team Name"
                                         value={formDataTeams.name}
                                         onChange={e => setFormDataTeams({ ...formDataTeams, name: e.target.value })}
@@ -894,6 +1052,7 @@ function EmployeeManagement() {
                                 <div>
                                     <input
                                         type="text"
+                                        style={{ margin: '5px' }}
                                         placeholder="Location ID"
                                         value={formDataTeams.location_id}
                                         onChange={e => setFormDataTeams({ ...formDataTeams, location_id: e.target.value })}
@@ -907,20 +1066,21 @@ function EmployeeManagement() {
                             <div className="location-list">
                                 <input
                                     type="text"
+                                    style={{ margin: '5px' }}
                                     placeholder="Search Locations"
                                     value={searchLocation}
                                     onChange={(e) => setSearchLocation(e.target.value)}
                                 />
-                                {searchLocation && ( 
-                                <ul>
-                                    {filteredLocations.map((location) => (
-                                        <li key={location.id}>
-                                            <p>ID: {location.id}</p>
-                                            <p>Name: {location.name}</p>
-                                            <p>Short Name: {location.short_name}</p>
-                                        </li>
-                                    ))}
-                                </ul>
+                                {searchLocation && (
+                                    <ul>
+                                        {filteredLocations.map((location) => (
+                                            <li key={location.id} className='li-EM '>
+                                                <p>ID: {location.id}</p>
+                                                <p>Name: {location.name}</p>
+                                                <p>Short Name: {location.short_name}</p>
+                                            </li>
+                                        ))}
+                                    </ul>
                                 )}
                             </div>
                         </div>
@@ -930,7 +1090,9 @@ function EmployeeManagement() {
                             <div>
                                 <h3 className="secondary">Employee Details:</h3>
                                 <input
+
                                     type="text"
+                                    style={{ margin: '5px' }}
                                     placeholder="Name"
                                     value={formDataEmployee.name}
                                     onChange={e => setFormDataEmployee({ ...formDataEmployee, name: e.target.value })}
@@ -964,6 +1126,7 @@ function EmployeeManagement() {
                                     <h3 className="secondary">Set Location Name Details:</h3>
                                     <input
                                         type="text"
+                                        style={{ margin: '5px' }}
                                         placeholder="Name"
                                         value={formDataLocation.name}
                                         onChange={(e) =>
@@ -972,6 +1135,7 @@ function EmployeeManagement() {
                                     />
                                     <input
                                         type="text"
+                                        style={{ margin: '5px' }}
                                         placeholder="Short_Name"
                                         value={formDataLocation.short_name}
                                         onChange={(e) =>
@@ -983,6 +1147,7 @@ function EmployeeManagement() {
                                     <h3 className="secondary">Set Location Geotag Details:</h3>
                                     <input
                                         type="number"
+                                        style={{ margin: '5px' }}
                                         placeholder="Latitude"
                                         value={formDataLocation.latitude}
                                         onChange={(e) =>
@@ -992,6 +1157,7 @@ function EmployeeManagement() {
                                     <input
                                         type="number"
                                         placeholder="Longitude"
+                                        style={{ margin: '5px' }}
                                         value={formDataLocation.longitude}
                                         onChange={(e) =>
                                             setFormDataLocation({ ...formDataLocation, longitude: e.target.value })
@@ -1000,6 +1166,7 @@ function EmployeeManagement() {
                                     <input
                                         type="text"
                                         placeholder="Address"
+                                        style={{ margin: '5px' }}
                                         value={formDataLocation.address}
                                         onChange={(e) =>
                                             setFormDataLocation({ ...formDataLocation, address: e.target.value })
@@ -1031,19 +1198,20 @@ function EmployeeManagement() {
                                 <input
                                     type="text"
                                     placeholder="Search Locations"
+                                    style={{ margin: '5px' }}
                                     value={searchLocation}
                                     onChange={(e) => setSearchLocation(e.target.value)}
                                 />
-                                {searchLocation && ( 
-                                <ul>
-                                    {filteredLocations.map((location) => (
-                                        <li key={location.id}>
-                                            <p>ID: {location.id}</p>
-                                            <p>Name: {location.name}</p>
-                                            <p>Short Name: {location.short_name}</p>
-                                        </li>
-                                    ))}
-                                </ul>
+                                {searchLocation && (
+                                    <ul>
+                                        {filteredLocations.map((location) => (
+                                            <li key={location.id} className='li-EM '>
+                                                <p>ID: {location.id}</p>
+                                                <p>Name: {location.name}</p>
+                                                <p>Short Name: {location.short_name}</p>
+                                            </li>
+                                        ))}
+                                    </ul>
                                 )}
                             </div>
                         </div>
@@ -1057,6 +1225,7 @@ function EmployeeManagement() {
                                     <h3 className="secondary">Team Id:</h3>
                                     <input
                                         type="text"
+                                        style={{ margin: '5px' }}
                                         placeholder="Team ID"
                                         value={formDataTeams.Id}
                                         onChange={e => setFormDataTeams({ ...formDataTeams, Id: e.target.value })}
@@ -1069,6 +1238,7 @@ function EmployeeManagement() {
                                     <input
                                         type="text"
                                         placeholder="Team Name"
+                                        style={{ margin: '5px' }}
                                         value={formDataTeams.name}
                                         onChange={e => setFormDataTeams({ ...formDataTeams, name: e.target.value })}
                                     />
@@ -1078,23 +1248,26 @@ function EmployeeManagement() {
                                     <input
                                         type="text"
                                         placeholder="Qualification IDs (comma-separated)"
+                                        style={{ margin: '5px' }}
                                         value={formDataTeams.qualification_ids.join(',')} // Join the array for display
                                         onChange={(e) => setFormDataTeams({ ...formDataTeams, qualification_ids: e.target.value.split(',') })}
                                     />
                                 </div>
                                 <button onClick={handleUpdateQualifications} type="submit" style={{ margin: '10px' }} className="EM-button">Update Team Qualifications</button>
-                                <div>
+                                {/* <div >
                                     <input
                                         type="text"
                                         placeholder="User IDs (comma-separated)"
+                                        style={{ margin: '5px'}}
                                         value={formDataTeams.user_ids.join(',')} // Join the array for display
                                         onChange={(e) => setFormDataTeams({ ...formDataTeams, user_ids: e.target.value.split(',') })}
                                     />
-                                </div>
+                                </div>*/}
                                 <div>
                                     <input
                                         type="text"
                                         placeholder="Manager IDs (comma-separated)"
+                                        style={{ margin: '5px' }}
                                         value={formDataTeams.manager_ids.join(',')} // Join the array for display
                                         onChange={(e) => setFormDataTeams({ ...formDataTeams, manager_ids: e.target.value.split(',') })}
                                     />
@@ -1108,56 +1281,59 @@ function EmployeeManagement() {
                                 <input
                                     type="text"
                                     placeholder="Search Teams"
+                                    style={{ margin: '5px' }}
                                     value={searchTeams}
                                     onChange={(e) => setSearchTeams(e.target.value)}
                                 />
-                                 {searchTeams && ( 
-                                <ul>
-                                    {filteredTeams.map((Teams) => (
-                                        <li key={Teams.id}>
-                                            <p>ID: {Teams.id}</p>
-                                            <p>Name: {Teams.name}</p>
-                                        </li>
-                                    ))}
-                                </ul>
+                                {searchTeams && (
+                                    <ul>
+                                        {filteredTeams.map((Teams) => (
+                                            <li key={Teams.id} className='li-EM '>
+                                                <p>ID: {Teams.id}</p>
+                                                <p>Name: {Teams.name}</p>
+                                            </li>
+                                        ))}
+                                    </ul>
                                 )}
                             </div>
                             <div className="location-list">
                                 <input
                                     type="text"
                                     placeholder="Search Locations"
+                                    style={{ margin: '5px' }}
                                     value={searchLocation}
                                     onChange={(e) => setSearchLocation(e.target.value)}
                                 />
-                                 {searchLocation && ( 
-                                <ul>
-                                    {filteredLocations.map((location) => (
-                                        <li key={location.id}>
-                                            <p>ID: {location.id}</p>
-                                            <p>Name: {location.name}</p>
-                                            <p>Short Name: {location.short_name}</p>
-                                        </li>
-                                    ))}
-                                </ul>
-                                 )}
+                                {searchLocation && (
+                                    <ul>
+                                        {filteredLocations.map((location) => (
+                                            <li key={location.id} className='li-EM '>
+                                                <p>ID: {location.id}</p>
+                                                <p>Name: {location.name}</p>
+                                                <p>Short Name: {location.short_name}</p>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
                             </div>
                             <div className="Users-list">
                                 <input
                                     type="text"
+                                    style={{ margin: '5px' }}
                                     placeholder="Search Users"
                                     value={searchUsers}
                                     onChange={(e) => setSearchUsers(e.target.value)}
                                 />
-                                {searchUsers && ( 
-                                <ul>
-                                    {filteredUsers.map((Users) => (
-                                        <li key={Users.id}>
-                                            <p>ID: {Users.id}</p>
-                                            <p>Name: {Users.name}</p>
-                                        </li>
-                                    ))}
-                                </ul>
-                                  )}
+                                {searchUsers && (
+                                    <ul >
+                                        {filteredUsers.map((Users) => (
+                                            <li key={Users.id} className='li-EM '>
+                                                <p>ID: {Users.id}</p>
+                                                <p>Name: {Users.name}</p>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
                             </div>
                         </div>
                     ) : showUpadateUsers ? (
@@ -1172,6 +1348,7 @@ function EmployeeManagement() {
                                     <input
                                         type="text"
                                         placeholder="User ID"
+                                        style={{ margin: '5px' }}
                                         value={formDataEmployee.Id}
                                         onChange={e => setFormDataEmployee({ ...formDataEmployee, Id: e.target.value })}
                                     />
@@ -1181,6 +1358,7 @@ function EmployeeManagement() {
                                     <input
                                         type="text"
                                         placeholder="User Name"
+                                        style={{ margin: '5px' }}
                                         value={formDataEmployee.name}
                                         onChange={e => setFormDataEmployee({ ...formDataEmployee, name: e.target.value })}
                                     />
@@ -1188,7 +1366,8 @@ function EmployeeManagement() {
                                 <div>
                                     <input
                                         type="text"
-                                        placeholder="User ID"
+                                        style={{ margin: '5px' }}
+                                        placeholder="Employee ID"
                                         value={formDataEmployee.employee_id}
                                         onChange={e => setFormDataEmployee({ ...formDataEmployee, employee_id: e.target.value })}
                                     />
@@ -1197,6 +1376,7 @@ function EmployeeManagement() {
                                     <input
                                         type="text"
                                         placeholder="Passcode"
+                                        style={{ margin: '5px' }}
                                         value={formDataEmployee.passcode}
                                         onChange={e => setFormDataEmployee({ ...formDataEmployee, passcode: e.target.value })}
                                     />
@@ -1206,15 +1386,28 @@ function EmployeeManagement() {
                                     <input
                                         type="text"
                                         placeholder="Phone"
+                                        style={{ margin: '5px' }}
                                         value={formDataEmployee.phone}
                                         onChange={e => setFormDataEmployee({ ...formDataEmployee, phone: e.target.value })}
                                     />
                                 </div>
 
                                 <div>
+                                    <input
+                                        type="text"
+                                        placeholder="Email"
+                                        style={{ margin: '5px' }}
+                                        value={formDataEmployee.email}
+                                        onChange={e => setFormDataEmployee({ ...formDataEmployee, email: e.target.value })}
+                                    />
+                                </div>
+                                
+
+                                <div>
                                     <h4 className="secondary">Date of Birth:</h4>
                                     <input
                                         type="date"
+                                        style={{ margin: '5px' }}
                                         placeholder="Date of Birth"
                                         value={formDataEmployee.date_of_birth}
                                         onChange={e => setFormDataEmployee({ ...formDataEmployee, date_of_birth: e.target.value })}
@@ -1225,20 +1418,14 @@ function EmployeeManagement() {
                                     <h4 className="secondary">Employment Start Date:</h4>
                                     <input
                                         type="date"
+                                        style={{ margin: '5px' }}
                                         placeholder="Employment Start Date"
                                         value={formDataEmployee.employment_start_date}
                                         onChange={e => setFormDataEmployee({ ...formDataEmployee, employment_start_date: e.target.value })}
                                     />
                                 </div>
 
-                                <div>
-                                    <input
-                                        type="text"
-                                        placeholder="Email"
-                                        value={formDataEmployee.email}
-                                        onChange={e => setFormDataEmployee({ ...formDataEmployee, email: e.target.value })}
-                                    />
-                                </div>
+                        
 
                                 <div>
                                     <input
@@ -1253,6 +1440,7 @@ function EmployeeManagement() {
                                     <label>
                                         <input
                                             type="radio"
+                                            style={{ margin: '5px' }}
                                             value="true"
                                             checked={formDataEmployee.enable_login === true}
                                             onChange={() => setFormDataEmployee({ ...formDataEmployee, enable_login: true })}
@@ -1263,6 +1451,7 @@ function EmployeeManagement() {
                                         <input
                                             type="radio"
                                             value="false"
+                                            style={{ margin: '5px' }}
                                             checked={formDataEmployee.enable_login === false}
                                             onChange={() => setFormDataEmployee({ ...formDataEmployee, enable_login: false })}
                                         />
@@ -1286,30 +1475,134 @@ function EmployeeManagement() {
 
 
                                 <button type="submit" style={{ margin: '10px' }} className="EM-button">Update Users Submit</button>
+                                {showResult && <p>{showResult}</p>}
                             </form>
                             <div className="Users-list">
                                 <input
                                     type="text"
+                                    style={{ margin: '5px' }}
                                     placeholder="Search Users"
                                     value={searchUsers}
                                     onChange={(e) => setSearchUsers(e.target.value)}
                                 />
-                                {searchUsers && ( 
-                                <ul>
-                                    {filteredUsers.map((Users) => (
-                                        <li key={Users.id}>
-                                            <p>ID: {Users.id}</p>
-                                            <p>Name: {Users.name}</p>
-                                        </li>
-                                    ))}
-                                </ul>
+                                {searchUsers && (
+                                    <ul>
+                                        {filteredUsers.map((Users) => (
+                                            <li key={Users.id} className='li-EM '>
+                                                <p>ID: {Users.id}</p>
+                                                <p>Name: {Users.name}</p>
+                                            </li>
+                                        ))}
+                                    </ul>
                                 )}
                             </div>
                         </div>
 
+                    ) : showOnboardNewUser ? (
+                        <div className="flex-container">
+                            <form style={{ padding: '30px' }} className="primary">
+                                <h2 className="secondary h2-EM">Onboard A New User</h2>
+
+                                <div>
+                                    <h3 className="secondary">Name:</h3>
+                                    <input
+                                        type="text"
+                                        style={{ margin: '5px' }}
+                                        placeholder="Name"
+                                        value={formDataOnboarding.Name}
+                                        onChange={e => setFormDataOnboarding({ ...formDataOnboarding, Name: e.target.value })}
+                                    />
+                                </div>
+
+                                <div>
+                                    <h3 className="secondary">Email:</h3>
+                                    <input
+                                        type="email"
+                                        style={{ margin: '5px' }}
+                                        placeholder="Email"
+                                        value={formDataOnboarding.Email}
+                                        onChange={e => setFormDataOnboarding({ ...formDataOnboarding, Email: e.target.value })}
+                                    />
+                                </div>
+
+                                <div>
+                                    <h3 className="secondary">Phone:</h3>
+                                    <input
+                                        type="tel"
+                                        style={{ margin: '5px' }}
+                                        placeholder="Phone"
+                                        value={formDataOnboarding.Phone}
+                                        onChange={e => setFormDataOnboarding({ ...formDataOnboarding, Phone: e.target.value })}
+                                    />
+                                </div>
+
+                                <div>
+                                    <h3 className="secondary">Custom Message:</h3>
+                                    <input
+                                        type="text"
+                                        style={{ margin: '5px' }}
+                                        placeholder="Custom Message"
+                                        value={formDataOnboarding.Custom_Message}
+                                        onChange={e => setFormDataOnboarding({ ...formDataOnboarding, Custom_Message: e.target.value })}
+                                    />
+                                </div>
+
+                                <button onClick={handleOnboardNewUserSubmit} type="submit" style={{ margin: '10px' }} className="EM-button">
+                                    Onboard New User
+                                </button>
+
+                                {showResult && <p>{showResult}</p>}
+                            </form>
+                            <form style={{ padding: '30px' }} className="primary">
+                                <h2 className="secondary h2-EM">Onboard A Existing User</h2>
+
+                                <div>
+                                    <h3 className="secondary">User ID:</h3>
+                                    <input
+                                        type="text"
+                                        style={{ margin: '5px' }}
+                                        placeholder="User ID"
+                                        value={formDataOnboarding.Id}
+                                        onChange={e => setFormDataOnboarding({ ...formDataOnboarding, Id: e.target.value })}
+                                    />
+                                </div>
+
+
+                                <button onClick={handleOnboardExistingUserSubmit} type="submit" style={{ margin: '10px' }} className="EM-button">
+                                    Onboard New User
+                                </button>
+
+                                {showResult && <p>{showResult}</p>}
+                            </form>
+                            <div className="Users-list">
+                                <input
+                                    type="text"
+                                    style={{ margin: '5px' }}
+                                    placeholder="Search Users"
+                                    value={searchUsers}
+                                    onChange={(e) => setSearchUsers(e.target.value)}
+                                />
+                                {searchUsers && (
+                                    <ul>
+                                        {filteredUsers.map((Users) => (
+                                            <li key={Users.id} className='li-EM '>
+                                                <p>ID: {Users.id}</p>
+                                                <p>Name: {Users.name}</p>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+                        </div>
                     ) : (
-                        <div>
-                            <p>Under construction not really sure what to put here \n maybe like a checklist for the onboarding process</p>
+                        <div style={{ paddingLeft: '20px' }}>
+                            <h2 className="secondary h2-EM">Welcome to Employee Management</h2>
+                            <p>
+                                We're excited to have you on board! This is your Employee Management system, where you can manage employee data, locations, teams, and more.
+                            </p>
+                            <p>
+                                Use the navigation on the left to get started. If you have any questions or need assistance, feel free to reach out to our support team.
+                            </p>
                         </div>
                     )
                     }
