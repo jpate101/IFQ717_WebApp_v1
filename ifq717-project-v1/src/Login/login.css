@@ -7,7 +7,7 @@
 }
 
 .login-form {
-    width: 100%;
+    width: 75%;
     align-items: top;
     margin-top: 2rem;
   }
@@ -17,7 +17,7 @@
   }
 
 .login-button {
-  background-color: var(--button-green); 
+  background-color: var(--button-green) !important; 
   font-size: large;
   padding: 5px;
   color: white;
@@ -27,7 +27,7 @@
 }
 
 .login-button:hover {
-    background-color: var(--button-green-hover);
+    background-color: var(--button-green-hover) !important;
     border-color: var(--button-green-hover);
 }
   
@@ -59,6 +59,22 @@
     position: relative;
   }
 
+  .login-enticer-heading {
+    text-align: center !important;
+    color: var(--secondary-color) !important;
+    margin-bottom: 1rem;
+  }
+
+  
+  .login-enticer-card {
+    background-color: var(--background-color);
+    width: 75%;
+    padding: 1rem;
+    border-radius: 5px;
+    margin: 2rem auto;
+    margin-top: 15%;
+  }
+
   @media (min-width: 992px) {
     .login-screen-column-2  {
       display: grid;
@@ -67,11 +83,18 @@
     }
   }
 
-  .login-enticer-logo {
+.login-enticer-logo {
     width: 20%;
     position: absolute;
     bottom: 2.5%;
     right: 2.5%;
     opacity: 0.9;
-  }
+}
 
+.login-enticer-fill-primary  {
+    fill: --var(primary-color) !important;
+}
+
+.lighter-font {
+    font-weight: 220;
+}

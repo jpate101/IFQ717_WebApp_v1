@@ -1,0 +1,5 @@
+/* CSS specifically for the Login Screen */
+
+.dash-h1 {
+    color: --var(primary-color);
+}
