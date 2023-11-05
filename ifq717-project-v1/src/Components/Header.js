@@ -45,7 +45,7 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
                   <HighlightLink to ="/Timesheets/approveTimesheets" as={Link}>
                     Approve Timesheets
                   </HighlightLink>
-``                  <HighlightLink to="/scheduler" as={Link}>
+``                  <HighlightLink to="/roster" as={Link}>
                     Create schedules
                   </HighlightLink>
                   <HighlightLink to="root/EmployeeManagement/" as={Link}>

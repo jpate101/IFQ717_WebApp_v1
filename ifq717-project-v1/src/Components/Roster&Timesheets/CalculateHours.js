@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 
-export function formatShiftTime(epochTime) {
-    return dayjs(epochTime * 1000).format('h:mma'); // This will format the time as e.g. "9:00a"
+export function formatShiftTime(time, timezone) {
+  return dayjs(time).tz(timezone).format('HH:mm');
 }
 
 export function calculateHours(startTime, finishTime) {

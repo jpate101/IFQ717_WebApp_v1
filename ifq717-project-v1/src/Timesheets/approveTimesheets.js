@@ -3,12 +3,12 @@ import { Table } from 'react-bootstrap';
 import '../App.css';
 import '../index.css';
 import '../Tailwind.css';
-import WeekPickerComponent from '../Components/WeekPicker';
+import WeekPickerComponent from '../Components/Roster&Timesheets/WeekPicker';
 import dayjs from 'dayjs';
-import GetUsers from '../Components/GetUsers';  // Adjust the path accordingly
-import { calculateHours, formatShiftTime } from '../Components/CalculateHours';
-import GetShifts from '../Components/GetShifts';
-import GetDepartment from '../Components/GetDepartment';
+import { getUsers } from '../API/Utilities';
+import { calculateHours, formatShiftTime } from '../Components/Roster&Timesheets/CalculateHours';
+import { GetShifts } from '../API/Utilities';
+import { getDepartmentById } from '../API/Utilities';
 
 function ApproveTimesheets() {
     const [data, setData] = useState([]);
@@ -43,7 +43,7 @@ function ApproveTimesheets() {
                 toDate={dayjs(selectedDate).endOf('week').format('YYYY-MM-DD')}
             >
                 {(shifts) => (
-                    <GetUsers>
+                    <getUsers>
                         {(users) => (
                             <Table hover>
                                 <thead>
@@ -66,12 +66,12 @@ function ApproveTimesheets() {
                                             <td>{/* Worked hours - Calculate as needed */}</td>
                                             <td>{shift.cost}</td>
                                             <td>
-                                                <GetDepartment departmentId={shift.department_id}>
+                                                <getDepartmentById departmentId={shift.department_id}>
                                                     {(department) => (
                                                         // Display the department name if available, otherwise show a placeholder or the ID
                                                         department ? department.name : 'Loading...'
                                                     )}
-                                                </GetDepartment>
+                                                </getDepartmentById>
                                             </td>
                                             <td>{Array.isArray(shift.notes) && shift.notes.length > 0 ? shift.notes[0].body : ''}</td>
                                         </tr>
@@ -79,7 +79,7 @@ function ApproveTimesheets() {
                                 </tbody>
                             </Table>
                         )}
-                    </GetUsers>
+                    </getUsers>
                 )}
             </GetShifts>
         </div>
