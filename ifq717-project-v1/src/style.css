@@ -18,16 +18,20 @@
     display: flex;
 }
 
+
 .primary {
-    color: rgb(30, 64, 175); 
+    /*color: rgb(30, 64, 175); */
+    color: #3b82f6;
   }
   
 .secondary {
-    color: rgb(0, 0, 0); 
+    /*color: rgb(0, 0, 0); */
+    color: #1e40af;
   }
 
 .background {
-    background-color: rgb(249, 250, 251);
+    /*background-color: rgb(249, 250, 251);*/
+    background-color:#f9fafb;
   }
   
 .left-column-nav-EM {
@@ -37,13 +41,20 @@
 h3 {
     font-size: 1.2em;
   }
+
+.h2-EM {
+    font-size: 1.5rem; /* Adjust the font size as needed */
+    font-weight: bold;
+    margin: 10px 0; /* Add top and bottom margin */
+    letter-spacing: 1px; /* Adjust letter spacing as needed */
+}
   
 input {
     color: rgb(30, 64, 175); /* Change to blue text color */
     border: 1px solid rgb(30, 64, 175); /* Add blue outline */
     font-size: 16px; /* Adjust font size as needed */
-    padding: 10px; /* Adjust padding as needed */
-    margin: 2px;
+    padding: 10px;
+    margin: 10px; 
     background-color: rgb(249, 250, 251); /* Background color same as container */
     border-radius: 5px; /* Rounded edges */
     transition: color 0.3s; /* Smooth color transition */
@@ -54,19 +65,20 @@ input:focus {
     background-color: rgb(30, 64, 175);
   }
   
+  
 .EM-button {
-    color: rgb(249, 250, 251); /* Text color same as container */
-    background-color: rgb(30, 64, 175); /* Blue background */
-    border: 1px solid rgb(30, 64, 175); /* Blue border */
-    font-size: 16px; /* Adjust font size as needed */
-    padding: 8px; /* Adjust padding as needed */
-    border-radius: 5px; /* Rounded edges */
-    transition: background-color 0.3s, color 0.3s; /* Smooth color transition */
+  color: #1e40af; /* Text color same as container */
+  background-color: #1e40af; /* Blue background */
+  border: 1px solid #1e40af; /* Blue border */
+  font-size: 16px; /* Adjust font size as needed */
+  padding: 8px; /* Adjust padding as needed */
+  border-radius: 5px; /* Rounded edges */
+  transition: background-color 0.3s, color 0.3s; /* Smooth color transition */
   }
   
 .EM-button:hover {
-    color: rgb(30, 64, 175);
-    background-color: rgb(249, 250, 251);
+  color: rgb(249, 250, 251);
+  background-color: rgb(30, 64, 175);
   }
   
 
@@ -101,6 +113,22 @@ input:focus {
   .nav-link:hover {
     color: var(--secondary-color);
   }
+
+  .li-EM {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 10px 0;
+    margin-right: 10px;
+    background: #f9fafb;
+    border-color: #3b82f6;
+  }
+  
+  .li-EM p {
+    font-weight: bold;
+    color:  #1e40af;
+  }
+
 
   /* FORM FIELD STYLING, APPLIED ON LOGIN FORM TO START */
 
@@ -161,4 +189,65 @@ input:focus {
   height: 50px;
   padding: 10px;
 }
+
+
+.title-EM {
+    font-size: 2.5rem; 
+    text-align: center; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 10vh; 
+}
+/* phone testing */
+
+@media (max-width: 768px) {
+  .flex-container {
+      flex-direction: column; 
+
+  }
+
+  .left-column-nav-EM {
+    width: 100%; 
+
+  }
+  .location-list {
+    padding-left: 30px;
+    padding-top: 5px;
+  }
+  .Users-list{
+    padding-left: 30px;
+    padding-top: 5px;
+  }
+  .Teams-list{
+    padding-left: 30px;
+    padding-top: 5px;
+  }
+
+}
+
+@media (max-width: 576px) {
+  .left-column-nav-EM {
+      width: 100%; 
+  }
+  .title-EM {
+    padding-bottom: 50px;
+    padding-top: 50px;
+  }
+  .location-list {
+    padding-left: 30px;
+    padding-top: 5px;
+  }
+  .Users-list{
+    padding-left: 30px;
+    padding-top: 5px;
+  }
+  .Teams-list{
+    padding-left: 30px;
+    padding-top: 5px;
+  }
+  
+
+
+  }
   
