@@ -7,9 +7,9 @@ import Footer from './Components/Footer';
 import Home from './Home';
 import Login from './Login/Login';
 import Dashboard from './Dashboard';
-import Scheduler from './Scheduler';
 import EmployeeManagement from './EmployeeManagement';
 import ApproveTimesheets from './Timesheets/approveTimesheets';
+import Roster from './Roster/Roster';
 
 export default function App() {
   const [cookies, setCookie, removeCookie] = useCookies(['token']);
@@ -53,8 +53,8 @@ export default function App() {
             />
             <Route path="root/EmployeeManagement/*" element={<EmployeeManagement />} />
             <Route
-              path="/scheduler"
-              element={<Scheduler setIsLoggedIn={setIsLoggedIn} />}
+              path="/roster"
+              element={<Roster setIsLoggedIn={setIsLoggedIn} />}
             />
             <Route
               path="/Timesheets/approveTimesheets"
