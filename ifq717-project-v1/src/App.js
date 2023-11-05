@@ -6,7 +6,7 @@ import Header from './Components/Header';
 import Footer from './Components/Footer';
 import Home from './Home';
 import Login from './Login/Login';
-import Dashboard from './Dashboard';
+import Dashboard from './Dashboard/Dashboard';
 import Scheduler from './Scheduler';
 import EmployeeManagement from './EmployeeManagement';
 import ApproveTimesheets from './Timesheets/approveTimesheets';

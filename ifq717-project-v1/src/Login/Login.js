@@ -118,31 +118,31 @@ export default function Login() {
               <Image src={require('../Resources/logo-white.svg').default} alt="Logo" className="login-enticer-logo" />
               <Card className ="mb-4 login-enticer-card">
               <Card.Body>
-                <Card.Title className="enticer-card-heading">Organisation onboarding wizard</Card.Title>
+                <Card.Title className="login-enticer-heading">Organisation onboarding wizard</Card.Title>
                 <div>
-  <div className="flex items-top">
-    <img src="/Summary.svg" alt="Summary Icon" className="mr-2 h-5 w-5 login-enticer-fill-primary" />
-    <span>Organisation onboarding overview</span>
-  </div>
-  <div className="flex items-center">
-    <img src="/Worker.svg" alt="Worker Icon" className="mr-2 h-5 w-5 fill-primary" />
-    <div className="d-flex align-items-top">
-      <span>Workforce management</span>
-    </div>
-  </div>
-  <div className="ml-7 lighter-font">
-    <div>Manage locations, staff & teams</div>
-  </div>
-  <div className="flex items-center">
-    <img src="/Calendar-Days.svg" alt="Timesheet Icon" className="mr-2 h-5 w-5 fill-primary" />
-    <div className="d-flex align-items-center">
-      <span>Schedule management</span>
-    </div>
-  </div>
-  <div className="ml-7 lighter-font">
-    <div>Create, edit, approve & export timesheets</div>
-  </div>
-</div>
+                  <div className="flex items-top">
+                    <img src="/Summary.svg" alt="Summary Icon" className="mr-2 h-5 w-5 login-enticer-fill-primary" />
+                    <span>Organisation onboarding overview</span>
+                  </div>
+                  <div className="flex items-center">
+                    <img src="/Worker.svg" alt="Worker Icon" className="mr-2 h-5 w-5 login-enticer-fill-primary" />
+                    <div className="d-flex align-items-top">
+                      <span>Workforce management</span>
+                    </div>
+                  </div>
+                  <div className="ml-7 lighter-font">
+                    <div>Manage locations, staff & teams</div>
+                  </div>
+                  <div className="flex items-center">
+                    <img src="/Calendar-Days.svg" alt="Timesheet Icon" className="mr-2 h-5 w-5 login-enticer-fill-primary" />
+                    <div className="d-flex align-items-center">
+                      <span>Schedule management</span>
+                    </div>
+                  </div>
+                  <div className="ml-7 lighter-font">
+                    <div>Create, edit, approve & export timesheets</div>
+                  </div>
+                </div>
               </Card.Body>
               </Card>
             </div>
