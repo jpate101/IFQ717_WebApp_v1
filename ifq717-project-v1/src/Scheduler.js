@@ -93,7 +93,7 @@ function calculateHours(startTime, finishTime) {
   }
 }
 
-function TimePickerComponent({ shiftDetails, setShiftDetails, hoursWorked, setHoursWorked }) {
+function TimePickerComponent({ rosterDetails, setRosterDetails, hoursWorked, setHoursWorked }) {
 
   return (
     <FormItemWrapper
@@ -108,13 +108,13 @@ function TimePickerComponent({ shiftDetails, setShiftDetails, hoursWorked, setHo
        suffixIcon={null}
        minuteStep={15}
        value={[
-        shiftDetails.startTime ? dayjs(shiftDetails.startTime, "HH:mm") : null,
-        shiftDetails.finishTime ? dayjs(shiftDetails.finishTime, "HH:mm") : null
+        rosterDetails.startTime ? dayjs(rosterDetails.startTime, "HH:mm") : null,
+        rosterDetails.finishTime ? dayjs(rosterDetails.finishTime, "HH:mm") : null
       ]}
        onChange={dayjsValues => {
         const formattedStartTime = (dayjsValues && dayjsValues[0]) ? dayjsValues[0].format("HH:mm") : "";
         const formattedFinishTime = (dayjsValues && dayjsValues[1]) ? dayjsValues[1].format("HH:mm") : "";
-        setShiftDetails(prev => ({ ...prev, startTime:formattedStartTime, finishTime: formattedFinishTime }));
+        setRosterDetails(prev => ({ ...prev, startTime:formattedStartTime, finishTime: formattedFinishTime }));
         const calculatedHours = calculateHours(formattedStartTime, formattedFinishTime);
         setHoursWorked(calculatedHours)
       }}
@@ -193,33 +193,6 @@ function TeamsDropdown({ teams, onSelectChange, employeeTeams }) {
   )
 }
 
-function AddANote({ shiftDetails, setShiftDetails}) {
-  return (
-    <FormItemWrapper
-      icon={
-        <svg 
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="w-6 h-6 mr-2">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-        </svg>
-      }
-    >
-      <textarea
-        placeholder="Add shift note"
-        value ={shiftDetails.note}
-        onChange={e => setShiftDetails(prev => ({ ...prev, note: e.target.value}))}
-      ></textarea>
-    </FormItemWrapper>
-  );
-}
-
 function FormItemWrapper({ children, icon}) {
   return (
     <div className="flex">
@@ -250,6 +223,21 @@ function FormItemWrapper({ children, icon}) {
   const fromDate = dayjs(selectedDate).startOf(view).format('YYYY-MM-DD');
   const toDate = dayjs(selectedDate).endOf(view).format('YYYY-MM-DD');
 
+  const { roster, loading, error } = //GetRosterForDate();
+
+  useEffect(() => {
+    // handle loading and error state here
+    if (loading) {
+      // Maybe show a loading indicator
+    }
+
+    if (error) {
+      // Maybe show an error message
+    }
+
+    // If I need to do something when schedules are fetched, do it here
+  }, [roster, loading, error]);
+
   const initialRow = useMemo(() => ({
     Mon: "",
     Tues: "",
@@ -263,149 +251,48 @@ function FormItemWrapper({ children, icon}) {
   const [allHours, setAllHours] = useState([initialRow]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [shiftDetails, setShiftDetails] = useState({
+  const [rosterDetails, setRosterDetails] = useState({
   employee: "",
   date: new Date(),
   startTime: "",
   finishTime: "",
   team: "",
-  note: "",
 });
 
 const employeeIdToName = employees.reduce((acc, employee) => {
-  acc[employee.id] = employee.name; // Assuming the employee object has an 'id' and 'name' property
+  acc[employee.id] = employee.name; 
   return acc;
 }, {});
 
 console.log(`Token being used for request: ${token}`);
 
-const fetchShifts = useCallback(async () => {
-  console.log('Starting to fetch shifts...');
-  
-  try {
-    const response = await fetch(`https://my.tanda.co/api/v2/shifts?from=${fromDate}&to=${toDate}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-    });
-
-    console.log('Fetch attempted, response status:', response.status);
-    if (!response.ok) {
-      throw new Error(`Network response was not ok: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log('Raw shift data fetched:', data);
-
-    // Process the shifts data here
-    const processedShifts = data.reduce((acc, shift) => {
-      console.log('Processing shift:', shift);
-      const shiftDate = dayjs(shift.start * 1000).format('YYYY-MM-DD');
-      if (!acc[shiftDate]) {
-        acc[shiftDate] = [];
-      }
-      acc[shiftDate].push(shift);
-      return acc;
-    }, {});
-
-    console.log("Processed shift data:", processedShifts);
-    setShifts(processedShifts);
-  } catch (error) {
-    console.error("There was an error fetching the shifts:", error);
-  }
-}, [fromDate, toDate, token]);
-
-// Use useEffect to call fetchShifts when the component mounts or when dependencies change
-useEffect(() => {
-  fetchShifts();
-}, [fetchShifts]);
-
 const handleOpenNewShiftModal = (dayIndex) => {
   setSelectedEmployee(null);
   const newShiftDate = getFormattedDateForDay(dayIndex);
   // Initialize the shift details with the selected date
-  setShiftDetails({
+  setRosterDetails({
     employee: "",
     date: newShiftDate,
     startTime: "",
     finishTime: "",
     team: "",
-    note: "",
   });
   setIsModalOpen(true);
 };
 
 const handleOpenEditShiftModal = (selectedShift) => {
   const employeeForShift = employees.find(emp => emp.id === selectedShift.user_id) || { id: selectedShift.user_id };
-  setShiftDetails({
+  setRosterDetails({
     id: selectedShift.id,
     employee: employeeForShift,
     date: new Date(selectedShift.start * 1000),
     startTime: dayjs(selectedShift.start * 1000).format('HH:mm'),
     finishTime: dayjs(selectedShift.finish * 1000).format('HH:mm'),
     team: selectedShift.department_id, 
-    note: selectedShift.metadata
   });
   setIsModalOpen(true);
 };
 
-const handleSaveShift = async () => {
-  console.log('Saving shift with details:', shiftDetails);
-
-  const formattedDate = dayjs(shiftDetails.date).format('YYYY-MM-DD');
-  const shiftStartDate = new Date(`${formattedDate}T${shiftDetails.startTime}:00`);
-  const shiftFinishDate = new Date(`${formattedDate}T${shiftDetails.finishTime}:00`);
-  
-  // Convert the Date objects to Unix epoch time (in seconds)
-  const startEpoch = Math.floor(shiftStartDate.getTime() / 1000);
-  const finishEpoch = Math.floor(shiftFinishDate.getTime() / 1000);
-
-  const shiftData = {
-    user_id: selectedEmployee,
-    date: formattedDate,
-    start: startEpoch,
-    finish: finishEpoch,
-    department_id: selectedTeam, // Assuming team is an object with id
-    metadata: "",
-  };
-  console.log("shiftData", shiftData);
-  try {
-    const method = shiftDetails.id ? 'PUT' : 'POST';
-    const url = shiftDetails.id ? `https://my.tanda.co/api/v2/shifts/${shiftDetails.id}` : 'https://my.tanda.co/api/v2/shifts';
-
-    console.log('Attempting to save shift with method:', method, 'and data:', shiftData);
-
-    const response = await fetch(url, {
-      method: method,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(shiftData),
-    });
-
-    console.log('Save attempted, response status:', response.status);
-
-    if (!response.ok) {
-      const errorBody = await response.text();
-      console.error('Error response body:', errorBody);
-      throw new Error(`Failed to save shift: ${response.status}`);
-    }
-
-    setSelectedEmployee(null);
-    setSelectedTeam(null);
-
-    alert('Shift saved successfully!');
-    console.log('Shift saved successfully. Refreshing shifts...');
-    await fetchShifts();
-    setIsModalOpen(false);
-  } catch (error) {
-    console.error('Error saving shift:', error);
-    alert('Error saving shift: ' + error.message);
-  }
-};
 
 async function deleteShift(shiftId) {
   const response = await fetch(`https://my.tanda.co/api/v2/shifts/${shiftId}`, {  // Use DELETE method
@@ -620,8 +507,8 @@ const handleTodayButtonClick = () => {
 
               const currentFormattedDate = dayjs(getFormattedDateForDay(index)).format('YYYY-MM-DD');
               //console.log('Current formatted date:', currentFormattedDate);
-              const dayShifts = shifts[currentFormattedDate] || [];
-              //console.log('dayShifts:', dayShifts);
+              const dayRoster = roster[currentFormattedDate] || [];
+              //console.log('daySchedules:', daySchedules);
         
               return (
                 <div 
@@ -651,21 +538,21 @@ const handleTodayButtonClick = () => {
 
                     </div>
                     {/* Add the logic here to display shift details */}
-                    {dayShifts.map((shift, index) => (
+                    {dayRoster.map((roster, index) => (
                       <div
                         className="cursor-pointer hover:bg-gray-200"
-                        key={shift.id}
+                        key={roster.id}
                         onClick={() => {
-                          handleOpenEditShiftModal(shift);
-                          setSelectedShift(shift)
+                          handleOpenEditShiftModal(roster);
+                          setSelectedShift(roster)
                           //Displays the current shifts in the table
                           setIsModalOpen(true);
                         }}
                         // ... rest of the ShiftComponent attributes ...
                       >
                         {/* Display shift data as needed */}
-                        <div>{employeeIdToName[shift.user_id] || "Unknown"}</div>
-                        <div>{formatShiftTime(shift.start)} - {formatShiftTime(shift.finish)}</div>
+                        <div>{employeeIdToName[roster.user_id] || "Unknown"}</div>
+                        <div>{formatShiftTime(roster.start)} - {formatShiftTime(roster.finish)}</div>
                       </div>
                     ))}
                 
@@ -685,20 +572,20 @@ const handleTodayButtonClick = () => {
               className="absolute top-2 right-2 text-xl font-bold">&times;
               </button>
               <div className="my-2">
-                <DateFormItem shiftDate={shiftDetails.date}
+                <DateFormItem shiftDate={rosterDetails.date}
                 />
               </div>
               <div className="my-2">
                 <TimePickerComponent
-                  shiftDetails={shiftDetails}
-                  setShiftDetails={setShiftDetails}
+                  rosterDetails={rosterDetails}
+                  setRosterDetails={setRosterDetails}
                   hoursWorked={hoursWorked}
                   setHoursWorked={setHoursWorked}
                 />
               </div>
               <div className="my-2">
               <EmployeesDropdown
-                employees={shiftDetails.id ? [shiftDetails.employee] : employees}
+                employees={rosterDetails.id ? [rosterDetails.employee] : employees}
                 selectedEmployeeId={selectedEmployee}
                 onSelectChange= {(value) => {
                   console.log("Selected Employee ID", value);
@@ -714,10 +601,6 @@ const handleTodayButtonClick = () => {
                 />
               </div>
               <div className="my-2">
-                <AddANote
-                  shiftDetails={shiftDetails}
-                  setShiftDetails={setShiftDetails}
-                />
               </div>
               <div className="flex justify-between my-2">
                 <div>{hoursWorked}</div>
@@ -748,7 +631,7 @@ const handleTodayButtonClick = () => {
                     d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                   </svg>
                 <button
-                  onClick={handleSaveShift}
+                  onClick={""}
                   className="bg-white text-tandaBlue px-4 py-2 rounded border-2 border-tandaBlue tandaBlue hover:bg-tandaBlue hover:text-white">
                     Save
                 </button>
