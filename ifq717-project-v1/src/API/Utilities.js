@@ -53,7 +53,7 @@ export const getSchedules = async () => {
   }
 }
 // Fetches info about all visible users
-export const getUsers =async () => {
+export const getUsers = async () => {
   try {
     const headers = getHeaders(); // Use the existing getHeaders function
 
@@ -71,18 +71,38 @@ export const getUsers =async () => {
     const usersData = await response.json();
     console.log('Users data received:', usersData);
 
-    const usersMap = usersData.reduce((acc, user) => {
-      acc[user.id] = user;
-      return acc;
-    }, {});
-
-    return usersMap;
+    // Return an array of user objects with only id and name properties
+    return usersData.map(user => ({
+      id: user.id,
+      name: user.name,
+    }));
 
   } catch (error) {
     console.error('Error fetching users:', error);
     throw error;
   }
-}
+};
+
+// Fetches departments
+export const getAllDepartments = async () => {
+  try {
+    const headers = getHeaders(); // Use the existing getHeaders function
+    const url = `${API_BASE_URL}/departments`;
+
+    const response = await fetch(url, { method: 'GET', headers });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const departmentsData = await response.json();
+    console.log('Departments data received:', departmentsData);
+    return departmentsData;
+  } catch (error) {
+    console.error('Error fetching departments:', error);
+    throw error;
+  }
+};
 
 // Fetches department by id
 export const getDepartmentById = async (departmentId) => {
