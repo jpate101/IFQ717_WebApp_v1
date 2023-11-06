@@ -15,7 +15,7 @@ const getHeaders = () => {
 export const getRosterForDate = async (date) => {
   try {
     const headers = getHeaders();
-    const url = `${API_BASE_URL}/rosters/on/${date}`;
+    const url = `${API_BASE_URL}/rosters/on/${date}?show_costs=true`;
 
     const response = await fetch(url, { method: 'GET', headers });
     if (!response.ok) {
@@ -52,6 +52,27 @@ export const getSchedules = async () => {
     throw error;
   }
 }
+
+// Utilities.js
+
+export const getSchedulesByUser = async (userIds, fromDate, toDate) => {
+  const headers = getHeaders(); // Assuming getHeaders is defined in this file as well
+  const userIdsParam = userIds.join(',');
+  const url = `${API_BASE_URL}/schedules?user_ids=${userIdsParam}&from=${fromDate}&to=${toDate}&show_costs=true&include_names=false`;
+
+  try {
+    const response = await fetch(url, { method: 'GET', headers });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching schedules:', error);
+    return []; // Return an empty array as a fallback
+  }
+};
+
+
 // Fetches info about all visible users
 export const getUsers = async () => {
   try {
@@ -75,6 +96,8 @@ export const getUsers = async () => {
     return usersData.map(user => ({
       id: user.id,
       name: user.name,
+      hourly_rate: user.hourly_rate,
+
     }));
 
   } catch (error) {
@@ -82,6 +105,39 @@ export const getUsers = async () => {
     throw error;
   }
 };
+
+// Gets information about a user
+// Gets information about a user, including departments they belong to
+export const getUserInfo = async (userId) => {
+  try {
+    const headers = getHeaders();
+
+    const url = `${API_BASE_URL}/users/${userId}?show_wages=true`;
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: headers
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const userData = await response.json();
+    console.log('User data received:', userData);
+
+    return {
+      id: userData.id,
+      name: userData.name,
+      departmentIds: userData.department_ids // Assuming this is how the departments are provided in the response
+    };
+
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    throw error;
+  }
+};
+
 
 // Fetches departments
 export const getAllDepartments = async () => {
