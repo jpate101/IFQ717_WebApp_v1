@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Table } from 'react-bootstrap';
 import WeekPickerComponent from '../Components/Roster&Timesheets/WeekPicker';
-import { getUsers, getRosterForDate } from '../API/Utilities';
+import { getUsers, getRosterForDate, updateTimesheetStatus } from '../API/Utilities';
+import { TimesheetForUser } from './TimesheetForUser';
 import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import utc from 'dayjs/plugin/utc';
@@ -19,6 +21,27 @@ const getHeaders = () => {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${token}`
   };
+};
+
+
+
+const StatusSelect = ({ timesheetId, initialStatus, onUpdate }) => {
+  const handleChange = (event) => {
+    const newStatus = event.target.value;
+    onUpdate(timesheetId, newStatus);
+  };
+
+  return (
+    <select
+      className="form-select-sm small-text"
+      defaultValue={initialStatus}
+      onChange={handleChange}
+      aria-label="Timesheet Status Select"
+    >
+      <option value="pending">Pending</option>
+      <option value="approved">Approved</option>
+    </select>
+  );
 };
 
 // Helper function to format week range
@@ -62,6 +85,12 @@ const ApproveTimesheetsPage = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const fetchedRosteredHours = useRef(false);
+  const navigate = useNavigate();
+
+  // Handles the row click which opens the TimesheetForUser page
+  const handleRowClick = async (userId) => {
+    navigate(`/timesheet-for-user/${userId}`);
+  };
 
   const fetchTimesheets = async (date) => {
     setLoading(true);
@@ -165,8 +194,7 @@ const ApproveTimesheetsPage = () => {
     console.error('Error fetching rostered hours:', error);
   }
 };
-  
-  
+
   useEffect(() => {
     if (!fetchedRosteredHours.current && timesheets.length > 0 && users.length > 0) {
       fetchRosteredHours().then(() => {
@@ -199,7 +227,21 @@ const ApproveTimesheetsPage = () => {
     }, 0) / 60;
   };
 
-  
+  const handleStatusChange = async (timesheetId, newStatus) => {
+    try {
+      await updateTimesheetStatus(timesheetId, newStatus);
+      // Update local state to reflect the change
+      setTimesheets((prevTimesheets) =>
+        prevTimesheets.map((ts) =>
+          ts.id === timesheetId ? { ...ts, status: newStatus } : ts
+        )
+      );
+    } catch (error) {
+      console.error('Failed to update timesheet status:', error);
+      // Handle error (e.g., show a message to the user)
+    }
+  };
+
   const safeMap = (array, mapFn) => Array.isArray(array) ? array.map(mapFn) : [];
 
   return (
@@ -217,7 +259,7 @@ const ApproveTimesheetsPage = () => {
             <th>Rostered Hours</th>
             <th>Worked Hours</th>
             <th>Cost</th>
-            <th>Notes</th>
+            <th>Status</th>
           </tr>
         </thead>
         <tbody>
@@ -242,12 +284,22 @@ const ApproveTimesheetsPage = () => {
               
                 return (
                   <tr key={timesheet.id}>
-                    <td>{(getUserById(timesheet.user_id) && getUserById(timesheet.user_id).name) || 'N/A'}</td>
+                    <td onClick={() =>handleRowClick(timesheet.user_id)}>
+                      <span style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}>
+                        {(getUserById(timesheet.user_id) && getUserById(timesheet.user_id).name) || 'N/A'}
+                      </span>
+                    </td>
                     <td>{formattedDate}</td>
                     <td>{timesheet.rosteredHours || 'N/A'}</td>
                     <td>{`${workedHours.toFixed(2)}h`}</td>
                     <td>{`$${cost.toFixed(2)}`}</td>
-                    <td>{safeMap(timesheet.notes, note => note.body).join(', ')}</td>
+                    <td>
+                    <StatusSelect
+                      timesheetId={timesheet.id}
+                      initialStatus={timesheet.status}
+                      onUpdate={handleStatusChange}
+                    />
+                    </td>
                   </tr>
                 )
             })

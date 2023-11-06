@@ -274,3 +274,28 @@ export const createSchedule = async (details) => {
     throw error; // Rethrow the error to be handled by the caller
   }
 };
+
+// Updates the status of a timesheet
+export const updateTimesheetStatus = async (timesheetId, newStatus) => {
+  const url = `${API_BASE_URL}/timesheets/${timesheetId}`;
+  const body = JSON.stringify({ status: newStatus });
+  
+  try {
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: body
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const updatedTimesheet = await response.json();
+    console.log('Updated Timesheet:', updatedTimesheet);
+    return updatedTimesheet;
+  } catch (error) {
+    console.error('Error updating timesheet:', error);
+    throw error; 
+  }
+};
