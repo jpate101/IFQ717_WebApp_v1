@@ -1,17 +1,18 @@
 import { calculateHours } from "./CalculateHours";
 import FormItemWrapper from "./FormItemWrapper";
 import {TimePicker } from 'antd';
+import { CalendarIcon } from "./RosterIcons";
 import dayjs from 'dayjs';
 
-function TimePickerComponent({ shiftDetails, setShiftDetails, hoursWorked, setHoursWorked }) {
+function TimePickerComponent({ 
+  shiftDetails = {startTime: '', finishTime: ''},
+  setShiftDetails, 
+  hoursWorked, 
+  setHoursWorked }) {
 
     return (
       <FormItemWrapper
-        icon={
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="tanda-icon">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        }
+        icon={CalendarIcon}
       >
         <TimePicker.RangePicker
          format="HH:mm"
