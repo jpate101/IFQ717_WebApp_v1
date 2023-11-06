@@ -9,7 +9,7 @@
 // UPDATE THIS SO THAT I CAN CALL GET COMPLETIONSTATUS for all or for individual 
 
 
-import { useState, useEffect } from 'react';
+/*import { useState, useEffect } from 'react';
 import { getAllSchedules } from './GetAllSchedules';
 
 function GetCompletionStatus() {
@@ -17,16 +17,7 @@ function GetCompletionStatus() {
 
   useEffect(() => {
     console.log('Fetching schedules to build the schedule state for progress indicators');
-    getAllSchedules()
-      .then(data => {
-        console.log('Schedules data received:', data);
-        if (data.length > 0) {
-          console.log('Setting schedule completion state to true');
-          setIsScheduleComplete(true);
-        } else {
-          console.log('Setting schedule completion state to false');
-          setIsScheduleComplete(false);
-        }
+    getSchedule(<id>)
       })
       .catch(error => console.error('Error fetching schedules:', error));
   }, []);
