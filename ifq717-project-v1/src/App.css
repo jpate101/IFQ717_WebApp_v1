@@ -291,3 +291,11 @@ textarea:focus {
   font-size: 0.75rem;
   text-align: center;
 }
+
+.timesheet-table {
+  border-collapse:collapse;
+  border-spacing: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.1);
+}
