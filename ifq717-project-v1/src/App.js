@@ -10,6 +10,7 @@ import Dashboard from './Dashboard/Dashboard';
 import EmployeeManagement from './EmployeeManagement';
 import ApproveTimesheets from './Timesheets/approveTimesheets';
 import Roster from './Roster/Roster';
+import TimesheetForUser from './Timesheets/TimesheetForUser';
 
 export default function App() {
   const [cookies, setCookie, removeCookie] = useCookies(['token']);
@@ -59,6 +60,10 @@ export default function App() {
             <Route
               path="/Timesheets/approveTimesheets"
               element={<ApproveTimesheets setIsLoggedIn={setIsLoggedIn}/>}
+            />
+            <Route
+              path="timesheet-for-user/:userId"
+              element={<TimesheetForUser setIsLoggedIn={setIsLoggedIn}/>}
             />
           </Routes>
         </Container>
