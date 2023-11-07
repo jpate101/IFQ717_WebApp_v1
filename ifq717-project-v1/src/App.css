@@ -307,3 +307,13 @@ textarea:focus {
 .username-hover:hover {
   color: #3498db; /* This is the color you want on hover */
 }
+
+.header-dropdown-toggle {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.header-dropdown-toggle:hover {
+font-weight: bold;
+}
