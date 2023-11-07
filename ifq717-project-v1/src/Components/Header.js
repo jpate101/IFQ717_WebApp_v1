@@ -1,4 +1,4 @@
-import { Container, Navbar, Nav, Dropdown } from "react-bootstrap";
+import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
 import { Link, useResolvedPath, useMatch, useLocation } from "react-router-dom";
 import '../style.css';
 import './../Resources/logo-navy.svg';
@@ -39,22 +39,17 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
               </HighlightLink>
               {isLoggedIn ? (
                 <>
-                <Dropdown as={Nav.Item}>
-                  <Dropdown.Toggle as={Nav.Link} id='dropdown-timesheets'>
-                    Timesheets
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu className = "header-dropdown-toggle">
-                    <Dropdown.Item as={Link} to='/Timesheets/exportTimesheets' className="header-dropdown-toggle text-primary">
-                      Export Timesheets
-                    </Dropdown.Item>
-                    <Dropdown.Item as={Link} to='/Timesheets/approveTimesheets' className="header-dropdown-toggle text-primary">
-                      Approve Timesheets
-                    </Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown>
                   <HighlightLink to="/onboard-users" as={Link}>
                     Onboard users
                   </HighlightLink>
+                  <NavDropdown title="Timesheets" id="timesheets-nav-dropdown" className="timesheets-nav-dropdown lg:-mr-44 md: -mr-24">
+                    <NavDropdown.Item href="/Timesheets/approveTimesheets" className="timesheets-nav-dropdown text-primary">
+                      Approve Timesheets
+                    </NavDropdown.Item>
+                    <NavDropdown.Item href="/Timesheets/exportTimesheets" className="timesheets-nav-dropdown text-primary">
+                      Export Timesheets
+                    </NavDropdown.Item>
+                  </NavDropdown>
                   <HighlightLink to="/roster" as={Link}>
                     Create schedules
                   </HighlightLink>
