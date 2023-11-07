@@ -227,7 +227,7 @@ const openModalToAddShift = (userId, date) => {
                     <div key={dayIndex} className="roster-table-font day bg-white border p-2 rounded m-1 overflow-hidden relative">
                       <div className="flex flex-col items-center justify-center">
                       <button
-                        className="cursor-pointer hover:text-tandaBlue mb-2"
+                        className="cursor-pointer hover:text-primary mb-2"
                         onClick={() => openModalToAddShift(row.userId, dayjs(selectedDate).add(dayIndex, 'day').format('YYYY-MM-DD'))}
                       >
                         <PlusCircleIcon />
