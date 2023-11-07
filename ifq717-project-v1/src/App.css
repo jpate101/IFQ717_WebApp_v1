@@ -308,12 +308,21 @@ textarea:focus {
   color: #3498db; /* This is the color you want on hover */
 }
 
-.header-dropdown-toggle {
-  background-color: transparent !important;
+
+.timesheets-nav-dropdown .dropdown-menu {
   border: none !important;
   box-shadow: none !important;
+  background-color: transparent !important;
 }
 
-.header-dropdown-toggle:hover {
-font-weight: bold;
+.timesheets-nav-dropdown .dropdown-item {
+  font-weight: bold;
+}
+
+.timesheets-nav-dropdown .dropdown-item:hover {
+  color:#1e40af !important;
+}
+
+.timesheets-nav-dropdown .dropdown-item:active {
+  background-color: transparent !important;
 }
