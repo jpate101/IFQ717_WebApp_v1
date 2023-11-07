@@ -42,7 +42,7 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
                   <HighlightLink to="/onboard-users" as={Link}>
                     Onboard users
                   </HighlightLink>
-                  <NavDropdown title="Timesheets" id="timesheets-nav-dropdown" className="timesheets-nav-dropdown">
+                  <NavDropdown title="Timesheets" id="timesheets-nav-dropdown" className="timesheets-nav-dropdown lg:-mr-44 md: -mr-24">
                     <NavDropdown.Item href="/Timesheets/approveTimesheets" className="timesheets-nav-dropdown text-primary">
                       Approve Timesheets
                     </NavDropdown.Item>
