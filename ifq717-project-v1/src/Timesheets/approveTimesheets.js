@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Table } from 'react-bootstrap';
+import { Table, Button } from 'react-bootstrap';
 import WeekPickerComponent from '../Components/Roster&Timesheets/WeekPicker';
-import { getUsers, getRosterForDate, updateTimesheetStatus } from '../API/Utilities';
-import { TimesheetForUser } from './TimesheetForUser';
+import { getUsers, getRosterForDate } from '../API/Utilities';
 import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import utc from 'dayjs/plugin/utc';
@@ -21,27 +20,6 @@ const getHeaders = () => {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${token}`
   };
-};
-
-
-
-const StatusSelect = ({ timesheetId, initialStatus, onUpdate }) => {
-  const handleChange = (event) => {
-    const newStatus = event.target.value;
-    onUpdate(timesheetId, newStatus);
-  };
-
-  return (
-    <select
-      className="form-select-sm small-text"
-      defaultValue={initialStatus}
-      onChange={handleChange}
-      aria-label="Timesheet Status Select"
-    >
-      <option value="pending">Pending</option>
-      <option value="approved">Approved</option>
-    </select>
-  );
 };
 
 // Helper function to format week range
@@ -88,48 +66,48 @@ const ApproveTimesheetsPage = () => {
   const navigate = useNavigate();
 
   // Handles the row click which opens the TimesheetForUser page
-  const handleRowClick = async (userId) => {
-    navigate(`/timesheet-for-user/${userId}`);
+  const handleRowClick = (userId) => {
+    navigate(`/timesheet-for-user/${userId}?start=${selectedDate.startOf('isoWeek').format('YYYY-MM-DD')}&end=${selectedDate.endOf('isoWeek').format('YYYY-MM-DD')}`);
   };
+  
 
-  const fetchTimesheets = async (date) => {
+  const fetchTimesheets = async (startDate) => {
     setLoading(true);
+    const endDate = startDate.endOf('isoWeek');
+    let allTimesheets = [];
     try {
       const headers = getHeaders();
-      const dateForTimesheet = date.format('YYYY-MM-DD');
-      const response = await fetch(`${API_BASE_URL}/timesheets/on/${dateForTimesheet}?show_costs=true&show_award_interpretation=true`, {
-        method: 'GET',
-        headers: headers
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      for (let date = dayjs(startDate); date.isSameOrBefore(endDate); date = date.add(1, 'day')) {
+        const dateForTimesheet = date.format('YYYY-MM-DD');
+        const response = await fetch(`${API_BASE_URL}/timesheets/on/${dateForTimesheet}?show_costs=true&show_award_interpretation=true`, {
+          method: 'GET',
+          headers: headers
+        });
+  
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+  
+        const dailyTimesheets = await response.json();
+        allTimesheets = allTimesheets.concat(dailyTimesheets);
       }
-
-      const data = await response.json();
-
-      data.forEach(timesheet => {
-        console.log(`Timesheet ID: ${timesheet.id}, Shifts:`, timesheet.shifts);
-      });
-
-      setTimesheets(data);
+  
+      setTimesheets(allTimesheets);
     } catch (error) {
-      console.error('Error fetching timesheets:', error);
+      console.error('Error fetching timesheets for week:', error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    // Effect to fetch timesheets based on selectedDate whenever it changes
     if (selectedDate.isValid()) {
       fetchTimesheets(selectedDate);
-      fetchedRosteredHours.current = false; // Reset to fetch rostered hours for the new week
+      fetchedRosteredHours.current = false; 
     }
   }, [selectedDate]); 
 
   const handleDateChange = (date) => {
-    // If the date is not null, we set the selected date to the start of the selected week
     if (date) {
       const newSelectedDate = dayjs(date).startOf('isoWeek');
       setSelectedDate(newSelectedDate);
@@ -158,17 +136,16 @@ const ApproveTimesheetsPage = () => {
     const toDate = selectedDate.endOf('isoWeek').format('YYYY-MM-DD');
   
     try {
-      // We'll use getRosterForDate for each day of the week, as the new API endpoint provides daily rosters
+     
       const rosterPromises = [];
       for (let date = dayjs(fromDate); date.isSameOrBefore(toDate); date = date.add(1, 'day')) {
         rosterPromises.push(getRosterForDate(date.format('YYYY-MM-DD')));
       }
       const rosters = await Promise.all(rosterPromises);
-    console.log('Rosters:', rosters); // Log all fetched rosters
+    console.log('Rosters:', rosters); 
 
-    // Assuming that rosters is an array of roster objects with a schedules array inside each
     const schedules = rosters.flatMap(roster => roster.schedules.flatMap(schedule => schedule.schedules));
-    console.log('Schedules:', schedules); // Log the combined schedules from all rosters
+    console.log('Schedules:', schedules); 
 
     const updatedTimesheets = timesheets.map(timesheet => {
       const userSchedules = schedules.filter(schedule => schedule.user_id === timesheet.user_id);
@@ -176,19 +153,19 @@ const ApproveTimesheetsPage = () => {
 
       const totalRosteredHours = userSchedules.reduce((acc, schedule) => {
         const rosteredHoursForSchedule = calculateRosteredHours(schedule);
-        console.log(`Schedule:`, schedule, 'Rostered Hours:', rosteredHoursForSchedule); // Log rostered hours for this schedule
+        console.log(`Schedule:`, schedule, 'Rostered Hours:', rosteredHoursForSchedule);
         return acc + rosteredHoursForSchedule;
       }, 0);
 
-      console.log(`Total Rostered Hours for UserID ${timesheet.user_id}:`, totalRosteredHours); // Log total rostered hours for this user
+      console.log(`Total Rostered Hours for UserID ${timesheet.user_id}:`, totalRosteredHours); 
 
       return {
         ...timesheet,
-        rosteredHours: totalRosteredHours.toFixed(2) // Format to 2 decimal places
+        rosteredHours: totalRosteredHours.toFixed(2) 
       };
     });
 
-    console.log('Updated Timesheets:', updatedTimesheets); // Log the final updated timesheets array
+    console.log('Updated Timesheets:', updatedTimesheets);
     setTimesheets(updatedTimesheets);
   } catch (error) {
     console.error('Error fetching rostered hours:', error);
@@ -216,7 +193,6 @@ const ApproveTimesheetsPage = () => {
     }
     return timesheet.shifts.reduce((acc, shift) => {
       if (!shift.start || !shift.finish) {
-        // If either start or finish time is null, skip this shift
         return acc;
       }
       const start = dayjs.unix(shift.start);
@@ -225,21 +201,6 @@ const ApproveTimesheetsPage = () => {
       const duration = finish.diff(start, 'minute') - breakLength;
       return acc + duration;
     }, 0) / 60;
-  };
-
-  const handleStatusChange = async (timesheetId, newStatus) => {
-    try {
-      await updateTimesheetStatus(timesheetId, newStatus);
-      // Update local state to reflect the change
-      setTimesheets((prevTimesheets) =>
-        prevTimesheets.map((ts) =>
-          ts.id === timesheetId ? { ...ts, status: newStatus } : ts
-        )
-      );
-    } catch (error) {
-      console.error('Failed to update timesheet status:', error);
-      // Handle error (e.g., show a message to the user)
-    }
   };
 
   const safeMap = (array, mapFn) => Array.isArray(array) ? array.map(mapFn) : [];
@@ -284,8 +245,8 @@ const ApproveTimesheetsPage = () => {
               
                 return (
                   <tr key={timesheet.id}>
-                    <td onClick={() =>handleRowClick(timesheet.user_id)}>
-                      <span style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}>
+                    <td onClick={() =>handleRowClick(timesheet.user_id, selectedDate.startOf('week').format('YYYY-MM-DD'), selectedDate.endOf('week').format('YYYY-MM-DD'))}>
+                      <span className="username-hover" style={{ cursor: 'pointer', color: 'primary' }}>
                         {(getUserById(timesheet.user_id) && getUserById(timesheet.user_id).name) || 'N/A'}
                       </span>
                     </td>
@@ -293,13 +254,7 @@ const ApproveTimesheetsPage = () => {
                     <td>{timesheet.rosteredHours || 'N/A'}</td>
                     <td>{`${workedHours.toFixed(2)}h`}</td>
                     <td>{`$${cost.toFixed(2)}`}</td>
-                    <td>
-                    <StatusSelect
-                      timesheetId={timesheet.id}
-                      initialStatus={timesheet.status}
-                      onUpdate={handleStatusChange}
-                    />
-                    </td>
+                    <td></td>
                   </tr>
                 )
             })
