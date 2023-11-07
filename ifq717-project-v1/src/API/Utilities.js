@@ -299,3 +299,26 @@ export const updateTimesheetStatus = async (timesheetId, newStatus) => {
     throw error; 
   }
 };
+
+//Updates the shift status
+export const approveShift = async (shiftId) => {
+  const url = `${API_BASE_URL}/shifts/${shiftId}`;
+  const headers = getHeaders();
+  
+  try {
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify({ status: 'APPROVED' }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error approving shift:', error);
+    throw error;
+  }
+};

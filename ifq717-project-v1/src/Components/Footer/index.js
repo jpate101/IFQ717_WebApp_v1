@@ -9,7 +9,7 @@ const Footer = () => {
         <div className="footer-grid">
             <div className="footer-column">
                 <div>
-                    <p>&copy; 2023, &lt;Tanda Launchpad&gt; </p>
+                    <p>&copy; 2023, Tanda Launchpad </p>
                     <p>2 George St, < br/>
                     Brisbane QLD 4000</p>
                 </div>
