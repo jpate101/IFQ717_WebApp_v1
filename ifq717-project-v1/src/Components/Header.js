@@ -40,7 +40,7 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
               {isLoggedIn ? (
                 <>
                 <Dropdown as={Nav.Item}>
-                  <Dropdown.Toggle as={Nav.Link} id='dropdown-timesheets'>
+                  <Dropdown.Toggle as={Nav.Link} id=''>
                     Timesheets
                   </Dropdown.Toggle>
                   <Dropdown.Menu className = "header-dropdown-toggle">
