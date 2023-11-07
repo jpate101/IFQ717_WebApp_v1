@@ -59,21 +59,20 @@
     position: relative;
   }
 
-  /*.login-enticer-heading {
-    text-align: center;
-    background-color: var(--background-color);
-    color: var(--secondary-color);
-    font-weight: bold;
-    font-size: 1rem;
-    padding: 0.5rem;
-  }*/
+  .login-enticer-heading {
+    text-align: center !important;
+    color: var(--secondary-color) !important;
+    margin-bottom: 1rem;
+  }
 
+  
   .login-enticer-card {
     background-color: var(--background-color);
     width: 75%;
     padding: 1rem;
     border-radius: 5px;
     margin: 2rem auto;
+    margin-top: 15%;
   }
 
   @media (min-width: 992px) {
@@ -92,8 +91,8 @@
     opacity: 0.9;
 }
 
-.login-enticer-fill-primary {
-    fill: var(--primary-color);
+.login-enticer-fill-primary  {
+    fill: --var(primary-color) !important;
 }
 
 .lighter-font {

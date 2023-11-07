@@ -117,6 +117,14 @@
   border-color: #19b3d9 !important;
 }
 
+.ant-picker input {
+  height: 12px !important;
+}
+
+.ant-modal-content {
+  box-shadow: none !important;
+  justify-content: center !important;
+}
 textarea:focus {
   outline-color: #19b3d9;
 }
@@ -140,6 +148,9 @@ textarea:focus {
   box-shadow: 0 0 0 .5px rgb(25,179,217) !important;
 }
 
+.calendar-icon {
+  margin-right: -3px;
+}
 
 .border-tandaBlue {
   --tw-border-opacity: 1;
@@ -274,4 +285,21 @@ textarea:focus {
 .active\:bg-blue-700:active {
   --tw-bg-opacity: 1;
   background-color: rgb(29 78 216 / var(--tw-bg-opacity));
+}
+
+.roster-table-font {
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.timesheet-table {
+  border-collapse:collapse;
+  border-spacing: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.1);
+}
+
+.small-text {
+  font-size: 0.75rem;
 }
