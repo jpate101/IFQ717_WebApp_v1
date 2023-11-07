@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Table } from 'react-bootstrap';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
+import { getUserInfo, approveShift } from '../API/Utilities';
+import WeekPickerComponent from '../Components/Roster&Timesheets/WeekPicker';
+import dayjs from 'dayjs';
 
 const API_BASE_URL = 'https://my.tanda.co/api/v2';
 
@@ -13,89 +16,178 @@ const getHeaders = () => {
   };
 };
 
-const TimesheetForUser = () => {
-  let { userId } = useParams();
-  const [timesheet, setTimesheet] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
 
-  console.log('TimesheetForUser: userId', userId); // Log the userId on each render
+const StatusSelect = ({ shiftId, initialStatus, onUpdate }) => {
+  const [status, setStatus] = useState(initialStatus);
 
-  const getCurrentTimesheetForUser = async (userId) => {
-    setIsLoading(true);
-    console.log('getCurrentTimesheetForUser: Fetching for userId', userId); // Log the userId when fetching
-    try {
-      const headers = getHeaders();
-      const url = `${API_BASE_URL}/timesheets/for/${userId}/current?show_costs=true&show_award_interpretation=true`;
-      console.log('getCurrentTimesheetForUser: Fetch URL', url); // Log the URL being requested
-      const response = await fetch(url, { method: 'GET', headers });
-
-      console.log('getCurrentTimesheetForUser: Response status', response.status); // Log the response status
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log('getCurrentTimesheetForUser: Fetched data', data); // Log the fetched data
-      setTimesheet(data); // Set the timesheet state with the fetched data
-    } catch (error) {
-      console.error('getCurrentTimesheetForUser: Error fetching timesheet', error); // Log any errors
-      setError(error);
-    } finally {
-      setIsLoading(false); // Ensure loading is set to false after fetch operation is complete
-    }
-  };
+  console.log(`Rendering StatusSelect for shiftId ${shiftId} with initialStatus ${initialStatus}`);
 
   useEffect(() => {
-    if (userId) {
-      getCurrentTimesheetForUser(userId);
-    }
-  }, [userId]);
+    console.log(`StatusSelect useEffect called. Updating status to ${initialStatus} for shiftId ${shiftId}`);
+    setStatus(initialStatus); 
+  }, [initialStatus]);
 
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
-
-  if (error) {
-    console.error('TimesheetForUser: Error', error); // Log the error if one occurred
-    return <p>Error fetching timesheet: {error.toString()}</p>;
-  }
-
-  console.log('TimesheetForUser: Timesheet state before rendering', timesheet); // Log the timesheet state before rendering
-
-  if (!timesheet || !Array.isArray(timesheet.shifts)) {
-    console.error('TimesheetForUser: Invalid timesheet data', timesheet); // Log if the timesheet data is invalid
-    return <p>No timesheet data available or timesheet.shifts is not an array.</p>;
-  }
-
-  const formatDate = (timestamp) => {
-    return new Date(timestamp * 1000).toLocaleString();
+  const handleChange = async (event) => {
+    const newStatus = event.target.value;
+    setStatus(newStatus); 
+    await onUpdate(shiftId, newStatus);
   };
 
   return (
-    <Table hover>
-      <thead>
-        <tr>
-          <th>User Name</th>
-          <th>Shift Date</th>
-          <th>Start</th>
-          <th>Finish</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        {timesheet.shifts.map((shift) => (
-          <tr key={shift.id}>
-            <td>{timesheet.user_id}</td>
-            <td>{new Date(shift.date).toLocaleDateString()}</td>
-            <td>{formatDate(shift.start)}</td>
-            <td>{formatDate(shift.finish)}</td>
-            <td>{shift.status}</td>
+    <select
+      className="form-select-sm small-text"
+      value={status}
+      onChange={handleChange}
+      aria-label="Timesheet Status Select"
+    >
+      <option value="pending">Pending</option>
+      <option value="approved">Approved</option>
+    </select>
+  );
+};
+
+const TimesheetForUser = () => {
+  let { userId } = useParams();
+  let location = useLocation();
+  const [timesheet, setTimesheet] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [userName, setUserName] = useState('');
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  const useQuery = () => {
+    return new URLSearchParams(location.search);
+  }
+
+  let query = useQuery();
+  let startOfWeek = query.get('start');
+  let endOfWeek = query.get('end');
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      const headers = getHeaders();
+      
+      const userInfoResponse = await getUserInfo(userId);
+      setUserName(userInfoResponse.name); 
+
+      const startDate = dayjs(startOfWeek);
+      const endDate = dayjs(endOfWeek);
+      let allShifts = [];
+  
+      for (let date = startDate; date.isSameOrBefore(endDate); date = date.add(1, 'day')) {
+        const dateString = date.format('YYYY-MM-DD');
+        const url = `${API_BASE_URL}/timesheets/for/${userId}/on/${dateString}?show_costs=true&show_award_interpretation=true`;
+  
+        try {
+          const response = await fetch(url, { method: 'GET', headers });
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const data = await response.json();
+          allShifts = allShifts.concat(data.shifts);
+        } catch (error) {
+          setError(error);
+        }
+      }
+  
+      // Set the combined shifts to state
+      setTimesheet({ ...timesheet, shifts: allShifts });
+      setIsLoading(false);
+    };
+  
+    if (userId && startOfWeek && endOfWeek) {
+      fetchData();
+    }
+  }, [userId, startOfWeek, endOfWeek]);
+
+  useEffect(() => {
+    if (startOfWeek) {
+      setSelectedDate(new Date(startOfWeek));
+    }
+  }, [startOfWeek]);
+  
+
+  const formatDate = (timestamp) => {
+    // If the timestamp is 0 or the date matches the Unix epoch start, return 'pending'
+    if (timestamp === 0 || new Date(timestamp * 1000).toISOString() === '1970-01-01T00:00:00.000Z') {
+      return 'pending';
+    }
+    // Format the time to show hours and minutes only
+    return new Date(timestamp * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const handleStatusChange = async (shiftId, newStatus) => {
+    try {
+      // Only call approveShift if the new status is 'approved'
+      if (newStatus === 'approved') {
+        const updatedShift = await approveShift(shiftId);
+        console.log('Shift status updated:', updatedShift);
+      }
+
+      setTimesheet((currentTimesheet) => {
+        // Find the index of the shift that was updated
+        const shiftIndex = currentTimesheet.shifts.findIndex(s => s.id === shiftId);
+        if (shiftIndex === -1) return currentTimesheet; // If not found, return the current timesheet without changes
+        
+        // Create a new copy of shifts and update the status of the appropriate shift
+        const updatedShifts = [...currentTimesheet.shifts];
+        updatedShifts[shiftIndex] = { ...updatedShifts[shiftIndex], status: newStatus.toUpperCase() };
+  
+        // Return a new timesheet object with the updated shifts array
+        return { ...currentTimesheet, shifts: updatedShifts };
+      });
+  
+    } catch (error) {
+      console.error('Failed to update shift status:', error);
+      // Handle error (e.g., show a message to the user)
+    }
+  };
+
+  return (
+    <>
+      <WeekPickerComponent
+        selectedDate={selectedDate}
+        onDateChange={setSelectedDate}
+      />
+      <Table hover>
+        <thead>
+          <tr>
+            <th>User Name</th>
+            <th>Shift Date</th>
+            <th>Start</th>
+            <th>Finish</th>
+            <th>Shift Status</th>
           </tr>
-        ))}
-      </tbody>
-    </Table>
+        </thead>
+        <tbody>
+        {timesheet && timesheet.shifts ? (
+          timesheet.shifts.map((shift) => {
+            console.log(`Shift data:`, shift);
+            return (
+              <tr key={shift.id}>
+                <td>{userName}</td>
+                <td>{new Date(shift.date).toLocaleDateString()}</td>
+                <td>{formatDate(shift.start)}</td>
+                <td>{formatDate(shift.finish)}</td>
+                <td>
+                  <StatusSelect
+                    shiftId={shift.id}
+                    initialStatus={shift.status.toLowerCase()}
+                    onUpdate={handleStatusChange}
+                  />
+                </td>
+              </tr>
+              );
+            })
+          ) : (
+            <tr>
+              <td colSpan="5">Loading timesheet data...</td>
+            </tr>
+          )}
+        </tbody>
+      </Table>
+    </>
   );
 };
 
