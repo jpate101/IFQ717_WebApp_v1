@@ -1,4 +1,4 @@
-import { Container, Navbar, Nav } from "react-bootstrap";
+import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
 import { Link, useResolvedPath, useMatch, useLocation } from "react-router-dom";
 import '../style.css';
 import './../Resources/logo-navy.svg';
@@ -42,10 +42,15 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
                   <HighlightLink to="/onboard-users" as={Link}>
                     Onboard users
                   </HighlightLink>
-                  <HighlightLink to ="/Timesheets/approveTimesheets" as={Link}>
-                    Approve Timesheets
-                  </HighlightLink>
-``                  <HighlightLink to="/roster" as={Link}>
+                  <NavDropdown title="Timesheets" id="timesheets-nav-dropdown" className="timesheets-nav-dropdown lg:-mr-44 md: -mr-24">
+                    <NavDropdown.Item href="/Timesheets/approveTimesheets" className="timesheets-nav-dropdown text-primary">
+                      Approve Timesheets
+                    </NavDropdown.Item>
+                    <NavDropdown.Item href="/Timesheets/exportTimesheets" className="timesheets-nav-dropdown text-primary">
+                      Export Timesheets
+                    </NavDropdown.Item>
+                  </NavDropdown>
+                  <HighlightLink to="/roster" as={Link}>
                     Create schedules
                   </HighlightLink>
                   <HighlightLink to="root/EmployeeManagement/" as={Link}>

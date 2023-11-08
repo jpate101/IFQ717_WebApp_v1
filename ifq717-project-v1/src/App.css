@@ -114,7 +114,7 @@
 }
 
 .ant-picker-focused.ant-picker {
-  border-color: #19b3d9 !important;
+  border-color: #3498db !important;
 }
 
 .ant-picker input {
@@ -140,7 +140,7 @@ textarea:focus {
 }
 
 .ant-picker-dropdown .ant-picker-week-panel-row-selected td.ant-picker-cell:before {
-  background: #19b3d9;
+  background: #3498db;
 }
 
 .ant-picker-focused.ant-picker {
@@ -302,4 +302,26 @@ textarea:focus {
 
 .small-text {
   font-size: 0.75rem;
+}
+
+.username-hover:hover {
+  color: #3498db; /* This is the color you want on hover */
+}
+
+.timesheets-nav-dropdown .dropdown-menu {
+  border: none !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+}
+
+.timesheets-nav-dropdown .dropdown-item {
+  font-weight: bold;
+}
+
+.timesheets-nav-dropdown .dropdown-item:hover {
+  color:#1e40af !important;
+}
+
+.timesheets-nav-dropdown .dropdown-item:active {
+  background-color: transparent !important;
 }
