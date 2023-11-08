@@ -10,7 +10,7 @@ function EmployeeManagement() {
     const [showTeamsForm, setShowTeamsForm] = useState(false);
     const [showEmployeeForm, setShowEmployeeForm] = useState(false);
     const [showUpadateUsers, setShowUpadateUsers] = useState(false);
-    const [showUpadateLocations, setShowUpadateLocations] = useState(false);
+    const [showUpdateLocations, setShowUpdateLocations] = useState(false);
     const [showUpadateTeams, setShowUpadateTeams] = useState(false);
     const [showOnboardNewUser, setShowOnboardNewUser] = useState(false);
     const [showResult, setShowResult] = useState("");
@@ -171,7 +171,7 @@ function EmployeeManagement() {
         setShowTeamsForm(false);
         setShowEmployeeForm(false);
         setShowUpadateUsers(false);
-        setShowUpadateLocations(false);
+        setShowUpdateLocations(false);
         setShowUpadateTeams(false);
         setShowOnboardNewUser(false);
         setShowResult('');
@@ -182,7 +182,7 @@ function EmployeeManagement() {
         setShowLocationForm(false);
         setShowTeamsForm(true);
         setShowUpadateUsers(false);
-        setShowUpadateLocations(false);
+        setShowUpdateLocations(false);
         setShowUpadateTeams(false);
         setShowOnboardNewUser(false);
         setShowResult('');
@@ -193,14 +193,14 @@ function EmployeeManagement() {
         setShowTeamsForm(false);
         setShowEmployeeForm(true);
         setShowUpadateUsers(false);
-        setShowUpadateLocations(false);
+        setShowUpdateLocations(false);
         setShowUpadateTeams(false);
         setShowOnboardNewUser(false);
         setShowResult('');
     };
     const handleUpadateUsersClick = () => {
         setShowUpadateUsers(true);
-        setShowUpadateLocations(false);
+        setShowUpdateLocations(false);
         setShowUpadateTeams(false);
         setShowLocationForm(false);
         setShowTeamsForm(false);
@@ -210,7 +210,7 @@ function EmployeeManagement() {
     }
     const handleUpadateLocationsClick = () => {
         setShowUpadateUsers(false);
-        setShowUpadateLocations(true);
+        setShowUpdateLocations(true);
         setShowUpadateTeams(false);
         setShowLocationForm(false);
         setShowTeamsForm(false);
@@ -220,7 +220,7 @@ function EmployeeManagement() {
     }
     const handleUpadateTeamsClick = () => {
         setShowUpadateUsers(false);
-        setShowUpadateLocations(false);
+        setShowUpdateLocations(false);
         setShowUpadateTeams(true);
         setShowLocationForm(false);
         setShowTeamsForm(false);
@@ -230,7 +230,7 @@ function EmployeeManagement() {
     }
     const handleOnbooardNewUserClick = () => {
         setShowUpadateUsers(false);
-        setShowUpadateLocations(false);
+        setShowUpdateLocations(false);
         setShowUpadateTeams(false);
         setShowLocationForm(false);
         setShowTeamsForm(false);
@@ -1107,7 +1107,7 @@ function EmployeeManagement() {
                             <button type="submit" style={{ margin: '10px' }} className="EM-button">Create Employee</button>
                             {showResult && <p>{showResult}</p>}
                         </form>
-                    ) : showUpadateLocations ? (
+                    ) : showUpdateLocations ? (
                         <div className="flex-container">
                             <form
                                 onSubmit={handleUpdateLocationSubmit}
