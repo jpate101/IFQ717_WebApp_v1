@@ -248,7 +248,7 @@ function EmployeeManagement() {
         latitude: '',
         longitude: '',
         address: '',
-        public_holiday_regions: [''],
+        public_holiday_regions: ['au'],
         specific_holiday_dates: [
             { date: '' },
             { date: '', from: '', to: '' },
@@ -396,7 +396,7 @@ function EmployeeManagement() {
             latitude: parseFloat(formDataLocation.latitude),
             longitude: parseFloat(formDataLocation.longitude),
             address: formDataLocation.address,
-            public_holiday_regions: ['au'],
+            public_holiday_regions: formDataLocation.public_holiday_regions,
             specific_holiday_dates: [
                 {
                     date: '',
@@ -409,6 +409,7 @@ function EmployeeManagement() {
             ],
         };
         const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
+        console.log(requestBody);
         console.log(apiKey);
 
         // Send a POST request to your API endpoint
@@ -556,7 +557,7 @@ function EmployeeManagement() {
             latitude: parseFloat(formDataLocation.latitude),
             longitude: parseFloat(formDataLocation.longitude),
             address: formDataLocation.address,
-            public_holiday_regions: ['au'],
+            public_holiday_regions: formDataLocation.public_holiday_regions,
             specific_holiday_dates: [
                 {
                     date: '2016-03-14',
@@ -783,7 +784,7 @@ function EmployeeManagement() {
 
         }
         console.log(updatedData.employment_start_date);
-        
+
         if (updatedData.name === '') {
             delete updatedData.name;
         }
@@ -794,10 +795,10 @@ function EmployeeManagement() {
             delete updatedData.enable_login;
         }
         if (updatedData.date_of_birth === "") {
-            delete updatedData.date_of_birth ;
+            delete updatedData.date_of_birth;
         }
         if (updatedData.employment_start_date === '') {
-            delete updatedData.employment_start_date ;
+            delete updatedData.employment_start_date;
         }
 
         for (let field in updatedData) {
@@ -898,18 +899,18 @@ function EmployeeManagement() {
     function handleOnboardExistingUserSubmit(e) {
         console.log('Onboard Existing User button pressed');
         e.preventDefault();
-    
+
         if (!formDataOnboarding.Id) {
             setShowResult("Please fill in the User ID field.");
             return;
         }
-    
+
         const userId = formDataOnboarding.Id;
         const apiKey = document.cookie.replace(
             /(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/,
             "$1"
         );
-    
+
         fetch(`https://my.tanda.co/api/v2/users/${userId}/onboard`, {
             method: 'POST',
             headers: {
@@ -961,7 +962,7 @@ function EmployeeManagement() {
                             <a onClick={handleUpadateTeamsClick}>Update Teams</a>
                         </li>
                         <li>
-                            <a onClick={handleOnbooardNewUserClick}>Onboard users</a>
+                            <a onClick={handleOnbooardNewUserClick}>Send Onboard User Invites</a>
                         </li>
                     </ul>
                 </div>
@@ -1019,6 +1020,10 @@ function EmployeeManagement() {
                                     onChange={e => setFormDataLocation({ ...formDataLocation, public_holiday_regions: [e.target.value] })}
                                 >
                                     <option value="au">Australia</option>
+                                    <option value="us">United States</option>
+                                    <option value="ca">Canada</option>
+                                    <option value="uk">United Kingdom</option>
+                                    <option value="fr">France</option>
                                     {/* Add more options for other regions if needed */}
                                 </select>
                             </div>
@@ -1182,6 +1187,11 @@ function EmployeeManagement() {
                                         }
                                     >
                                         <option value="au">Australia</option>
+                                        <option value="us">United States</option>
+                                        <option value="ca">Canada</option>
+                                        <option value="uk">United Kingdom</option>
+                                        <option value="fr">France</option>
+                                        {/* Add more options for other regions if needed */}
                                     </select>
                                 </div>
                                 <div>
@@ -1254,7 +1264,7 @@ function EmployeeManagement() {
                                     />
                                 </div>
                                 <button onClick={handleUpdateQualifications} type="submit" style={{ margin: '10px' }} className="EM-button">Update Team Qualifications</button>
-                                {/* <div >
+                                <div >
                                     <input
                                         type="text"
                                         placeholder="User IDs (comma-separated)"
@@ -1262,7 +1272,7 @@ function EmployeeManagement() {
                                         value={formDataTeams.user_ids.join(',')} // Join the array for display
                                         onChange={(e) => setFormDataTeams({ ...formDataTeams, user_ids: e.target.value.split(',') })}
                                     />
-                                </div>*/}
+                                </div>
                                 <div>
                                     <input
                                         type="text"
@@ -1401,7 +1411,7 @@ function EmployeeManagement() {
                                         onChange={e => setFormDataEmployee({ ...formDataEmployee, email: e.target.value })}
                                     />
                                 </div>
-                                
+
 
                                 <div>
                                     <h4 className="secondary">Date of Birth:</h4>
@@ -1425,7 +1435,7 @@ function EmployeeManagement() {
                                     />
                                 </div>
 
-                        
+
 
                                 <div>
                                     <input
