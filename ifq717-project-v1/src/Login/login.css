@@ -10,11 +10,11 @@
     width: 75%;
     align-items: top;
     margin-top: 2rem;
-  }
+}
 
-  .login-button:focus {
+.login-button:focus {
     outline: none !important;
-  }
+}
 
 .login-button {
   background-color: var(--button-green) !important; 
@@ -38,6 +38,7 @@
 
 .login-fields {
     background-color: var(--background-color);
+    margin-left: 0px;
 }
 
 .login-alert {

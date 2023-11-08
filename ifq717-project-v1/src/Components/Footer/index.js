@@ -27,7 +27,7 @@ const Footer = () => {
         <div className="footer-column">
           <div>
             <div className="chat-icon-container">
-            <p>Need support? < br/>
+            <p>Work in progress< br/>
             <img src="/Chat.svg" alt="Chat Icon" className="chat-icon" />
             </p>
             </div>
