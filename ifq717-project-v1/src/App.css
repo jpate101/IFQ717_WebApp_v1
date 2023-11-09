@@ -353,3 +353,21 @@ textarea:focus {
   border-color: #3498db !important;
   box-shadow: 0 0 0 0.2px rgb(25,179,217) !important;
 }
+
+.form-check-input:checked {
+  background-color:#3498db !important;
+}
+
+.download-icon {
+  fill: white !important;
+  color:white !important;
+}
+
+.export-button {
+  background-color: #3498db !important; 
+  border-color: #3498db !important;
+}
+
+.selectAll-button:hover {
+  background-color: white !important;
+}
