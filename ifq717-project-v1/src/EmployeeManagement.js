@@ -708,9 +708,23 @@ function EmployeeManagement() {
         }
 
         const teamUpdateRequestUsersManagers = {
-            //user_ids: formDataTeams.user_ids.map(Number),
+            user_ids: formDataTeams.user_ids.map(Number),
             manager_ids: formDataTeams.manager_ids.map(Number),
         };
+
+        //delete teamUpdateRequestUsersManagers.user_ids;
+        //console.log(teamUpdateRequestUsersManagers.user_ids[0]);
+        if (teamUpdateRequestUsersManagers.user_ids[0] == 0 ) {
+            delete teamUpdateRequestUsersManagers.user_ids;
+        }
+        
+        if (teamUpdateRequestUsersManagers.manager_ids[0] == 0) {
+            delete teamUpdateRequestUsersManagers.manager_ids;
+        }
+
+
+        
+        //console.log(teamUpdateRequestUsersManagers.user_ids[0]);
         console.log(teamUpdateRequestUsersManagers);
 
         const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
@@ -1284,6 +1298,7 @@ function EmployeeManagement() {
                                         value={formDataTeams.user_ids.join(',')} // Join the array for display
                                         onChange={(e) => setFormDataTeams({ ...formDataTeams, user_ids: e.target.value.split(',') })}
                                     />
+                                    <p>user IDs current dont work</p>
                                 </div>
                                 <div>
                                     <input
@@ -1374,6 +1389,17 @@ function EmployeeManagement() {
                                         value={formDataEmployee.Id}
                                         onChange={e => setFormDataEmployee({ ...formDataEmployee, Id: e.target.value })}
                                     />
+                                    <select
+                                        value={formDataOnboarding.Id}
+                                        onChange={(e) => setFormDataOnboarding({ ...formDataOnboarding, Id: e.target.value })}
+                                    >
+                                        <option value="">Select User ID</option>
+                                        {filteredUsers.map((user) => (
+                                            <option key={user.id} value={user.id}>
+                                                {user.name} - {user.email}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
                                 <h3 className="secondary">Set User/Employee Details:</h3>
                                 <div>
@@ -1587,6 +1613,17 @@ function EmployeeManagement() {
                                         value={formDataOnboarding.Id}
                                         onChange={e => setFormDataOnboarding({ ...formDataOnboarding, Id: e.target.value })}
                                     />
+                                    <select
+                                        value={formDataOnboarding.Id}
+                                        onChange={(e) => setFormDataOnboarding({ ...formDataOnboarding, Id: e.target.value })}
+                                    >
+                                        <option value="">Select User ID</option>
+                                        {filteredUsers.map((user) => (
+                                            <option key={user.id} value={user.id}>
+                                                {user.name} - {user.email}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
 
 
