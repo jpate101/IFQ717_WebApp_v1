@@ -23,6 +23,7 @@ function WeekPickerComponent({ selectedDate, onDateChange }) {
               showToday={false}
               format="DD MMM"
               locale={locale}
+              size="large"
           />
           <Button onClick={handleTodayButtonClick}
           className="border p-2 rounded background text-white h-10"
