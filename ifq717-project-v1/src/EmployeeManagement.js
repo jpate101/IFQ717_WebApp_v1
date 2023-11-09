@@ -1228,28 +1228,7 @@ function EmployeeManagement() {
                                     Update Location
                                 </button>
                                 {showResult && <p>{showResult}</p>}
-                            </form>
-
-                            <div className="location-list">
-                                <input
-                                    type="text"
-                                    placeholder="Search Locations"
-                                    style={{ margin: '5px' }}
-                                    value={searchLocation}
-                                    onChange={(e) => setSearchLocation(e.target.value)}
-                                />
-                                {searchLocation && (
-                                    <ul>
-                                        {filteredLocations.map((location) => (
-                                            <li key={location.id} className='li-EM '>
-                                                <p>ID: {location.id}</p>
-                                                <p>Name: {location.name}</p>
-                                                <p>Short Name: {location.short_name}</p>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </div>
+                            </form>                        
                         </div>
                     ) : showUpdateTeams ? (
                         <div className="flex-container">
@@ -1266,6 +1245,17 @@ function EmployeeManagement() {
                                         value={formDataTeams.Id}
                                         onChange={e => setFormDataTeams({ ...formDataTeams, Id: e.target.value })}
                                     />
+                                    <select
+                                        value={formDataTeams.Id}
+                                        onChange={(e) => setFormDataOnboarding({ ...formDataTeams, Id: e.target.value })}
+                                    >
+                                        <option value="">Select Team ID</option>
+                                        {filteredTeams.map((Teams) => (
+                                            <option key={Teams.Id} value={Teams.Id}>
+                                                {Teams.name} - {Teams.Id}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
 
 
@@ -1314,45 +1304,6 @@ function EmployeeManagement() {
                                 <button onClick={handleUpdateUsersAndManagers} type="submit" style={{ margin: '10px' }} className="EM-button">Update Team Users and managers</button>
                                 {showResult && <p>{showResult}</p>}
                             </form>
-                            <div className="Teams-list">
-                                <input
-                                    type="text"
-                                    placeholder="Search Teams"
-                                    style={{ margin: '5px' }}
-                                    value={searchTeams}
-                                    onChange={(e) => setSearchTeams(e.target.value)}
-                                />
-                                {searchTeams && (
-                                    <ul>
-                                        {filteredTeams.map((Teams) => (
-                                            <li key={Teams.id} className='li-EM '>
-                                                <p>ID: {Teams.id}</p>
-                                                <p>Name: {Teams.name}</p>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </div>
-                            <div className="location-list">
-                                <input
-                                    type="text"
-                                    placeholder="Search Locations"
-                                    style={{ margin: '5px' }}
-                                    value={searchLocation}
-                                    onChange={(e) => setSearchLocation(e.target.value)}
-                                />
-                                {searchLocation && (
-                                    <ul>
-                                        {filteredLocations.map((location) => (
-                                            <li key={location.id} className='li-EM '>
-                                                <p>ID: {location.id}</p>
-                                                <p>Name: {location.name}</p>
-                                                <p>Short Name: {location.short_name}</p>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </div>
                             <div className="Users-list">
                                 <input
                                     type="text"
@@ -1525,25 +1476,6 @@ function EmployeeManagement() {
                                 <button type="submit" style={{ margin: '10px' }} className="EM-button">Update Users Submit</button>
                                 {showResult && <p>{showResult}</p>}
                             </form>
-                            <div className="Users-list">
-                                <input
-                                    type="text"
-                                    style={{ margin: '5px' }}
-                                    placeholder="Search Users"
-                                    value={searchUsers}
-                                    onChange={(e) => setSearchUsers(e.target.value)}
-                                />
-                                {searchUsers && (
-                                    <ul>
-                                        {filteredUsers.map((Users) => (
-                                            <li key={Users.id} className='li-EM '>
-                                                <p>ID: {Users.id}</p>
-                                                <p>Name: {Users.name}</p>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </div>
                         </div>
 
                     ) : showOnboardNewUser ? (
@@ -1633,25 +1565,6 @@ function EmployeeManagement() {
 
                                 {showResult && <p>{showResult}</p>}
                             </form>
-                            <div className="Users-list">
-                                <input
-                                    type="text"
-                                    style={{ margin: '5px' }}
-                                    placeholder="Search Users"
-                                    value={searchUsers}
-                                    onChange={(e) => setSearchUsers(e.target.value)}
-                                />
-                                {searchUsers && (
-                                    <ul>
-                                        {filteredUsers.map((Users) => (
-                                            <li key={Users.id} className='li-EM '>
-                                                <p>ID: {Users.id}</p>
-                                                <p>Name: {Users.name}</p>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </div>
                         </div>
                     ) : (
                         <div style={{ paddingLeft: '20px' }}>
