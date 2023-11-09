@@ -3,6 +3,7 @@ import { Table, Row, Col, Button, FormCheck} from 'react-bootstrap';
 import { Input } from 'antd';
 import { getUsers } from '../API/Utilities';
 import WeekPickerComponent from '../Components/Roster&Timesheets/WeekPicker';
+import {ReactComponent as DownloadIcon } from '../svg/download.svg';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en-gb'; 
 
@@ -34,6 +35,7 @@ const ExportTimesheets = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedForExport, setSelectedForExport] = useState(new Set());
+    const [isAllSelected, setIsAllSelected] = useState(false);
 
     const fetchTimesheets = async (startDate) => {
     setLoading(true);
@@ -116,12 +118,13 @@ const ExportTimesheets = () => {
     };
 
     const filteredTimesheets = timesheets.flatMap((timesheet) =>
-        timesheet.shifts.map((shift) => {
-            const user = getUserById(timesheet.user_id);
-            const shiftDate = dayjs(shift.date).format('DD/MM/YYYY');
-            return { ...shift, user_name: user ? user.name : 'N/A', shiftDate };
-        })
-    ).filter(shift => shift.user_name.toLowerCase().includes(searchTerm.toLowerCase()));
+  timesheet.shifts.map((shift) => {
+    const user = getUserById(timesheet.user_id);
+    const shiftDate = dayjs(shift.date).format('DD/MM/YYYY');
+    const statusCapitalized = shift.status === 'APPROVED' ? 'Approved' : shift.status;
+    return { ...shift, user_name: user ? user.name : 'N/A', shiftDate, status: statusCapitalized };
+  })
+).filter(shift => shift.user_name.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const toggleTimesheetSelection = (timesheetId) => {
         console.log(`Toggling selection for timesheet ID: ${timesheetId}`);
@@ -138,7 +141,18 @@ const ExportTimesheets = () => {
             return newSelection;
         });
     };
-    
+
+    const handleSelectAllChange = (e) => {
+        setIsAllSelected(e.target.checked);
+        if (e.target.checked) {
+            // Code to select all items
+            const allIds = new Set(filteredTimesheets.map(ts => ts.id));
+            setSelectedForExport(allIds);
+        } else {
+            // Code to deselect all items
+            setSelectedForExport(new Set());
+        }
+        };
     const exportSelectedTimesheets = async () => {
         console.log('Exporting selected timesheets:', Array.from(selectedForExport));
         if (selectedForExport.size === 0) {
@@ -173,6 +187,11 @@ const ExportTimesheets = () => {
         }
     };
 
+    const selectAllTimesheets = () => {
+        const allIds = new Set(filteredTimesheets.map(ts => ts.id));
+        setSelectedForExport(allIds);
+    };
+
     return (
         <div>
             <Row className="align-items-center mb-3">
@@ -193,9 +212,62 @@ const ExportTimesheets = () => {
                 />
                 </Col>
             </Row>
-            <Button onClick={exportSelectedTimesheets} disabled={selectedForExport.size === 0}>
-                Export Selected Timesheets
-            </Button>
+            <Row>
+                <Col className="d-flex justify-content-left">
+                    <Button
+                        className="selectAll-button"
+                        style={{
+                            display: 'inline-flex',
+                            paddingBottom: '0',
+                            marginBottom: '10px',
+                            borderColor: '#3498db'
+                        }}
+                    >
+                        <label
+                            htmlFor="custom-switch"
+                            style={{ 
+                                color: '#3498db', 
+                                fontWeight: 'bold',
+                                marginTop: '3px',
+                                marginRight: '5px'
+                                }}>
+                            Select All
+                        </label>
+                        <FormCheck 
+                            type="switch"
+                            id="custom-switch"
+                            onChange={handleSelectAllChange}
+                            checked={isAllSelected}
+                        />
+                    </Button>
+                </Col>
+                <Col className="d-flex justify-content-end ">
+                    <Button 
+                        onClick={exportSelectedTimesheets}
+                        disabled={selectedForExport.size === 0}
+                        className= "button-pointer-enabled"
+                        style={{ 
+                            backgroundColor: '#3498db',
+                            borderColor: '#3498db',
+                            color: 'white',
+                            marginBottom: 9,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        Export Timesheets 
+                        {selectedForExport.size > 0 &&  (
+                            <DownloadIcon
+                                style={{
+                                    marginLeft: '5px',
+                                    width: '16px',
+                                    height: '16px'
+                                }}/>
+                            )}
+                    </Button>
+                </Col>
+            </Row>
             <Table striped bordered hover className="timesheet-table">
                 <thead>
                     <tr>
@@ -220,6 +292,7 @@ const ExportTimesheets = () => {
                                         <FormCheck
                                             checked={selectedForExport.has(shift.id)}
                                             onChange={() => toggleTimesheetSelection(shift.id)}
+                                            
                                         />
                                     </td>
                                     <td>{shift.user_name}</td>
