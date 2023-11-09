@@ -69,7 +69,7 @@
   width: 1.5rem;
   height: 1.5rem;
   margin-right: 0.5rem;
-  color: #19b3d9;
+  color: #3498db;
 }
 
 .dropdown {
@@ -77,39 +77,39 @@
 }
 
 .tanda-dropdown .ant-select-item-option:hover {
-  background-color: #19b3d9;
+  background-color: #3498db;
  }
 
 /* Also, consider the focused state set by AntD */
 
 .ant-select-focused .ant-select-selector {
-  border-color: #19b3d9 !important;
+  border-color: #3498db !important;
   box-shadow: 0 0 0 .5px rgb(25,179,217) !important;
 }
 
 .ant-select:hover .ant-select-selector {
-  border-color: #19b3d9 !important;
+  border-color: #3498db !important;
   box-shadow: 0 0 0 .5px rgb(25,179,217) !important;
 }
 
 .timepicker:hover {
-  border-color: #19b3d9 !important;
+  border-color: #3498db !important;
   box-shadow: 0 0 0 .5px rgb(25,179,217) !important; 
 }
 
 .timepicker-panel {
-  border-color: #19b3d9 !important;
+  border-color: #3498db !important;
   box-shadow: 0 0 0 .5px rgb(25,179,217) !important; 
 
 }
 
 .ant-picker:hover {
-  border-color: #19b3d9 !important;
+  border-color: #3498db !important;
   box-shadow: 0 0 0 .5px rgb(25,179,217) !important; 
 }
 
 .ant-picker:focus {
-  border-color: #19b3d9 !important;
+  border-color: #3498db !important;
   box-shadow: 0 0 0 .5px rgb(25,179,217) !important;
 }
 
@@ -126,7 +126,7 @@
   justify-content: center !important;
 }
 textarea:focus {
-  outline-color: #19b3d9;
+  outline-color: #3498db;
 }
 
 /* Hide the header for the week column */
@@ -144,7 +144,7 @@ textarea:focus {
 }
 
 .ant-picker-focused.ant-picker {
-  border-color: #19b3d9;
+  border-color: #3498db;
   box-shadow: 0 0 0 .5px rgb(25,179,217) !important;
 }
 
@@ -324,4 +324,32 @@ textarea:focus {
 
 .timesheets-nav-dropdown .dropdown-item:active {
   background-color: transparent !important;
+}
+
+.custom-search .ant-btn.ant-input-search-button .anticon-search svg{
+  fill: white !important; /* Replace with your desired color */
+}
+
+/* Target the button inside the search component */
+.custom-search .ant-btn.ant-input-search-button {
+  background-color: #3498db !important; 
+  border-color: #3498db !important;
+}
+
+.ant-input:hover {
+  background-color: white !important; 
+  outline-color: #3498db !important;
+  border-color: #3498db !important;
+  box-shadow: 0 0 0 0.2px rgb(25,179,217) !important;
+}
+
+.ant-input {
+  background-color: white !important;
+  text-emphasis-color: black !important;
+  color: black !important;
+}
+.ant-input:focus {
+  outline-color: #3498db !important;
+  border-color: #3498db !important;
+  box-shadow: 0 0 0 0.2px rgb(25,179,217) !important;
 }
