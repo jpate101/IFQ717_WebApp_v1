@@ -67,7 +67,7 @@ const ApproveTimesheetsPage = () => {
 
   // Handles the row click which opens the TimesheetForUser page
   const handleRowClick = (userId) => {
-    navigate(`/timesheet-for-user/${userId}?start=${selectedDate.startOf('isoWeek').format('YYYY-MM-DD')}&end=${selectedDate.endOf('isoWeek').format('YYYY-MM-DD')}`);
+    navigate(`/Timesheets/${userId}?start=${selectedDate.startOf('isoWeek').format('YYYY-MM-DD')}&end=${selectedDate.endOf('isoWeek').format('YYYY-MM-DD')}`);
   };
   
 

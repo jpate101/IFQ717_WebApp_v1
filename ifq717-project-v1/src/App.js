@@ -9,6 +9,7 @@ import Login from './Login/Login';
 import Dashboard from './Dashboard/Dashboard';
 import EmployeeManagement from './EmployeeManagement';
 import ApproveTimesheets from './Timesheets/approveTimesheets';
+import ExportTimesheets from './Timesheets/exportTimesheets'
 import Roster from './Roster/Roster';
 import TimesheetForUser from './Timesheets/TimesheetForUser';
 
@@ -62,8 +63,12 @@ export default function App() {
               element={<ApproveTimesheets setIsLoggedIn={setIsLoggedIn}/>}
             />
             <Route
-              path="timesheet-for-user/:userId"
+              path="Timesheets/:userId"
               element={<TimesheetForUser setIsLoggedIn={setIsLoggedIn}/>}
+            />
+            <Route
+              path="/Timesheets/exportTimesheets"
+              element={<ExportTimesheets setIsLoggedIn={setIsLoggedIn}/>}
             />
           </Routes>
         </Container>
