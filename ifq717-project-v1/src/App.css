@@ -367,3 +367,7 @@ textarea:focus {
   background-color: #3498db !important; 
   border-color: #3498db !important;
 }
+
+.selectAll-button:hover {
+  background-color: white !important;
+}
