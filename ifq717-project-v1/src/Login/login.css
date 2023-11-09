@@ -12,6 +12,11 @@
     margin-top: 2rem;
 }
 
+.login-labels {
+    margin-bottom: 0rem !important;
+    margin-top: 0.75rem;
+}
+
 .login-button:focus {
     outline: none !important;
 }
@@ -23,7 +28,7 @@
   color: white;
   border: 2px solid var(--button-green); 
   width: 100%;
-  margin: 20 20%;
+  margin-top: 1rem !important;
 }
 
 .login-button:hover {
