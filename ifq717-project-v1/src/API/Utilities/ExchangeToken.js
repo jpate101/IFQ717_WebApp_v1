@@ -25,12 +25,14 @@ export default function ExchangeToken({ username, password }) {
         grant_type: grantType
       })
     }).then((res) => {
-      if (res.ok) {
-        return res.json();
-      } else {
-        throw new Error(`Token exchange failed with status: ${res.status} - ${res.statusText}`);
-      }
-    }).then((data) => {
+        if (res.ok) {
+          return res.json();
+        } else if (res.status === 402) {
+          throw new Error('Your account is locked for billing purposes. Please contact your Tanda Manager for support.');
+        } else if (res.status === 409) {
+          throw new Error('Your account is rate limited. Please try again in 1 minute.');
+        }
+      }).then((data) => {
       console.log('Token exchange response: ', data);
       if (data.error) {
         console.error('Token exchange error: ', data.error);

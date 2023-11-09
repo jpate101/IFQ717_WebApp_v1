@@ -10,6 +10,8 @@ import ExchangeToken from "../API/Utilities/ExchangeToken";
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
   
@@ -23,6 +25,28 @@ export default function Login() {
   const handleLogin = (event) => {
     event.preventDefault();
     handleTokenExchange();
+  };
+
+  // handle username validation
+  const handleUsernameValidation = (value) => {
+    if (!value) {
+      setUsernameError("Please enter a valid username");
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      setUsernameError("Please enter a valid username (email format)");
+    } else {
+      setUsernameError("");
+    }
+    setUsername(value);
+  };
+
+  // handle password validation
+  const handlePasswordValidation = (value) => {
+    if (!value) {
+      setPasswordError("Please enter a valid password");
+    } else {
+      setPasswordError("");
+    }
+    setPassword(value);
   };
 
   // my basic login page //TODO: move to own component
@@ -44,9 +68,10 @@ export default function Login() {
                 placeholder="Enter username (valid email address)"
                 id="Username"
                 type="input"
-                onChange={setUsername}
+                onChange={handleUsernameValidation}
+                onBlur={() => handleUsernameValidation(username)}
                 className="login-fields"
-                
+                error={usernameError}
               />
               <TextField
                 value={password}
@@ -54,9 +79,10 @@ export default function Login() {
                 placeholder="Enter password"
                 id="Password"
                 type="password"
-                onChange={setPassword}
+                onChange={handlePasswordValidation}
+                onBlur={() => handlePasswordValidation(password)}
                 className="login-fields"
-               
+                error={passwordError}
               />
               <Button type="submit" variant="primary" className="mt-3 login-button">
                 Login
