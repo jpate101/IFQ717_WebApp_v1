@@ -1127,6 +1127,18 @@ function EmployeeManagement() {
                                     }
                                 />
 
+                                <select
+                                    value={formDataLocation.locationsId}
+                                    onChange={(e) => setFormDataLocation({ ...formDataLocation, locationsId: e.target.value })}
+                                >
+                                    <option value="">Select Location ID</option>
+                                    {filteredLocations.map((location) => (
+                                        <option key={location.id} value={location.id}>
+                                            {location.name} - {location.short_name}
+                                        </option>
+                                    ))}
+                                </select>
+
                                 <div>
                                     <h3 className="secondary">Set Location Name Details:</h3>
                                     <input
@@ -1268,7 +1280,7 @@ function EmployeeManagement() {
                                     <input
                                         type="text"
                                         placeholder="User IDs (comma-separated)"
-                                        style={{ margin: '5px'}}
+                                        style={{ margin: '5px' }}
                                         value={formDataTeams.user_ids.join(',')} // Join the array for display
                                         onChange={(e) => setFormDataTeams({ ...formDataTeams, user_ids: e.target.value.split(',') })}
                                     />
