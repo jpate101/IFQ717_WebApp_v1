@@ -9,9 +9,9 @@ function EmployeeManagement() {
     const [showLocationForm, setShowLocationForm] = useState(false);
     const [showTeamsForm, setShowTeamsForm] = useState(false);
     const [showEmployeeForm, setShowEmployeeForm] = useState(false);
-    const [showUpadateUsers, setShowUpadateUsers] = useState(false);
+    const [showUpdateUsers, setShowUpdateUsers] = useState(false);
     const [showUpdateLocations, setShowUpdateLocations] = useState(false);
-    const [showUpadateTeams, setShowUpadateTeams] = useState(false);
+    const [showUpdateTeams, setShowUpdateTeams] = useState(false);
     const [showOnboardNewUser, setShowOnboardNewUser] = useState(false);
     const [showResult, setShowResult] = useState("");
 
@@ -170,9 +170,9 @@ function EmployeeManagement() {
         setShowLocationForm(true);
         setShowTeamsForm(false);
         setShowEmployeeForm(false);
-        setShowUpadateUsers(false);
+        setShowUpdateUsers(false);
         setShowUpdateLocations(false);
-        setShowUpadateTeams(false);
+        setShowUpdateTeams(false);
         setShowOnboardNewUser(false);
         setShowResult('');
     };
@@ -181,9 +181,9 @@ function EmployeeManagement() {
         setShowEmployeeForm(false);
         setShowLocationForm(false);
         setShowTeamsForm(true);
-        setShowUpadateUsers(false);
+        setShowUpdateUsers(false);
         setShowUpdateLocations(false);
-        setShowUpadateTeams(false);
+        setShowUpdateTeams(false);
         setShowOnboardNewUser(false);
         setShowResult('');
     };
@@ -192,36 +192,36 @@ function EmployeeManagement() {
         setShowLocationForm(false);
         setShowTeamsForm(false);
         setShowEmployeeForm(true);
-        setShowUpadateUsers(false);
+        setShowUpdateUsers(false);
         setShowUpdateLocations(false);
-        setShowUpadateTeams(false);
+        setShowUpdateTeams(false);
         setShowOnboardNewUser(false);
         setShowResult('');
     };
-    const handleUpadateUsersClick = () => {
-        setShowUpadateUsers(true);
+    const handleUpdateUsersClick = () => {
+        setShowUpdateUsers(true);
         setShowUpdateLocations(false);
-        setShowUpadateTeams(false);
+        setShowUpdateTeams(false);
         setShowLocationForm(false);
         setShowTeamsForm(false);
         setShowEmployeeForm(false);
         setShowOnboardNewUser(false);
         setShowResult('');
     }
-    const handleUpadateLocationsClick = () => {
-        setShowUpadateUsers(false);
+    const handleUpdateLocationsClick = () => {
+        setShowUpdateUsers(false);
         setShowUpdateLocations(true);
-        setShowUpadateTeams(false);
+        setShowUpdateTeams(false);
         setShowLocationForm(false);
         setShowTeamsForm(false);
         setShowEmployeeForm(false);
         setShowOnboardNewUser(false);
         setShowResult('');
     }
-    const handleUpadateTeamsClick = () => {
-        setShowUpadateUsers(false);
+    const handleUpdateTeamsClick = () => {
+        setShowUpdateUsers(false);
         setShowUpdateLocations(false);
-        setShowUpadateTeams(true);
+        setShowUpdateTeams(true);
         setShowLocationForm(false);
         setShowTeamsForm(false);
         setShowEmployeeForm(false);
@@ -229,9 +229,9 @@ function EmployeeManagement() {
         setShowResult('');
     }
     const handleOnbooardNewUserClick = () => {
-        setShowUpadateUsers(false);
+        setShowUpdateUsers(false);
         setShowUpdateLocations(false);
-        setShowUpadateTeams(false);
+        setShowUpdateTeams(false);
         setShowLocationForm(false);
         setShowTeamsForm(false);
         setShowEmployeeForm(false);
@@ -947,19 +947,19 @@ function EmployeeManagement() {
                             <a onClick={handleCreateLocationsClick}>Create Locations</a>
                         </li>
                         <li>
-                            <a onClick={handleUpadateLocationsClick}>Update Locations</a>
+                            <a onClick={handleUpdateLocationsClick}>Update Locations</a>
                         </li>
                         <li>
                             <a onClick={handleCreateUsersClick}>Create Users</a>
                         </li>
                         <li>
-                            <a onClick={handleUpadateUsersClick}>Update Users</a>
+                            <a onClick={handleUpdateUsersClick}>Update Users</a>
                         </li>
                         <li>
                             <a onClick={handleCreateTeamsClick}>Create Teams</a>
                         </li>
                         <li>
-                            <a onClick={handleUpadateTeamsClick}>Update Teams</a>
+                            <a onClick={handleUpdateTeamsClick}>Update Teams</a>
                         </li>
                         <li>
                             <a onClick={handleOnbooardNewUserClick}>Send Onboard User Invites</a>
@@ -1237,7 +1237,7 @@ function EmployeeManagement() {
                                 )}
                             </div>
                         </div>
-                    ) : showUpadateTeams ? (
+                    ) : showUpdateTeams ? (
                         <div className="flex-container">
                             <form onSubmit={handleUpdateTeamsSubmit} style={{ padding: '30px' }} className="primary">
                                 <h2 className="secondary h2-EM">Update Teams</h2>
@@ -1358,7 +1358,7 @@ function EmployeeManagement() {
                                 )}
                             </div>
                         </div>
-                    ) : showUpadateUsers ? (
+                    ) : showUpdateUsers ? (
                         <div className="flex-container">
                             <form onSubmit={handleUpdateEmployee} style={{ padding: '30px' }} className="primary">
                                 <h2 className="secondary h2-EM">Update User</h2>
