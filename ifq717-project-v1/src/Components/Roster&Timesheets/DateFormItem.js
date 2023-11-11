@@ -1,22 +1,31 @@
-import React from 'react';
 import FormItemWrapper from './FormItemWrapper';
+import { ReactComponent as CalendarIcon } from '../../svg/calendar.svg'
+import dayjs from 'dayjs';
 
 function DateFormItem({ shiftDate }) {
-    console.log("DateFormItem rendered with shiftDate:", shiftDate);
-    return (
-      <FormItemWrapper>
-        <svg 
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="currentColor"
-          className="bi bi-calendar w-5 h-5 ml-0.5 mr-4 text-tandaBlue"
-          viewBox="0 0 16 16">
-          <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
-        </svg>
-        <div>{shiftDate ? shiftDate.toDateString(): ''}</div>
-      </FormItemWrapper>
-    );
+    
+  const iconStyle = {
+    marginTop: '5px',
+    transform: 'translateY(-3px) translateX(-2px)',
+    width: '22px',
+    height: '22px'
   }
+
+  return (
+    <FormItemWrapper>
+      <CalendarIcon
+        className="bi bi-calendar w-5 h-5 ml-0.5 mr-4 tanda-icon"
+        style={iconStyle}
+      >
+      </CalendarIcon>
+      <div
+        style={{
+          fontSize: '16px',
+          marginLeft: -8
+        }}
+      >{shiftDate ? dayjs(shiftDate).format('DD MMM YYYY') : ''}</div>
+    </FormItemWrapper>
+  );
+}
 
   export default DateFormItem;

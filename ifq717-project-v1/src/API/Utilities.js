@@ -53,10 +53,8 @@ export const getSchedules = async () => {
   }
 }
 
-// Utilities.js
-
 export const getSchedulesByUser = async (userIds, fromDate, toDate) => {
-  const headers = getHeaders(); // Assuming getHeaders is defined in this file as well
+  const headers = getHeaders(); 
   const userIdsParam = userIds.join(',');
   const url = `${API_BASE_URL}/schedules?user_ids=${userIdsParam}&from=${fromDate}&to=${toDate}&show_costs=true&include_names=false`;
 
@@ -68,7 +66,7 @@ export const getSchedulesByUser = async (userIds, fromDate, toDate) => {
     return await response.json();
   } catch (error) {
     console.error('Error fetching schedules:', error);
-    return []; // Return an empty array as a fallback
+    return []; 
   }
 };
 
@@ -76,7 +74,7 @@ export const getSchedulesByUser = async (userIds, fromDate, toDate) => {
 // Fetches info about all visible users
 export const getUsers = async () => {
   try {
-    const headers = getHeaders(); // Use the existing getHeaders function
+    const headers = getHeaders(); 
 
     const url = `${API_BASE_URL}/users?show_wages=true`;
 
@@ -92,11 +90,12 @@ export const getUsers = async () => {
     const usersData = await response.json();
     console.log('Users data received:', usersData);
 
-    // Return an array of user objects with only id and name properties
+   
     return usersData.map(user => ({
       id: user.id,
       name: user.name,
       hourly_rate: user.hourly_rate,
+      department_ids: user.department_ids
 
     }));
 
@@ -106,7 +105,6 @@ export const getUsers = async () => {
   }
 };
 
-// Gets information about a user
 // Gets information about a user, including departments they belong to
 export const getUserInfo = async (userId) => {
   try {
@@ -129,7 +127,7 @@ export const getUserInfo = async (userId) => {
     return {
       id: userData.id,
       name: userData.name,
-      departmentIds: userData.department_ids // Assuming this is how the departments are provided in the response
+      departmentIds: userData.department_ids
     };
 
   } catch (error) {
@@ -142,7 +140,7 @@ export const getUserInfo = async (userId) => {
 // Fetches departments
 export const getAllDepartments = async () => {
   try {
-    const headers = getHeaders(); // Use the existing getHeaders function
+    const headers = getHeaders();
     const url = `${API_BASE_URL}/departments`;
 
     const response = await fetch(url, { method: 'GET', headers });
@@ -167,7 +165,7 @@ export const getDepartmentById = async (departmentId) => {
   }
 
   try {
-    const headers = getHeaders(); // Use the existing getHeaders function
+    const headers = getHeaders(); 
     const url = `${API_BASE_URL}/departments/${departmentId}`;
 
     const response = await fetch(url, { method: 'GET', headers });
@@ -185,7 +183,6 @@ export const getDepartmentById = async (departmentId) => {
   }
 }
 
-
 export function GetShifts(props) {
   const [shifts, setShifts] = useState({});
 
@@ -194,7 +191,6 @@ export function GetShifts(props) {
   useEffect(() => {
 
       if (!fromDate || !toDate) {
-          // If fromDate or toDate is not set, do not proceed with fetching data.
           return;
       }
       
@@ -206,7 +202,6 @@ export function GetShifts(props) {
 
       async function fetchShiftData() {
           try {
-              // 1. Log the URL and headers
               console.log("Fetching shifts with URL:", `https://my.tanda.co/api/v2/shifts?from=${fromDate}&to=${toDate}&show_costs=true&show_notes=true`);
               console.log("Headers:", headers);
 
@@ -215,7 +210,6 @@ export function GetShifts(props) {
                   headers: headers
               });
 
-              // 2. Log the response status and statusText
               console.log("Response Status:", response.status);
               console.log("Response Status Text:", response.statusText);
 
@@ -225,10 +219,8 @@ export function GetShifts(props) {
 
               const data = await response.json();
 
-              // 3. Log the actual data
               console.log("Data:", data);
 
-              // Process the shifts data here
               const processedShifts = data.reduce((acc, shift) => {
                   const shiftDate = dayjs(shift.start * 1000).format('YYYY-MM-DD'); // Assuming shift.start is already in milliseconds. If it's in seconds, use shift.start * 1000
                   if (!acc[shiftDate]) {
@@ -252,7 +244,7 @@ export function GetShifts(props) {
 
 // Creates a Roster for the given date
 export const createSchedule = async (details) => {
-  const headers = getHeaders(); // Reuse the existing getHeaders function
+  const headers = getHeaders(); 
   const url = `${API_BASE_URL}/schedules`;
 
   try {
@@ -268,10 +260,12 @@ export const createSchedule = async (details) => {
 
     const scheduleData = await response.json();
     console.log('Schedule created:', scheduleData);
-    return scheduleData; // Return the newly created schedule data
+
+    return scheduleData;
+    
   } catch (error) {
     console.error('Error creating schedule:', error);
-    throw error; // Rethrow the error to be handled by the caller
+    throw error;
   }
 };
 
