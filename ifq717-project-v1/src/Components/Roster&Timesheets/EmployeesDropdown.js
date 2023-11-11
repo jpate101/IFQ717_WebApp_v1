@@ -1,36 +1,51 @@
+import React, { useState, useEffect } from 'react';
 import { Select } from 'antd';
 import FormItemWrapper from './FormItemWrapper';
+import { ReactComponent as PersonPlusIcon } from '../../svg/person-plus.svg'
+import { getUsers } from '../../API/Utilities';
+
 const { Option } = Select;
 
-function EmployeesDropdown({ employees, onSelectChange, selectedEmployeeId }) {
-    return (
-      <FormItemWrapper
-        icon={
-          <svg xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="tanda-icon">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z" />
-          </svg>
-        }
-      >
+function EmployeesDropdown({ onSelectChange, selectedEmployeeId }) {
+  const [employees, setEmployees] = useState([]);
+
+  useEffect(() => {
+    const fetchAndSortUsers = async () => {
+      try {
+        const fetchedUsers = await getUsers();
+        console.log('fetched users:', fetchedUsers)
+        const sortedUsers = fetchedUsers.sort((a, b) => a.name.localeCompare(b.name));
+        setEmployees(sortedUsers);
+        console.log('sorted users:', sortedUsers);
+      } catch (error) {
+        console.error('Failed to fetch or sort users:', error);
+      }
+    };
+
+    fetchAndSortUsers();
+  }, []);
+
+  return (
+      <FormItemWrapper>
+        <PersonPlusIcon
+          className="tanda-icon"
+        >
+        </PersonPlusIcon>
         <Select 
           popupClassName="tanda-dropdown"
-          onChange={(value) => onSelectChange(value)}
+          onChange={(value) => {
+            console.log('Selected Employee ID:', value);
+            onSelectChange(value);
+          }}
           value={selectedEmployeeId}
           placeholder="Select an Employee"
           style={{ width: '218px'}}
           showSearch
           filterOption={(input, option) =>
-          option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
           }
         >
-          {employees && employees.map(employee => (
+          {employees.map(employee => (
             <Option key={employee.id} value={employee.id}>
               {employee.name}
             </Option>
