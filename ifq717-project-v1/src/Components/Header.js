@@ -39,8 +39,14 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
               </HighlightLink>
               {isLoggedIn ? (
                 <>
+                  <HighlightLink to="root/EmployeeManagement/" as={Link}>
+                    Employee Management
+                  </HighlightLink>
                   <HighlightLink to="/onboard-users" as={Link}>
                     Onboard users
+                  </HighlightLink>
+                  <HighlightLink to="/roster" as={Link}>
+                    Create schedules
                   </HighlightLink>
                   <NavDropdown title="Timesheets" id="timesheets-nav-dropdown" className="timesheets-nav-dropdown lg:-mr-44 md: -mr-24">
                     <NavDropdown.Item href="/Timesheets/approveTimesheets" className="timesheets-nav-dropdown text-primary">
@@ -50,14 +56,8 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
                       Export Timesheets
                     </NavDropdown.Item>
                   </NavDropdown>
-                  <HighlightLink to="/roster" as={Link}>
-                    Create schedules
-                  </HighlightLink>
-                  <HighlightLink to="root/EmployeeManagement/" as={Link}>
-                    Employee Management
-                  </HighlightLink>
-                  <HighlightLink to="/" as={Link} onClick={handleLogOut}>
-                    Logout
+                  <HighlightLink to="/" as={Link} onClick={handleLogOut} className="ml-32">
+                    Logout - W.I.P
                   </HighlightLink>
                 </>
               ) : (
