@@ -1,135 +1,144 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Button, TimePicker } from 'antd';
 import EmployeesDropdown from './EmployeesDropdown';
 import TeamsDropdown from './TeamsDropdown';
-import { getAllDepartments, getUserInfo } from '../../API/Utilities';
+import DateFormItem from './DateFormItem';
+import TimePickerComponent from './TimePicker';
+import { getUsers, getAllDepartments } from '../../API/Utilities';
+import { ReactComponent as BinIcon } from '../../svg/trash3.svg';
+import { ReactComponent as DotDotDot } from '../../svg/three-dots.svg';
 import dayjs from 'dayjs';
-import { CalendarIcon } from './RosterIcons';
+const RosterModal = ({ isOpen, onClose, onAddShift, shiftDate }) => {
 
-// This function assumes you have a state in the Roster component for selectedDate, selectedEmployee, etc.
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [selectedTeam, setSelectedTeam] = useState(null);
+  const [teams, setTeams] = useState([]);
+  const [allTeams, setAllTeams] = useState([]);
+  const [hoursWorked, setHoursWorked] = useState('');
+  const [shiftDetails, setShiftDetails] = useState({
+    startTime: '',
+    finishTime: '',
+  });
 
-const AddShiftModal = ({ isOpen, onClose, employees, teams, onAddShift }) => {
-  const [startTime, setStartTime] = useState(dayjs());
-  const [finishTime, setFinishTime] = useState(dayjs());
-  const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
-  const [selectedTeamId, setSelectedTeamId] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(dayjs().toDate());
-  const [employeeTeams, setEmployeeTeams] = useState([]); 
+  useEffect(() => {
+    getAllDepartments().then(setAllTeams);
+  }, []);
+
+  const handleEmployeeSelect = async (employeeId) => {
+    console.log('handleEmployeeSelect called with employeeId:', employeeId);
+
+    const users = await getUsers();
+    console.log('Fetched users:', users);
+    
+    const employee = users.find(user => user.id === employeeId);
+    console.log('Found employee:', employee);
   
-  // Sort employees alphabetically by name before passing to EmployeesDropdown
-  const sortedEmployees = [...employees].sort((a, b) => a.name.localeCompare(b.name));
+    if (employee) {
+      const employeeTeams = allTeams.filter(team => employee.department_ids.includes(team.id));
+      console.log('Employee teams:', employeeTeams);
+
+      setTeams(employeeTeams);
+    } else {
+      console.log('No employee found, clearing teams');
+      setTeams([]);
+    }
+
+    setSelectedEmployee(employeeId);
+    console.log('setSelectedEmployee:', employeeId);
+  };
+
+  const handleSaveShift = async () => {
+
+    console.log('Received shiftDate:', shiftDate);
+
+    const startDateTime = dayjs(`${dayjs(shiftDate).format('YYYY-MM-DD')}T${shiftDetails.startTime}`);
+    const finishDateTime = dayjs(`${dayjs(shiftDate).format('YYYY-MM-DD')}T${shiftDetails.finishTime}`);
+    console.log('Parsed startDateTime:', startDateTime.toString());
+    console.log('Parsed finishDateTime:', finishDateTime.toString());
+    console.log('Shift details for start and finish:', shiftDetails);
+    
+    const newShiftDetails = {
+      employeeId: selectedEmployee,
+      teamId: selectedTeam,
+      startTime: startDateTime.format('HH:mm'),
+      finishTime: finishDateTime.format('HH:mm'),
+    };
   
- // Effect to handle initial employee selection when the modal opens
- useEffect(() => {
-  if (selectedEmployeeId && employees.length > 0) {
-    handleEmployeeChange(selectedEmployeeId);
-  }
-}, [selectedEmployeeId, employees]);
-
-// Now your handleEmployeeChange doesn't need to be async and won't fetch again
-const handleEmployeeChange = (value) => {
-  console.log(`Employee selected:`, value); // Log selected employee
-  setSelectedEmployeeId(value);
-  // Here you assume that departments are already filtered and passed as `teams`
-  setEmployeeTeams(teams);
-};
-// ...
-
+    console.log('New shift details being sent:', newShiftDetails);
   
-
-
-  const handleTeamChange = value => {
-    setSelectedTeamId(value);
+    try {
+      await onAddShift(newShiftDetails);
+    } catch (error) {
+      console.error('Error saving shift:', error);
+    }
   };
 
-  // Handler for TimePicker components
-  const handleStartTimeChange = time => {
-    setStartTime(time);
-  };
-
-  const handleFinishTimeChange = time => {
-    setFinishTime(time);
-  };
-
-  const handleAddShift = () => {
-    // Here you would send the data to your backend or state manager
-
-    console.log('Adding shift with the following details:', { // Log shift details
-      date: selectedDate,
-      employeeId: selectedEmployeeId,
-      teamId: selectedTeamId,
-      startTime: startTime.format('HH:mm'),
-      finishTime: finishTime.format('HH:mm'),
-    });
-
-    onAddShift({
-      date: selectedDate, // Assuming you pass this as a prop
-      employeeId: selectedEmployeeId,
-      teamId: selectedTeamId,
-      startTime: startTime.format('HH:mm'),
-      finishTime: finishTime.format('HH:mm'),
-    });
-    onClose();
-  };
-
-  return (
-    <Modal
-      title="Add Shift"
-      open={isOpen}
-      onOk={handleAddShift}
-      onCancel={onClose}
-      className="top-0 left-0 w-full h-full flex justify-center items-center bg-opacity-50 "
-      styles={{
-        mask: { backgroundColor: 'rgba(0, 0, 0, 0.05)' }
-      }}
-      footer={[
-        <Button key="back" onClick={onClose} style={{ marginRight: 8 }}>
-          Cancel
-        </Button>,
-        <Button
-        key="submit"
-        type="primary"
-        onClick={handleAddShift}
-        className="bg-white text-tandaBlue rounded border-2 border-tandaBlue tandaBlue hover:bg-tandaBlue hover:text-white">
-          Save
-        </Button>,
-      ]}
-
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      <div className="my-2">
-        <div 
-        style={{ marginBottom: 18, width: 258 }}>
-          <TimePicker.RangePicker
-            value={startTime}
-            onChange={handleStartTimeChange}
-            format="HH:mm"
-            minuteStep={15}
-            placeholder={['Start Time', 'Finish Time']}
-            className="ml-10 top-2"
-            size="small"
-          />
+  return isOpen && (
+    <>
+      <div className="fixed bg-black bg-opacity-10 inset-0 flex justify-center items-center">
+      <div className="relative bg-white p-5 rounded-lg h-auto max-h-[80vh] overflow-y-auto">
+        <button 
+          onClick={onClose}
+          className="absolute top-2 right-2 text-xl font-bold cursor-pointer"
+        >
+          &times;
+        </button>
+        <div className="my-2">
+          <DateFormItem
+            shiftDate={shiftDate}
+          >
+          </DateFormItem>
+        </div>
+        <div className="my-2">
+          <TimePickerComponent
+            shiftDetails={shiftDetails}
+            setShiftDetails={setShiftDetails}
+            hoursWorked={hoursWorked}
+            setHoursWorked={setHoursWorked}
+          >
+          </TimePickerComponent>
+        </div>
+        <div className="my-2">
+        <EmployeesDropdown
+          onSelectChange={handleEmployeeSelect}
+          selectedEmployeeId={selectedEmployee}
+        >
+        </EmployeesDropdown>
+        </div>
+        <div className="my-2">
+          <TeamsDropdown
+            teams={teams}
+            onSelectChange={setSelectedTeam}
+          >
+          </TeamsDropdown>
+        </div>
+        <div className="flex justify-between my-2">
+          <div>{}</div>
+          <div className="flex items-center"
+            style={{ marginTop: '10px' }}
+            >
+            <DotDotDot
+              //onClick={() => setIsDotDotDotModalOpen(true)}
+              className="w-6 h-6 mr-3 cursor-pointer roster-icon"
+            >
+            </DotDotDot>
+            <BinIcon
+              //onClick={handleDeleteShift}
+              className="w-6 h-6 mr-3 cursor-pointer roster-icon"
+            >
+            </BinIcon>
+          <button
+            onClick={handleSaveShift}
+            className="save-button px-4 py-2 rounded border-2 ">
+              Save
+          </button>
         </div>
       </div>
-      <div style={{ marginBottom: 10 }}>
-        <EmployeesDropdown
-          employees={sortedEmployees}
-          onSelectChange={handleEmployeeChange}
-          selectedEmployeeId={selectedEmployeeId}
-        />
-      </div>
-      <div style={{ marginBottom: 10 }}>
-        <TeamsDropdown
-          teams={employeeTeams} // Gets filtered teams specific to the selected employee
-          onSelectChange={handleTeamChange}
-          employeeTeams={teams}
-        />
-      </div>
-    </Modal>
-  );
-};
+    </div>
+  </div>
+    </>
+)}
 
-export default AddShiftModal;
+
+export default RosterModal;
+
+
