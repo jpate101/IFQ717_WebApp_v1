@@ -34,8 +34,8 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
           <Navbar.Toggle aria-controls="navbarSupportedContent" />
           <Navbar.Collapse id="navbarSupportedContent">
             <Nav className="me-auto">
-              <HighlightLink to="/" as={Link}>
-                 {isLoggedIn ? 'Dashboard' : 'Home'}
+              <HighlightLink to={isLoggedIn ? '/dashboard' : '/'} as={Link}>
+              {isLoggedIn ? 'Dashboard' : 'Home'}
               </HighlightLink>
               {isLoggedIn ? (
                 <>
