@@ -48,7 +48,8 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
                   <HighlightLink to="/roster" as={Link}>
                     Create schedules
                   </HighlightLink>
-                  <NavDropdown title="Timesheets" id="timesheets-nav-dropdown" className="timesheets-nav-dropdown lg:-mr-44 md: -mr-24">
+                    {/* Need to fix spacing issue here */}
+                  <NavDropdown title="Timesheets" id="timesheets-nav-dropdown" className="timesheets-nav-dropdown">
                     <NavDropdown.Item href="/Timesheets/approveTimesheets" className="timesheets-nav-dropdown text-primary">
                       Approve Timesheets
                     </NavDropdown.Item>

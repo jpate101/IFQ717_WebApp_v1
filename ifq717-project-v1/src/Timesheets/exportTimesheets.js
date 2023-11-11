@@ -11,7 +11,6 @@ dayjs.locale('en-gb');
 
 const API_BASE_URL = 'https://my.tanda.co/api/v2';
 
-// Helper function to get headers with the Authorization token
 const getHeaders = () => {
     const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, "$1");
     return {
@@ -20,7 +19,6 @@ const getHeaders = () => {
     };
 };
 
-// Helper function to format week range
 const formatWeekRange = (date) => {
     if (!date || !dayjs(date).isValid()) {
         console.error('formatWeekRange - received invalid date:', date);
@@ -104,15 +102,13 @@ const ExportTimesheets = () => {
     };
 
     const formatDate = (timestamp) => {
-        // Convert Unix timestamp from seconds to milliseconds
         const date = new Date(timestamp * 1000);
-        // Check if the date is valid
         if (isNaN(date.getTime())) {
             console.error(`Invalid timestamp: ${timestamp}`);
             return 'Invalid Date';
         } else {
             const formattedTime = dayjs(date).format('HH:mm');
-            //console.log(`Formatted time for timestamp ${timestamp}:`, formattedTime); // Log the formatted time
+            //console.log(`Formatted time for timestamp ${timestamp}:`, formattedTime);
             return formattedTime;
         }
     };
@@ -145,11 +141,9 @@ const ExportTimesheets = () => {
     const handleSelectAllChange = (e) => {
         setIsAllSelected(e.target.checked);
         if (e.target.checked) {
-            // Code to select all items
             const allIds = new Set(filteredTimesheets.map(ts => ts.id));
             setSelectedForExport(allIds);
         } else {
-            // Code to deselect all items
             setSelectedForExport(new Set());
         }
         };
@@ -159,9 +153,7 @@ const ExportTimesheets = () => {
             console.log('No timesheets selected for export.');
             return;
         }
-        // Construct a list of timesheet IDs to export
         const timesheetIds = Array.from(selectedForExport).join(',');
-        // Call your API to export timesheets
         const exportUrl = `${API_BASE_URL}/timesheets/on/2023-11-07?export_format=csv&ids=${timesheetIds}`;
     
         try {

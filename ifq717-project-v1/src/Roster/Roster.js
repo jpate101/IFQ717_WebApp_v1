@@ -1,14 +1,14 @@
 import React, {useState, useEffect} from 'react';
-import { getRosterForDate, getUsers, getAllDepartments, getUserInfo } from '../API/Utilities';
+import ReactDOM from 'react-dom';
+import { getRosterForDate, getUsers, getAllDepartments, createSchedule } from '../API/Utilities';
 import WeekPickerComponent from '../Components/Roster&Timesheets/WeekPicker';
-import { calculateHours, formatShiftTime } from '../Components/Roster&Timesheets/CalculateHours';
-import DatePickerDropdown from '../Components/Roster&Timesheets/DatePickerDropdown';
+import { formatShiftTime } from '../Components/Roster&Timesheets/CalculateHours';
 import AddScheduleModal from '../Components/Roster&Timesheets/AddScheduleModal';
 import { PlusCircleIcon } from '../Components/Roster&Timesheets/RosterIcons';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en-gb';
-import utc from 'dayjs/plugin/utc'; // for handling UTC dates
-import timezone from 'dayjs/plugin/timezone'; // for handling timezones
+import utc from 'dayjs/plugin/utc'; 
+import timezone from 'dayjs/plugin/timezone';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -26,20 +26,17 @@ const Roster = () => {
     const [selectedEmployee, setSelectedEmployee] = useState(null);
 
     useEffect(() => {
-      // Check if there is a user ID in the current shift details and update the selected employee
       if (currentShiftDetails.userId) {
         const employee = users.find(u => u.id === currentShiftDetails.userId);
         setSelectedEmployee(employee);
       }
     }, [currentShiftDetails, users]);
 
-     // Fetch the user data using the GetUsers component
      useEffect(() => {
         let isMounted = true;
         const fetchUsers = async () => {
           setLoading(true);
           try {
-            // Call getUsers directly, not GetUsers since we are importing it as getUsers
             const usersData = await getUsers();
             if (isMounted) {
               setUsers(usersData);
@@ -63,7 +60,7 @@ const Roster = () => {
         const fetchDepartments = async () => {
             try {
                 const departmentsData = await getAllDepartments();
-                console.log('Departments fetched:', departmentsData); // Log fetched departments
+                console.log('Departments fetched:', departmentsData);
                 setDepartments(departmentsData);
             } catch (error) {
                 console.error('Failed to fetch departments:', error);
@@ -73,7 +70,6 @@ const Roster = () => {
         fetchDepartments();
     }, []);
     
-
       const fetchRoster = async (currentUsers) => {
         setLoading(true);
         try {
@@ -91,7 +87,6 @@ const Roster = () => {
         if (Object.keys(users).length > 0) {
           fetchRoster(users);
         }
-        // Now this effect will re-run not only when selectedDate changes but also when users state changes
       }, [selectedDate, users]);
       
       const handleDateChange = (date) => {
@@ -100,25 +95,21 @@ const Roster = () => {
       };
       
       useEffect(() => {
-        // Whenever selectedDate changes, this effect will re-run and fetch the roster
-        // for the week that includes the selectedDate
         fetchRoster();
       }, [selectedDate]);
       
     const formatRosterData = (schedules, currentUsers) => {
-        // Assuming each entry in `schedules` contains a `date` and nested `schedules`
         const userShiftMap = {};
       
         schedules.forEach(scheduleByDate => {
           scheduleByDate.schedules.forEach(schedule => {
             const start = new Date(schedule.start * 1000);
             const finish = new Date(schedule.finish * 1000);
-            const dayOfWeek = dayjs(start).format('dddd').toLowerCase(); // Using dayjs for formatting
+            const dayOfWeek = dayjs(start).format('dddd').toLowerCase();
       
             if (!userShiftMap[schedule.user_id]) {
               const user = currentUsers.find(u => u.id === schedule.user_id);
                 userShiftMap[schedule.user_id] = {
-                    //name: user ? user.name : 'Unknown',
                     userId: schedule.user_id,
                     monday: [], tuesday: [], wednesday: [], thursday: [], friday: [], saturday: [], sunday: [],
                 };
@@ -126,29 +117,25 @@ const Roster = () => {
       
             const shiftTime = `${formatShiftTime(start)} - ${formatShiftTime(finish)}`;
             
-            // Add the shift time to the appropriate day of the week
             if (userShiftMap[schedule.user_id].hasOwnProperty(dayOfWeek)) {
               userShiftMap[schedule.user_id][dayOfWeek].push(shiftTime);
             }
           });
         });
       
-        // Convert the map into an array of user shifts and join the times for each day
         return Object.values(userShiftMap).map(userShifts => {
           Object.keys(userShifts).forEach(day => {
             if (day !== 'userId' && day !== 'name') {
               userShifts[day] = userShifts[day].join(', ');
             } else {
-                 // Use the userId to get the user's name from the `users` state
               const user = currentUsers.find(u => u.id === userShifts.userId);
-              userShifts.name = user ? user.name : 'Unknown'; // Add a name property to the userShifts object
+              userShifts.name = user ? user.name : 'Unknown';
             }
           });
           return userShifts;
         });
       };
       
-    // This function will calculate the dates of the week based on selectedDate
     const getWeekDates = (selectedDate) => {
         dayjs.locale('en-gb');
         const startOfWeek = dayjs(selectedDate).startOf('week');
@@ -157,45 +144,77 @@ const Roster = () => {
         );
     };
 
-    // Call this function to get the array of week dates
     const weekDates = getWeekDates(selectedDate);
     const dayAbbreviations = ["Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun"];
 
-const fetchDepartmentsForUser = async (userId) => {
-  try {
-    const userInfo = await getUserInfo(userId);
-    console.log(`UserInfo for userId ${userId}:`, userInfo); // Log user info
-    const userDepartments = userInfo.departments;
-    console.log(`User departments for userId ${userId}:`, userDepartments); // Log user's departments
-    const filteredDepartments = departments.filter((department) => userDepartments.includes(department.id));
-    console.log(`Filtered departments for userId ${userId}:`, filteredDepartments); // Log filtered departments
-    setEmployeeTeams(filteredDepartments);
-  } catch (error) {
-    console.error('Failed to fetch departments for user:', error);
-  }
-};
 
+const openModalToAddShift = (userId, dayIndex) => {
+  const dateOfShift = dayjs(selectedDate).startOf('week').add(dayIndex, 'day').format('YYYY-MM-DD');
 
-const openModalToAddShift = (userId, date) => {
-  console.log(`Opening modal for userId ${userId} and date ${date}`); // Log modal open action
-  setCurrentShiftDetails({ userId, date });
+  console.log(`Opening modal for userId ${userId} and date ${dateOfShift}`);
+  setCurrentShiftDetails({ userId, date: dateOfShift });
   setIsModalOpen(true);
-  fetchDepartmentsForUser(userId);
 };  
 
     useEffect(() => {
-      console.log("isModalOpen:",isModalOpen); // This should log the updated value after re-renders
+      console.log("isModalOpen:",isModalOpen);
     }, [isModalOpen]);
 
     const usersArray = Object.values(users);
 
     useEffect(() => {
-      // when selectedDate changes, re-run and fetch roster
-      // for the week that includes the selectedDate
       if (users.length > 0) {
           fetchRoster(users);
       }
   }, [selectedDate, users]);
+
+  const addNewShiftToRoster = async (shiftDetails) => {
+    console.log('addNewShiftToRoster shiftDetails:', shiftDetails);
+    
+
+    const { employeeId, teamId, startTime, finishTime } = shiftDetails;
+    console.log('Start Time:', startTime, 'Finish Time:', finishTime);
+
+    if (!employeeId || !teamId || !startTime || !finishTime) {
+      console.error('Missing shift details:', shiftDetails);
+      return;
+    }
+  
+    const startDateTime = dayjs(`${currentShiftDetails.date}T${shiftDetails.startTime}`);
+    const finishDateTime = dayjs(`${currentShiftDetails.date}T${shiftDetails.finishTime}`);
+
+    const startTimestamp = startDateTime.unix();
+    const finishTimestamp = finishDateTime.unix();
+    
+    const shiftForAPI = {
+      user_id: employeeId,
+      department_id: teamId,
+      start: startTimestamp,
+      finish: finishTimestamp,
+    };
+  
+    console.log('addNewShiftToRoster shiftForAPI:', shiftForAPI);
+  
+    try {
+      const createdShift = await createSchedule(shiftForAPI);
+      console.log('Shift created:', createdShift);
+  
+      if (createdShift && createdShift.user_id) {
+        setRosterData((currentRosterData) => {
+          const updatedRosterData = [...currentRosterData];
+          return updatedRosterData;
+        });
+  
+        alert('Shift saved successfully!');
+        setIsModalOpen(false);
+        fetchRoster(users);
+      } else {
+        console.error('Unexpected response from createSchedule:', createdShift);
+      }
+    } catch (error) {
+      console.error('Error creating shift:', error);
+    }
+  };
 
     return (
         <div className="roster-container ">
@@ -219,26 +238,29 @@ const openModalToAddShift = (userId, date) => {
                 </div>
               ))}
 
-              {/* Body */}
               {rosterData.map((row, rowIndex) => (
                 <React.Fragment key={rowIndex}>
                   <div className="day bg-gray-100 border p-2 rounded m-1 overflow-hidden">{row.name}</div>
                   {[row.monday, row.tuesday, row.wednesday, row.thursday, row.friday, row.saturday, row.sunday].map((dayHours, dayIndex) => (
-                    <div key={dayIndex} className="roster-table-font day bg-white border p-2 rounded m-1 overflow-hidden relative">
+                    <div key={dayIndex} className="roster-table-font day p-2 rounded m-1 overflow-hidden relative">
                       <div className="flex flex-col items-center justify-center">
-                      <button
+                      <PlusCircleIcon
                         className="cursor-pointer hover:text-primary mb-2"
-                        onClick={() => openModalToAddShift(row.userId, dayjs(selectedDate).add(dayIndex, 'day').format('YYYY-MM-DD'))}
+                        onClick={() => openModalToAddShift(row.userId, dayIndex)}
                       >
-                        <PlusCircleIcon />
-                      </button>
-                      <AddScheduleModal
-                        isOpen={isModalOpen}
-                        onClose={() => setIsModalOpen(false)}
-                        employees={usersArray} //Passes the users array for the employee dropdown menu
-                        teams={employeeTeams} //Passed the departments as teams for team dropdown menu
-                        selectedEmployee={selectedEmployee}
-                      />
+                      </PlusCircleIcon>
+                      {isModalOpen && ReactDOM.createPortal(
+                        <AddScheduleModal
+                          isOpen={isModalOpen}
+                          onClose={() => setIsModalOpen(false)}
+                          onAddShift={addNewShiftToRoster}
+                          employees={usersArray}
+                          teams={employeeTeams}
+                          selectedEmployee={selectedEmployee}
+                          shiftDate={dayjs(currentShiftDetails.date).toDate()}
+                        />,
+                        document.getElementById('modal-root')
+                      )}
                         {dayHours}
                       </div>
                     </div>

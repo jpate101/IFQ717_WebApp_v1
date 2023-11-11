@@ -7,7 +7,6 @@ import dayjs from 'dayjs';
 
 const API_BASE_URL = 'https://my.tanda.co/api/v2';
 
-// Helper function to get headers with the Authorization token
 const getHeaders = () => {
   const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, "$1");
   return {
@@ -109,38 +108,31 @@ const TimesheetForUser = () => {
   
 
   const formatDate = (timestamp) => {
-    // If the timestamp is 0 or the date matches the Unix epoch start, return 'pending'
     if (timestamp === 0 || new Date(timestamp * 1000).toISOString() === '1970-01-01T00:00:00.000Z') {
       return 'pending';
     }
-    // Format the time to show hours and minutes only
     return new Date(timestamp * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
   const handleStatusChange = async (shiftId, newStatus) => {
     try {
-      // Only call approveShift if the new status is 'approved'
       if (newStatus === 'approved') {
         const updatedShift = await approveShift(shiftId);
         console.log('Shift status updated:', updatedShift);
       }
 
       setTimesheet((currentTimesheet) => {
-        // Find the index of the shift that was updated
         const shiftIndex = currentTimesheet.shifts.findIndex(s => s.id === shiftId);
-        if (shiftIndex === -1) return currentTimesheet; // If not found, return the current timesheet without changes
+        if (shiftIndex === -1) return currentTimesheet; 
         
-        // Create a new copy of shifts and update the status of the appropriate shift
         const updatedShifts = [...currentTimesheet.shifts];
         updatedShifts[shiftIndex] = { ...updatedShifts[shiftIndex], status: newStatus.toUpperCase() };
   
-        // Return a new timesheet object with the updated shifts array
         return { ...currentTimesheet, shifts: updatedShifts };
       });
   
     } catch (error) {
       console.error('Failed to update shift status:', error);
-      // Handle error (e.g., show a message to the user)
     }
   };
 

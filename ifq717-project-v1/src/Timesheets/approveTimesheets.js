@@ -22,39 +22,34 @@ const getHeaders = () => {
   };
 };
 
-// Helper function to format week range
 const formatWeekRange = (date) => {
     if (!date || !dayjs(date).isValid()) {
         console.error('formatWeekRange - received invalid date:', date);
         return 'Invalid Date Range';
     }
-    // Use isoWeek to set start of the week to Monday
     const startOfWeek = dayjs(date).startOf('isoWeek');
-    const endOfWeek = startOfWeek.add(6, 'day'); // Add 6 days to startOfWeek to get the endOfWeek
+    const endOfWeek = startOfWeek.add(6, 'day');
     return `${startOfWeek.format('DD MMM')} - ${endOfWeek.format('DD MMM YYYY')}`;
 };
 
-// Helper function to calculate cost of hours worked
 const calculateCost = (workedHours, hourly_rate) => {
     console.log(`Calculating cost: Worked Hours = ${workedHours}, Hourly Rate = ${hourly_rate}`);
     return workedHours * hourly_rate;
   };
 
-// Helper function to calculate rostered hours
 const calculateRosteredHours = (schedule) => {
     const start = dayjs.unix(schedule.start);
     const finish = dayjs.unix(schedule.finish);
     let totalMinutes = finish.diff(start, 'minute');
     
-    // Subtract only unpaid break lengths
     schedule.breaks.forEach(breakTime => {
-        if (!breakTime.paid) { // Check if the break is not paid
+        if (!breakTime.paid) {
             const breakLength = breakTime.length;
             totalMinutes -= breakLength;
         }
     });
     
-    return totalMinutes / 60; // Convert minutes to hours
+    return totalMinutes / 60;
 };;
 
 const ApproveTimesheetsPage = () => {
@@ -65,11 +60,9 @@ const ApproveTimesheetsPage = () => {
   const fetchedRosteredHours = useRef(false);
   const navigate = useNavigate();
 
-  // Handles the row click which opens the TimesheetForUser page
   const handleRowClick = (userId) => {
     navigate(`/Timesheets/${userId}?start=${selectedDate.startOf('isoWeek').format('YYYY-MM-DD')}&end=${selectedDate.endOf('isoWeek').format('YYYY-MM-DD')}`);
   };
-  
 
   const fetchTimesheets = async (startDate) => {
     setLoading(true);
@@ -149,7 +142,7 @@ const ApproveTimesheetsPage = () => {
 
     const updatedTimesheets = timesheets.map(timesheet => {
       const userSchedules = schedules.filter(schedule => schedule.user_id === timesheet.user_id);
-      console.log(`UserID ${timesheet.user_id} Schedules:`, userSchedules); // Log schedules for this user
+      console.log(`UserID ${timesheet.user_id} Schedules:`, userSchedules);
 
       const totalRosteredHours = userSchedules.reduce((acc, schedule) => {
         const rosteredHoursForSchedule = calculateRosteredHours(schedule);
