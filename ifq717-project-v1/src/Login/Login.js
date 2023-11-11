@@ -14,6 +14,7 @@ export default function Login() {
   const [passwordError, setPasswordError] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
+  const unauthorisedMessage = location.state ? location.state.message : null;
   
   // concatenate page path & params to generate a unique key
   // use key to force react to re-render the Login page when the URL changes 
@@ -56,9 +57,9 @@ export default function Login() {
         {/* Column 1 (visible on all devices) */}
         <Col xs={12} lg={6} className="d-flex align-items-center justify-content-center login-screen-column-1">
           <div className = "login-form">
-            {message ? (
+            {message || unauthorisedMessage ? (
               <Alert variant="danger">
-                {message}
+                {message || unauthorisedMessage}
               </Alert>
             ) : null}
             <Form onSubmit={handleLogin} >
