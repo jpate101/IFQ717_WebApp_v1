@@ -12,6 +12,7 @@ import ApproveTimesheets from './Timesheets/approveTimesheets';
 import ExportTimesheets from './Timesheets/exportTimesheets'
 import Roster from './Roster/Roster';
 import TimesheetForUser from './Timesheets/TimesheetForUser';
+import PrivateRoute from './Components/PrivateRoute';
 
 export default function App() {
   const [cookies, setCookie, removeCookie] = useCookies(['token']);
@@ -36,40 +37,47 @@ export default function App() {
             <Route
               path="/"
               element={
-                isLoggedIn ? <Navigate to="/dashboard" /> : <Home />
+                <Home />
               }
             />
             <Route
               path="/home"
               element={Home}
             />
-            <Route
-              path="/dashboard"
-              element={
-                isLoggedIn ? <Dashboard /> : <Navigate to="/" />
-              }
-            />
-            <Route
-              path="/login"
+            <Route path="/login"
               element={<Login setIsLoggedIn={setIsLoggedIn} />}
             />
-            <Route path="root/EmployeeManagement/*" element={<EmployeeManagement />} />
+            <Route
+              path="/dashboard"
+              element={<PrivateRoute element={<Dashboard />}
+              authorised={isLoggedIn} />}
+            />
+            <Route
+              path="/root/EmployeeManagement/*" 
+              element={<PrivateRoute element={<EmployeeManagement />}
+              authorised={isLoggedIn} />}
+            />
             <Route
               path="/roster"
-              element={<Roster setIsLoggedIn={setIsLoggedIn} />}
+              element={<PrivateRoute element={<Roster />}
+              authorised={isLoggedIn} />}
             />
             <Route
               path="/Timesheets/approveTimesheets"
-              element={<ApproveTimesheets setIsLoggedIn={setIsLoggedIn}/>}
+              element={<PrivateRoute element={<ApproveTimesheets />}
+              authorised={isLoggedIn} />}
             />
             <Route
               path="Timesheets/:userId"
-              element={<TimesheetForUser setIsLoggedIn={setIsLoggedIn}/>}
+              element={<PrivateRoute element={<TimesheetForUser />}
+              isLoggedIn={isLoggedIn} />}
             />
             <Route
               path="/Timesheets/exportTimesheets"
-              element={<ExportTimesheets setIsLoggedIn={setIsLoggedIn}/>}
+              element={<PrivateRoute element={<ExportTimesheets />}
+              authorised={isLoggedIn} />}
             />
+            <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </Container>
         <Footer />
