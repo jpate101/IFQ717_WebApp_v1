@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
-import GetToken from '../API/Utilities/getToken';
-import GetUserDetails from '../API/Utilities/getUserDetails';
+import GetToken from '../API/Utilities/GetToken';
+import GetUserDetails from '../API/Utilities/GetUserDetails';
 import TaskList from '../Components/TaskList/TaskList';
 import '../../src/style.css';
 

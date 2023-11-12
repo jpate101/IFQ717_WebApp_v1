@@ -1,8 +1,8 @@
 // Modelling tasks
 
 import { getLocations, getUsers, getSchedules } from '../../API/Utilities';
-import getTeams from '../../API/Utilities/getTeams';
-import getUserDetails from '../../API/Utilities/getUserDetails';
+import GetTeams from '../../API/Utilities/GetTeams';
+import GetUserDetails from '../../API/Utilities/GetUserDetails';
 
 const completionCriteria = (data) => {
   return data.some((data) => data.id !== undefined);
@@ -23,7 +23,7 @@ const tasks = [
     {
       name: 'Add teams',
       fetchFunction: async () => {
-        const teams = await getTeams({ page: 1, page_size: 1 });
+        const teams = await GetTeams({ page: 1, page_size: 1 });
         return teams;
       },
       completionCriteria: completionCriteria
