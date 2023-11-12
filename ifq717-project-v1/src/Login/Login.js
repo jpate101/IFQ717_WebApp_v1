@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import './login.css';
 import '../Resources/iStock-Chefs.jpg';
 import '../Resources/logo-white.svg';
-import ExchangeToken from "../API/Utilities/ExchangeToken";
+import ExchangeToken from "../API/Utilities/exchangeToken";
 
 export default function Login() {
   const [username, setUsername] = useState("");

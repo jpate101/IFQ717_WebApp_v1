@@ -329,10 +329,10 @@ export const getLocations = async () => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const locationsData = await response.json();
-    console.log('Locations data received:', locationsData);
+    const locations = await response.json();
+    console.log('Locations data received:', locations);
 
-    return locationsData;
+    return locations;
   
   } catch (error) {
     console.error('Error fetching locations:', error);

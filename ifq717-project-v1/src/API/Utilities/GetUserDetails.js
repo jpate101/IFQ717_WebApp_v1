@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import SetHeaders from './SetHeaders';
+import SetHeaders from './setHeaders';
 
 function GetUserDetails(token) {
   const [user, setUser] = useState(null);
