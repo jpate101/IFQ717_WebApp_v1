@@ -1,8 +1,8 @@
 // Set headers for use on the Tanda API, requiring token. 
 
-import GetToken from './getToken';
+import GetToken from './GetToken';
 
-const setHeaders = () => {
+const SetHeaders = () => {
   const token = GetToken();
   return {
     'Content-Type': 'application/json',
@@ -10,4 +10,4 @@ const setHeaders = () => {
   };
 };
 
-export default setHeaders;
+export default SetHeaders;

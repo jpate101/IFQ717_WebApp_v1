@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-import setHeaders from './setHeaders';
+import SetHeaders from './SetHeaders';
 
-function useUserDetails(token) {
+function GetUserDetails(token) {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
     console.log('Fetching user details...');
     fetch(`${process.env.REACT_APP_API_BASE_URL}/users/me`, {
-      headers: setHeaders()
+      headers: SetHeaders()
     })
       .then(response => response.json())
       .then(data => {
@@ -20,4 +20,4 @@ function useUserDetails(token) {
   return user;
 }
 
-export default useUserDetails;
+export default GetUserDetails;
