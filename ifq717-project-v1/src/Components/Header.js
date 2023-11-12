@@ -58,7 +58,7 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
                     </NavDropdown.Item>
                   </NavDropdown>
                   <HighlightLink to="/" as={Link} onClick={handleLogOut} className="ml-32">
-                    Logout - W.I.P
+                    Logout wip
                   </HighlightLink>
                 </>
               ) : (
