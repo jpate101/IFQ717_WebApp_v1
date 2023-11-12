@@ -362,6 +362,29 @@ export const approveShift = async (shiftId) => {
   }
 };
 
+// Get Locations
+export const getLocations = async () => {
+  const headers = getHeaders(); 
+  try {
+    const response = await fetch(`${API_BASE_URL}/locations?platform=false&show_business_hours=false`, {   
+      method: 'GET',
+      headers: headers,
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const locationsData = await response.json();
+    console.log('Locations data received:', locationsData);
+
+    return locationsData;
+  
+  } catch (error) {
+    console.error('Error fetching locations:', error);
+    throw error;
+  }
+}
+
 // Get current rosters
 
 export const getCurrentRosters = async () => {

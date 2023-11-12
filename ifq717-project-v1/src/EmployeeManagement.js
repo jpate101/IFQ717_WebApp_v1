@@ -9,9 +9,9 @@ function EmployeeManagement() {
     const [showLocationForm, setShowLocationForm] = useState(false);
     const [showTeamsForm, setShowTeamsForm] = useState(false);
     const [showEmployeeForm, setShowEmployeeForm] = useState(false);
-    const [showUpadateUsers, setShowUpadateUsers] = useState(false);
-    const [showUpadateLocations, setShowUpadateLocations] = useState(false);
-    const [showUpadateTeams, setShowUpadateTeams] = useState(false);
+    const [showUpdateUsers, setShowUpdateUsers] = useState(false);
+    const [showUpdateLocations, setShowUpdateLocations] = useState(false);
+    const [showUpdateTeams, setShowUpdateTeams] = useState(false);
     const [showOnboardNewUser, setShowOnboardNewUser] = useState(false);
     const [showResult, setShowResult] = useState("");
 
@@ -170,9 +170,9 @@ function EmployeeManagement() {
         setShowLocationForm(true);
         setShowTeamsForm(false);
         setShowEmployeeForm(false);
-        setShowUpadateUsers(false);
-        setShowUpadateLocations(false);
-        setShowUpadateTeams(false);
+        setShowUpdateUsers(false);
+        setShowUpdateLocations(false);
+        setShowUpdateTeams(false);
         setShowOnboardNewUser(false);
         setShowResult('');
     };
@@ -181,9 +181,9 @@ function EmployeeManagement() {
         setShowEmployeeForm(false);
         setShowLocationForm(false);
         setShowTeamsForm(true);
-        setShowUpadateUsers(false);
-        setShowUpadateLocations(false);
-        setShowUpadateTeams(false);
+        setShowUpdateUsers(false);
+        setShowUpdateLocations(false);
+        setShowUpdateTeams(false);
         setShowOnboardNewUser(false);
         setShowResult('');
     };
@@ -192,36 +192,36 @@ function EmployeeManagement() {
         setShowLocationForm(false);
         setShowTeamsForm(false);
         setShowEmployeeForm(true);
-        setShowUpadateUsers(false);
-        setShowUpadateLocations(false);
-        setShowUpadateTeams(false);
+        setShowUpdateUsers(false);
+        setShowUpdateLocations(false);
+        setShowUpdateTeams(false);
         setShowOnboardNewUser(false);
         setShowResult('');
     };
-    const handleUpadateUsersClick = () => {
-        setShowUpadateUsers(true);
-        setShowUpadateLocations(false);
-        setShowUpadateTeams(false);
+    const handleUpdateUsersClick = () => {
+        setShowUpdateUsers(true);
+        setShowUpdateLocations(false);
+        setShowUpdateTeams(false);
         setShowLocationForm(false);
         setShowTeamsForm(false);
         setShowEmployeeForm(false);
         setShowOnboardNewUser(false);
         setShowResult('');
     }
-    const handleUpadateLocationsClick = () => {
-        setShowUpadateUsers(false);
-        setShowUpadateLocations(true);
-        setShowUpadateTeams(false);
+    const handleUpdateLocationsClick = () => {
+        setShowUpdateUsers(false);
+        setShowUpdateLocations(true);
+        setShowUpdateTeams(false);
         setShowLocationForm(false);
         setShowTeamsForm(false);
         setShowEmployeeForm(false);
         setShowOnboardNewUser(false);
         setShowResult('');
     }
-    const handleUpadateTeamsClick = () => {
-        setShowUpadateUsers(false);
-        setShowUpadateLocations(false);
-        setShowUpadateTeams(true);
+    const handleUpdateTeamsClick = () => {
+        setShowUpdateUsers(false);
+        setShowUpdateLocations(false);
+        setShowUpdateTeams(true);
         setShowLocationForm(false);
         setShowTeamsForm(false);
         setShowEmployeeForm(false);
@@ -229,9 +229,9 @@ function EmployeeManagement() {
         setShowResult('');
     }
     const handleOnbooardNewUserClick = () => {
-        setShowUpadateUsers(false);
-        setShowUpadateLocations(false);
-        setShowUpadateTeams(false);
+        setShowUpdateUsers(false);
+        setShowUpdateLocations(false);
+        setShowUpdateTeams(false);
         setShowLocationForm(false);
         setShowTeamsForm(false);
         setShowEmployeeForm(false);
@@ -248,7 +248,7 @@ function EmployeeManagement() {
         latitude: '',
         longitude: '',
         address: '',
-        public_holiday_regions: [''],
+        public_holiday_regions: ['au'],
         specific_holiday_dates: [
             { date: '' },
             { date: '', from: '', to: '' },
@@ -396,7 +396,7 @@ function EmployeeManagement() {
             latitude: parseFloat(formDataLocation.latitude),
             longitude: parseFloat(formDataLocation.longitude),
             address: formDataLocation.address,
-            public_holiday_regions: ['au'],
+            public_holiday_regions: formDataLocation.public_holiday_regions,
             specific_holiday_dates: [
                 {
                     date: '',
@@ -409,6 +409,7 @@ function EmployeeManagement() {
             ],
         };
         const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
+        console.log(requestBody);
         console.log(apiKey);
 
         // Send a POST request to your API endpoint
@@ -556,7 +557,7 @@ function EmployeeManagement() {
             latitude: parseFloat(formDataLocation.latitude),
             longitude: parseFloat(formDataLocation.longitude),
             address: formDataLocation.address,
-            public_holiday_regions: ['au'],
+            public_holiday_regions: formDataLocation.public_holiday_regions,
             specific_holiday_dates: [
                 {
                     date: '2016-03-14',
@@ -707,9 +708,23 @@ function EmployeeManagement() {
         }
 
         const teamUpdateRequestUsersManagers = {
-            //user_ids: formDataTeams.user_ids.map(Number),
+            user_ids: formDataTeams.user_ids.map(Number),
             manager_ids: formDataTeams.manager_ids.map(Number),
         };
+
+        //delete teamUpdateRequestUsersManagers.user_ids;
+        //console.log(teamUpdateRequestUsersManagers.user_ids[0]);
+        if (teamUpdateRequestUsersManagers.user_ids[0] == 0 ) {
+            delete teamUpdateRequestUsersManagers.user_ids;
+        }
+        
+        if (teamUpdateRequestUsersManagers.manager_ids[0] == 0) {
+            delete teamUpdateRequestUsersManagers.manager_ids;
+        }
+
+
+        
+        //console.log(teamUpdateRequestUsersManagers.user_ids[0]);
         console.log(teamUpdateRequestUsersManagers);
 
         const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
@@ -783,7 +798,7 @@ function EmployeeManagement() {
 
         }
         console.log(updatedData.employment_start_date);
-        
+
         if (updatedData.name === '') {
             delete updatedData.name;
         }
@@ -794,10 +809,10 @@ function EmployeeManagement() {
             delete updatedData.enable_login;
         }
         if (updatedData.date_of_birth === "") {
-            delete updatedData.date_of_birth ;
+            delete updatedData.date_of_birth;
         }
         if (updatedData.employment_start_date === '') {
-            delete updatedData.employment_start_date ;
+            delete updatedData.employment_start_date;
         }
 
         for (let field in updatedData) {
@@ -898,18 +913,18 @@ function EmployeeManagement() {
     function handleOnboardExistingUserSubmit(e) {
         console.log('Onboard Existing User button pressed');
         e.preventDefault();
-    
+
         if (!formDataOnboarding.Id) {
             setShowResult("Please fill in the User ID field.");
             return;
         }
-    
+
         const userId = formDataOnboarding.Id;
         const apiKey = document.cookie.replace(
             /(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/,
             "$1"
         );
-    
+
         fetch(`https://my.tanda.co/api/v2/users/${userId}/onboard`, {
             method: 'POST',
             headers: {
@@ -946,22 +961,22 @@ function EmployeeManagement() {
                             <a onClick={handleCreateLocationsClick}>Create Locations</a>
                         </li>
                         <li>
-                            <a onClick={handleUpadateLocationsClick}>Update Locations</a>
+                            <a onClick={handleUpdateLocationsClick}>Update Locations</a>
                         </li>
                         <li>
                             <a onClick={handleCreateUsersClick}>Create Users</a>
                         </li>
                         <li>
-                            <a onClick={handleUpadateUsersClick}>Update Users</a>
+                            <a onClick={handleUpdateUsersClick}>Update Users</a>
                         </li>
                         <li>
                             <a onClick={handleCreateTeamsClick}>Create Teams</a>
                         </li>
                         <li>
-                            <a onClick={handleUpadateTeamsClick}>Update Teams</a>
+                            <a onClick={handleUpdateTeamsClick}>Update Teams</a>
                         </li>
                         <li>
-                            <a onClick={handleOnbooardNewUserClick}>Onboard users</a>
+                            <a onClick={handleOnbooardNewUserClick}>Send Onboard User Invites</a>
                         </li>
                     </ul>
                 </div>
@@ -1019,6 +1034,10 @@ function EmployeeManagement() {
                                     onChange={e => setFormDataLocation({ ...formDataLocation, public_holiday_regions: [e.target.value] })}
                                 >
                                     <option value="au">Australia</option>
+                                    <option value="us">United States</option>
+                                    <option value="ca">Canada</option>
+                                    <option value="uk">United Kingdom</option>
+                                    <option value="fr">France</option>
                                     {/* Add more options for other regions if needed */}
                                 </select>
                             </div>
@@ -1102,7 +1121,7 @@ function EmployeeManagement() {
                             <button type="submit" style={{ margin: '10px' }} className="EM-button">Create Employee</button>
                             {showResult && <p>{showResult}</p>}
                         </form>
-                    ) : showUpadateLocations ? (
+                    ) : showUpdateLocations ? (
                         <div className="flex-container">
                             <form
                                 onSubmit={handleUpdateLocationSubmit}
@@ -1121,6 +1140,18 @@ function EmployeeManagement() {
                                         setFormDataLocation({ ...formDataLocation, locationsId: e.target.value })
                                     }
                                 />
+
+                                <select
+                                    value={formDataLocation.locationsId}
+                                    onChange={(e) => setFormDataLocation({ ...formDataLocation, locationsId: e.target.value })}
+                                >
+                                    <option value="">Select Location ID</option>
+                                    {filteredLocations.map((location) => (
+                                        <option key={location.id} value={location.id}>
+                                            {location.name} - {location.short_name}
+                                        </option>
+                                    ))}
+                                </select>
 
                                 <div>
                                     <h3 className="secondary">Set Location Name Details:</h3>
@@ -1182,6 +1213,11 @@ function EmployeeManagement() {
                                         }
                                     >
                                         <option value="au">Australia</option>
+                                        <option value="us">United States</option>
+                                        <option value="ca">Canada</option>
+                                        <option value="uk">United Kingdom</option>
+                                        <option value="fr">France</option>
+                                        {/* Add more options for other regions if needed */}
                                     </select>
                                 </div>
                                 <div>
@@ -1192,30 +1228,9 @@ function EmployeeManagement() {
                                     Update Location
                                 </button>
                                 {showResult && <p>{showResult}</p>}
-                            </form>
-
-                            <div className="location-list">
-                                <input
-                                    type="text"
-                                    placeholder="Search Locations"
-                                    style={{ margin: '5px' }}
-                                    value={searchLocation}
-                                    onChange={(e) => setSearchLocation(e.target.value)}
-                                />
-                                {searchLocation && (
-                                    <ul>
-                                        {filteredLocations.map((location) => (
-                                            <li key={location.id} className='li-EM '>
-                                                <p>ID: {location.id}</p>
-                                                <p>Name: {location.name}</p>
-                                                <p>Short Name: {location.short_name}</p>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </div>
+                            </form>                        
                         </div>
-                    ) : showUpadateTeams ? (
+                    ) : showUpdateTeams ? (
                         <div className="flex-container">
                             <form onSubmit={handleUpdateTeamsSubmit} style={{ padding: '30px' }} className="primary">
                                 <h2 className="secondary h2-EM">Update Teams</h2>
@@ -1230,6 +1245,17 @@ function EmployeeManagement() {
                                         value={formDataTeams.Id}
                                         onChange={e => setFormDataTeams({ ...formDataTeams, Id: e.target.value })}
                                     />
+                                    <select
+                                        value={formDataTeams.Id}
+                                        onChange={(e) => setFormDataOnboarding({ ...formDataTeams, Id: e.target.value })}
+                                    >
+                                        <option value="">Select Team ID</option>
+                                        {filteredTeams.map((Teams) => (
+                                            <option key={Teams.Id} value={Teams.Id}>
+                                                {Teams.name} - {Teams.Id}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
 
 
@@ -1254,15 +1280,16 @@ function EmployeeManagement() {
                                     />
                                 </div>
                                 <button onClick={handleUpdateQualifications} type="submit" style={{ margin: '10px' }} className="EM-button">Update Team Qualifications</button>
-                                {/* <div >
+                                <div >
                                     <input
                                         type="text"
                                         placeholder="User IDs (comma-separated)"
-                                        style={{ margin: '5px'}}
+                                        style={{ margin: '5px' }}
                                         value={formDataTeams.user_ids.join(',')} // Join the array for display
                                         onChange={(e) => setFormDataTeams({ ...formDataTeams, user_ids: e.target.value.split(',') })}
                                     />
-                                </div>*/}
+                                    <p>user IDs current dont work</p>
+                                </div>
                                 <div>
                                     <input
                                         type="text"
@@ -1277,45 +1304,6 @@ function EmployeeManagement() {
                                 <button onClick={handleUpdateUsersAndManagers} type="submit" style={{ margin: '10px' }} className="EM-button">Update Team Users and managers</button>
                                 {showResult && <p>{showResult}</p>}
                             </form>
-                            <div className="Teams-list">
-                                <input
-                                    type="text"
-                                    placeholder="Search Teams"
-                                    style={{ margin: '5px' }}
-                                    value={searchTeams}
-                                    onChange={(e) => setSearchTeams(e.target.value)}
-                                />
-                                {searchTeams && (
-                                    <ul>
-                                        {filteredTeams.map((Teams) => (
-                                            <li key={Teams.id} className='li-EM '>
-                                                <p>ID: {Teams.id}</p>
-                                                <p>Name: {Teams.name}</p>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </div>
-                            <div className="location-list">
-                                <input
-                                    type="text"
-                                    placeholder="Search Locations"
-                                    style={{ margin: '5px' }}
-                                    value={searchLocation}
-                                    onChange={(e) => setSearchLocation(e.target.value)}
-                                />
-                                {searchLocation && (
-                                    <ul>
-                                        {filteredLocations.map((location) => (
-                                            <li key={location.id} className='li-EM '>
-                                                <p>ID: {location.id}</p>
-                                                <p>Name: {location.name}</p>
-                                                <p>Short Name: {location.short_name}</p>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </div>
                             <div className="Users-list">
                                 <input
                                     type="text"
@@ -1336,7 +1324,7 @@ function EmployeeManagement() {
                                 )}
                             </div>
                         </div>
-                    ) : showUpadateUsers ? (
+                    ) : showUpdateUsers ? (
                         <div className="flex-container">
                             <form onSubmit={handleUpdateEmployee} style={{ padding: '30px' }} className="primary">
                                 <h2 className="secondary h2-EM">Update User</h2>
@@ -1352,6 +1340,17 @@ function EmployeeManagement() {
                                         value={formDataEmployee.Id}
                                         onChange={e => setFormDataEmployee({ ...formDataEmployee, Id: e.target.value })}
                                     />
+                                    <select
+                                        value={formDataOnboarding.Id}
+                                        onChange={(e) => setFormDataOnboarding({ ...formDataOnboarding, Id: e.target.value })}
+                                    >
+                                        <option value="">Select User ID</option>
+                                        {filteredUsers.map((user) => (
+                                            <option key={user.id} value={user.id}>
+                                                {user.name} - {user.email}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
                                 <h3 className="secondary">Set User/Employee Details:</h3>
                                 <div>
@@ -1401,7 +1400,7 @@ function EmployeeManagement() {
                                         onChange={e => setFormDataEmployee({ ...formDataEmployee, email: e.target.value })}
                                     />
                                 </div>
-                                
+
 
                                 <div>
                                     <h4 className="secondary">Date of Birth:</h4>
@@ -1425,7 +1424,7 @@ function EmployeeManagement() {
                                     />
                                 </div>
 
-                        
+
 
                                 <div>
                                     <input
@@ -1477,25 +1476,6 @@ function EmployeeManagement() {
                                 <button type="submit" style={{ margin: '10px' }} className="EM-button">Update Users Submit</button>
                                 {showResult && <p>{showResult}</p>}
                             </form>
-                            <div className="Users-list">
-                                <input
-                                    type="text"
-                                    style={{ margin: '5px' }}
-                                    placeholder="Search Users"
-                                    value={searchUsers}
-                                    onChange={(e) => setSearchUsers(e.target.value)}
-                                />
-                                {searchUsers && (
-                                    <ul>
-                                        {filteredUsers.map((Users) => (
-                                            <li key={Users.id} className='li-EM '>
-                                                <p>ID: {Users.id}</p>
-                                                <p>Name: {Users.name}</p>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </div>
                         </div>
 
                     ) : showOnboardNewUser ? (
@@ -1565,6 +1545,17 @@ function EmployeeManagement() {
                                         value={formDataOnboarding.Id}
                                         onChange={e => setFormDataOnboarding({ ...formDataOnboarding, Id: e.target.value })}
                                     />
+                                    <select
+                                        value={formDataOnboarding.Id}
+                                        onChange={(e) => setFormDataOnboarding({ ...formDataOnboarding, Id: e.target.value })}
+                                    >
+                                        <option value="">Select User ID</option>
+                                        {filteredUsers.map((user) => (
+                                            <option key={user.id} value={user.id}>
+                                                {user.name} - {user.email}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
 
 
@@ -1574,25 +1565,6 @@ function EmployeeManagement() {
 
                                 {showResult && <p>{showResult}</p>}
                             </form>
-                            <div className="Users-list">
-                                <input
-                                    type="text"
-                                    style={{ margin: '5px' }}
-                                    placeholder="Search Users"
-                                    value={searchUsers}
-                                    onChange={(e) => setSearchUsers(e.target.value)}
-                                />
-                                {searchUsers && (
-                                    <ul>
-                                        {filteredUsers.map((Users) => (
-                                            <li key={Users.id} className='li-EM '>
-                                                <p>ID: {Users.id}</p>
-                                                <p>Name: {Users.name}</p>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </div>
                         </div>
                     ) : (
                         <div style={{ paddingLeft: '20px' }}>
