@@ -1,10 +1,11 @@
+import { useState } from 'react';
 import { Select } from 'antd';
 import FormItemWrapper from './FormItemWrapper';
 import { ReactComponent as PeopleIcon } from '../../svg/people.svg';
 const { Option } = Select;
 
-function TeamsDropdown({ onSelectChange, teams }) {
-  
+function TeamsDropdown({ onSelectChange, teams, selectedTeamId }) {
+
     return (
       <FormItemWrapper>
         <PeopleIcon
@@ -17,6 +18,7 @@ function TeamsDropdown({ onSelectChange, teams }) {
             console.log('Selected Team ID:', value);
             onSelectChange(value);
           }}
+          value={selectedTeamId}
           placeholder="Select a Team"
           style={{ 
             width: '218px',
