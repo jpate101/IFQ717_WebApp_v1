@@ -3,75 +3,123 @@ import EmployeesDropdown from './EmployeesDropdown';
 import TeamsDropdown from './TeamsDropdown';
 import DateFormItem from './DateFormItem';
 import TimePickerComponent from './TimePicker';
-import { getUsers, getAllDepartments } from '../../API/Utilities';
+import { getUsers, getAllDepartments, updateSchedule } from '../../API/Utilities';
 import { ReactComponent as BinIcon } from '../../svg/trash3.svg';
 import { ReactComponent as DotDotDot } from '../../svg/three-dots.svg';
 import dayjs from 'dayjs';
-const RosterModal = ({ isOpen, onClose, onAddShift, shiftDate }) => {
+const RosterModal = ({ 
+  isOpen,
+  onClose,
+  onAddShift,
+  onDeleteShift,
+  shiftDate,
+  shiftStartTime,
+  shiftFinishTime,
+  employeeId,
+  teamId,
+  shiftId,
+  currentShiftDetails,
+  onUpdateShift
+
+}) => {
 
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [teams, setTeams] = useState([]);
   const [allTeams, setAllTeams] = useState([]);
+  const [users, setUsers] = useState(null);
   const [hoursWorked, setHoursWorked] = useState('');
   const [shiftDetails, setShiftDetails] = useState({
     startTime: '',
     finishTime: '',
+    employeeId:'',
+    teamId:''
   });
 
   useEffect(() => {
-    getAllDepartments().then(setAllTeams);
-  }, []);
-
-  const handleEmployeeSelect = async (employeeId) => {
-    console.log('handleEmployeeSelect called with employeeId:', employeeId);
-
-    const users = await getUsers();
-    console.log('Fetched users:', users);
-    
-    const employee = users.find(user => user.id === employeeId);
-    console.log('Found employee:', employee);
-  
-    if (employee) {
-      const employeeTeams = allTeams.filter(team => employee.department_ids.includes(team.id));
-      console.log('Employee teams:', employeeTeams);
-
-      setTeams(employeeTeams);
-    } else {
-      console.log('No employee found, clearing teams');
-      setTeams([]);
+    if (shiftStartTime && shiftFinishTime) {
+      setShiftDetails({
+        startTime: shiftStartTime,
+        finishTime: shiftFinishTime,
+      });
     }
-
-    setSelectedEmployee(employeeId);
-    console.log('setSelectedEmployee:', employeeId);
-  };
+  }, [shiftStartTime, shiftFinishTime]);
+  useEffect(() => {
+    async function fetchData() {
+      console.log("Fetching departments...");
+      const departments = await getAllDepartments();
+      console.log("Departments fetched:", departments);
+      setAllTeams(departments);
+  
+      if (teamId) {
+        const team = departments.find(dept => dept.id === teamId);
+        console.log("Selected team (from teamId):", team);
+        setSelectedTeam(team);
+      }
+  
+      if (employeeId) {
+        console.log("Fetching user data for employeeId:", employeeId);
+        const userResponse = await getUsers(employeeId);
+        console.log("User response:", userResponse);
+  
+        if (userResponse && userResponse.length > 0) {
+          const specificUser = userResponse[0];
+          setUsers([specificUser]);
+          setSelectedEmployee(specificUser);
+  
+          const employeeTeams = departments.filter(team =>
+            specificUser.department_ids.includes(team.id)
+          );
+          console.log("Teams associated with the employee:", employeeTeams);
+          setTeams(employeeTeams);
+  
+          if (teamId) {
+            const selectedTeam = employeeTeams.find(team => team.id === teamId);
+            console.log("Selected team (from employee's teams):", selectedTeam);
+            setSelectedTeam(selectedTeam);
+          }
+        }
+      } else {
+        const allUsers = await getUsers();
+        console.log("All users fetched:", allUsers);
+        setUsers(allUsers);
+      }
+    }
+  
+    fetchData();
+  }, [teamId, employeeId]);
+  
+  const selectedEmployeeName = selectedEmployee ? selectedEmployee.name : null;
 
   const handleSaveShift = async () => {
-
-    console.log('Received shiftDate:', shiftDate);
-
+    console.log('handleSaveShift - Received currentShiftDetails:', currentShiftDetails)
+  
     const startDateTime = dayjs(`${dayjs(shiftDate).format('YYYY-MM-DD')}T${shiftDetails.startTime}`);
     const finishDateTime = dayjs(`${dayjs(shiftDate).format('YYYY-MM-DD')}T${shiftDetails.finishTime}`);
-    console.log('Parsed startDateTime:', startDateTime.toString());
-    console.log('Parsed finishDateTime:', finishDateTime.toString());
-    console.log('Shift details for start and finish:', shiftDetails);
-    
-    const newShiftDetails = {
-      employeeId: selectedEmployee,
-      teamId: selectedTeam,
-      startTime: startDateTime.format('HH:mm'),
-      finishTime: finishDateTime.format('HH:mm'),
+  
+    const shiftData = {
+      shiftId: currentShiftDetails.shiftId,
+      user_id: selectedEmployee.id,
+      department_id: selectedTeam.id || selectedTeam,
+      start: startDateTime.unix(),
+      finish: finishDateTime.unix(),
     };
   
-    console.log('New shift details being sent:', newShiftDetails);
-  
+    console.log('handleSaveShift - Prepared shiftData:', shiftData);
+
     try {
-      await onAddShift(newShiftDetails);
+      if (shiftData.shiftId) {
+        // Existing shift, update it
+        await onUpdateShift(shiftData);
+      } else {
+        // New shift, create it
+        await onAddShift(shiftData);
+      }
     } catch (error) {
       console.error('Error saving shift:', error);
     }
-  };
-
+  };  
+  
   return isOpen && (
     <>
       <div className="fixed bg-black bg-opacity-10 inset-0 flex justify-center items-center">
@@ -99,8 +147,9 @@ const RosterModal = ({ isOpen, onClose, onAddShift, shiftDate }) => {
         </div>
         <div className="my-2">
         <EmployeesDropdown
-          onSelectChange={handleEmployeeSelect}
-          selectedEmployeeId={selectedEmployee}
+          onSelectChange={() => {}}
+          selectedEmployeeId={selectedEmployeeName}
+          employees={users}
         >
         </EmployeesDropdown>
         </div>
@@ -108,6 +157,7 @@ const RosterModal = ({ isOpen, onClose, onAddShift, shiftDate }) => {
           <TeamsDropdown
             teams={teams}
             onSelectChange={setSelectedTeam}
+            selectedTeamId={selectedTeam ? selectedTeam.id : null}
           >
           </TeamsDropdown>
         </div>
@@ -122,7 +172,7 @@ const RosterModal = ({ isOpen, onClose, onAddShift, shiftDate }) => {
             >
             </DotDotDot>
             <BinIcon
-              //onClick={handleDeleteShift}
+              //onClick={}
               className="w-6 h-6 mr-3 cursor-pointer roster-icon"
             >
             </BinIcon>
