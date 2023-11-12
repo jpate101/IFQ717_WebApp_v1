@@ -72,31 +72,43 @@ export const getSchedulesByUser = async (userIds, fromDate, toDate) => {
 
 
 // Fetches info about all visible users
-export const getUsers = async () => {
+export const getUsers = async (employeeId = null) => {
   try {
     const headers = getHeaders(); 
 
-    const url = `${API_BASE_URL}/users?show_wages=true`;
+    let url = `${API_BASE_URL}/users?show_wages=true`;
+    if (employeeId) {
+      url = `${API_BASE_URL}/users/${employeeId}?show_wages=true`;
+      console.log(`Fetching data for user with ID: ${employeeId}`);
+    } else {
+      console.log('Fetching data for all users');
+    }
+    console.log('Request URL:', url);
 
     const response = await fetch(url, {
       method: 'GET',
       headers: headers
     });
 
+    console.log('Response received', response);
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const usersData = await response.json();
+    let usersData = await response.json();
     console.log('Users data received:', usersData);
 
-   
+    // Handle the case when the response is not an array (i.e., a single user is fetched)
+    if (!Array.isArray(usersData)) {
+      usersData = [usersData]; // Convert the single user object to an array for consistent processing
+    }
+
     return usersData.map(user => ({
       id: user.id,
       name: user.name,
       hourly_rate: user.hourly_rate,
       department_ids: user.department_ids
-
     }));
 
   } catch (error) {
@@ -104,6 +116,8 @@ export const getUsers = async () => {
     throw error;
   }
 };
+
+
 
 // Gets information about a user, including departments they belong to
 export const getUserInfo = async (userId) => {
@@ -269,6 +283,37 @@ export const createSchedule = async (details) => {
   }
 };
 
+// Deletes a schedule for the selected date
+
+export const deleteSchedule = async (scheduleId) => {
+  const response = await fetch(`${API_BASE_URL}/schedules/${scheduleId}`, {
+    method: 'DELETE',
+    headers: getHeaders(),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to delete schedule');
+  }
+
+  return response.json();
+};
+
+// Updates a schedule for the selected date
+
+export const updateSchedule = async (schedule) => {
+  const response = await fetch(`${API_BASE_URL}/schedules/${schedule.id}`, {
+    method: 'PUT',
+    headers: getHeaders(),
+    body: JSON.stringify(schedule),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to update schedule');
+  }
+
+  return response.json();
+};
+
 // Updates the status of a timesheet
 export const updateTimesheetStatus = async (timesheetId, newStatus) => {
   const url = `${API_BASE_URL}/timesheets/${timesheetId}`;
@@ -313,6 +358,26 @@ export const approveShift = async (shiftId) => {
     return await response.json();
   } catch (error) {
     console.error('Error approving shift:', error);
+    throw error;
+  }
+};
+
+// Get current rosters
+
+export const getCurrentRosters = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/rosters/current?show_costs=true`, {
+      method: 'GET',
+      headers: getHeaders()
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching current rosters:', error);
     throw error;
   }
 };
