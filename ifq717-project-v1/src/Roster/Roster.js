@@ -156,7 +156,6 @@ const Roster = () => {
     const shift = rosterData.find(shift => shift.userId === userId && shift.date === dateOfShift);
   
     if (shift) {
-      // Extract the start and finish times from the shift
       const [startTime, finishTime] = shift.shiftTime.split(' - ');
       setCurrentShiftDetails({ 
         userId, 
@@ -188,43 +187,38 @@ const Roster = () => {
   const addNewShiftToRoster = async (shiftDetails) => {
     console.log('addNewShiftToRoster shiftDetails:', shiftDetails);
   
-    // Destructure and log the shift details
     const { employeeId, teamId, startTime, finishTime } = shiftDetails;
     console.log('Start Time:', startTime, 'Finish Time:', finishTime);
   
-    // Check for missing details
     if (!employeeId || !teamId || !startTime || !finishTime) {
       console.error('Missing shift details:', shiftDetails);
       return;
     }
-  
-    // Convert times to Unix timestamps
+ 
     const startDateTime = dayjs(`${currentShiftDetails.date}T${startTime}`);
     const finishDateTime = dayjs(`${currentShiftDetails.date}T${finishTime}`);
     const startTimestamp = startDateTime.unix();
     const finishTimestamp = finishDateTime.unix();
     
-    // Prepare data for API call
+
     const shiftForAPI = {
-      user_id: employeeId.id,  // Ensure you are sending the ID, not the whole object
-      department_id: teamId,   // Ensure this is the team ID
+      user_id: employeeId.id,  
+      department_id: teamId,  
       start: startTimestamp,
       finish: finishTimestamp,
     };
   
     console.log('addNewShiftToRoster shiftForAPI:', shiftForAPI);
   
-    // API call
     try {
       const createdShift = await createSchedule(shiftForAPI);
       console.log('Shift created:', createdShift);
   
       if (createdShift && createdShift.user_id) {
-        // Update roster data and close modal
-        setRosterData(currentRosterData => [...currentRosterData, createdShift]); // Update the state with new shift
+        setRosterData(currentRosterData => [...currentRosterData, createdShift]);
         alert('Shift saved successfully!');
         setIsModalOpen(false);
-        fetchRoster(users); // Refresh the roster
+        fetchRoster(users);
       } else {
         console.error('Unexpected response from createSchedule:', createdShift);
       }
@@ -242,7 +236,6 @@ const Roster = () => {
     const dateOfShift = dayjs(selectedDate).startOf('week').add(dayIndex, 'day').format('YYYY-MM-DD');
     console.log("Date of Shift: ", dateOfShift);
   
-    // Find the user's shift data for the given day
     const userShifts = rosterData.find(row => row.userId === userId);
     console.log("User Shifts: ", userShifts);
   
@@ -251,7 +244,6 @@ const Roster = () => {
       return;
     }
   
-    // Update the day keys to match the format in userShifts
     const fullDayNames = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
     const dayKey = fullDayNames[dayIndex];
     console.log("Day Key: ", dayKey);
@@ -288,7 +280,7 @@ const Roster = () => {
       return;
     }
 
-    const teamIdParsed = parseInt(teamId, 10); // Assuming teamId is a number
+    const teamIdParsed = parseInt(teamId, 10);
 
     console.log("Setting current shift details...");
     setCurrentShiftDetails({
@@ -301,7 +293,6 @@ const Roster = () => {
       });
       console.log("currentShiftDetails after update: ", currentShiftDetails);
 
-    // Assuming 'users' and 'departments' contain the full list of employees and teams
     const selectedEmployee = users.find(user => user.id === userId);
     const selectedTeam = departments.find(department => department.id === teamIdParsed);
 
@@ -317,45 +308,39 @@ const Roster = () => {
   const updateShiftInRoster = async (shiftDetails) => {
     console.log('updateShiftInRoster - Received shiftDetails:', shiftDetails);
   
-    // Destructure and log the shift details
     const { employeeId, teamId, startTime, finishTime, shiftId } = shiftDetails;
     console.log('Start Time:', startTime, 'Finish Time:', finishTime, 'Shift ID:', shiftId);
   
-    // Check for missing details
     if (!shiftId || !employeeId || !teamId || !startTime || !finishTime) {
       console.error('Missing shift details:', shiftDetails);
       return;
     }
   
-    // Convert times to Unix timestamps
     const startDateTime = dayjs(`${currentShiftDetails.date}T${startTime}`);
     const finishDateTime = dayjs(`${currentShiftDetails.date}T${finishTime}`);
     const startTimestamp = startDateTime.unix();
     const finishTimestamp = finishDateTime.unix();
   
-    // Prepare data for API call
     const shiftForAPI = {
       id: shiftId,
-      user_id: employeeId.id, // Ensure you are sending the ID, not the whole object
-      department_id: teamId.id, // Ensure this is the team ID
+      user_id: employeeId.id,
+      department_id: teamId.id, 
       start: startTimestamp,
       finish: finishTimestamp,
     };
   
     console.log('updateShiftInRoster shiftForAPI:', shiftForAPI);
   
-    // API call
     try {
       const updatedShift = await updateSchedule(shiftForAPI);
       console.log('Shift updated:', updatedShift);
   
-      // Update roster data and close modal
       setRosterData(currentRosterData => {
         return currentRosterData.map(shift => shift.id === updatedShift.id ? updatedShift : shift);
       });
       alert('Shift updated successfully!');
       setIsModalOpen(false);
-      fetchRoster(users); // Refresh the roster
+      fetchRoster(users); 
     } catch (error) {
       console.error('Error updating shift:', error);
     }
@@ -366,7 +351,7 @@ const Roster = () => {
       await deleteSchedule(scheduleId);
       alert('Shift deleted successfully!');
       setIsModalOpen(false);
-      fetchRoster(users); // Refresh the roster
+      fetchRoster(users); 
     } catch (error) {
       console.error('Error deleting shift:', error);
       alert('Failed to delete shift');
