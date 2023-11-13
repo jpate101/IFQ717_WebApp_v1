@@ -34,15 +34,21 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
           <Navbar.Toggle aria-controls="navbarSupportedContent" />
           <Navbar.Collapse id="navbarSupportedContent">
             <Nav className="me-auto">
-              <HighlightLink to="/" as={Link}>
-                 {isLoggedIn ? 'Dashboard' : 'Home'}
+              <HighlightLink to={isLoggedIn ? '/dashboard' : '/'} as={Link}>
+              {isLoggedIn ? 'Dashboard' : 'Home'}
               </HighlightLink>
               {isLoggedIn ? (
                 <>
+                  <HighlightLink to="root/EmployeeManagement/" as={Link}>
+                    Employee Management
+                  </HighlightLink>
                   <HighlightLink to="/onboard-users" as={Link}>
                     Onboard users
                   </HighlightLink>
-                  {/*Need to fix spacing issue here*/}
+                  <HighlightLink to="/roster" as={Link}>
+                    Create schedules
+                  </HighlightLink>
+                    {/* Need to fix spacing issue here */}
                   <NavDropdown title="Timesheets" id="timesheets-nav-dropdown" className="timesheets-nav-dropdown">
                     <NavDropdown.Item href="/Timesheets/approveTimesheets" className="timesheets-nav-dropdown text-primary">
                       Approve Timesheets
@@ -51,14 +57,8 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
                       Export Timesheets
                     </NavDropdown.Item>
                   </NavDropdown>
-                  <HighlightLink to="/roster" as={Link}>
-                    Create schedules
-                  </HighlightLink>
-                  <HighlightLink to="root/EmployeeManagement/" as={Link}>
-                    Employee Management
-                  </HighlightLink>
-                  <HighlightLink to="/" as={Link} onClick={handleLogOut}>
-                    Logout
+                  <HighlightLink to="/" as={Link} onClick={handleLogOut} className="ml-32">
+                    Logout - W.I.P
                   </HighlightLink>
                 </>
               ) : (
