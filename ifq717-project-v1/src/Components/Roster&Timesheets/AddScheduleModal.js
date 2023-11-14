@@ -3,23 +3,24 @@ import EmployeesDropdown from './EmployeesDropdown';
 import TeamsDropdown from './TeamsDropdown';
 import DateFormItem from './DateFormItem';
 import TimePickerComponent from './TimePicker';
-import { getUsers, getAllDepartments, updateSchedule } from '../../API/Utilities';
+import { getUsers, getAllDepartments } from '../../API/Utilities';
 import { ReactComponent as BinIcon } from '../../svg/trash3.svg';
 import { ReactComponent as DotDotDot } from '../../svg/three-dots.svg';
 import dayjs from 'dayjs';
+
 const RosterModal = ({ 
   isOpen,
   onClose,
   onAddShift,
+  onUpdateShift,
   onDeleteShift,
   shiftDate,
   shiftStartTime,
   shiftFinishTime,
   employeeId,
   teamId,
-  shiftId,
+  scheduleId,
   currentShiftDetails,
-  onUpdateShift
 
 }) => {
 
@@ -44,6 +45,7 @@ const RosterModal = ({
       });
     }
   }, [shiftStartTime, shiftFinishTime]);
+
   useEffect(() => {
     async function fetchData() {
       console.log("Fetching departments...");
@@ -92,34 +94,68 @@ const RosterModal = ({
   const selectedEmployeeName = selectedEmployee ? selectedEmployee.name : null;
 
   const handleSaveShift = async () => {
-    console.log('handleSaveShift - Received currentShiftDetails:', currentShiftDetails)
-  
+
+    console.log('Received shiftDate:', shiftDate);
+
     const startDateTime = dayjs(`${dayjs(shiftDate).format('YYYY-MM-DD')}T${shiftDetails.startTime}`);
     const finishDateTime = dayjs(`${dayjs(shiftDate).format('YYYY-MM-DD')}T${shiftDetails.finishTime}`);
-  
-    const shiftData = {
-      shiftId: currentShiftDetails.shiftId,
-      user_id: selectedEmployee.id,
-      department_id: selectedTeam.id || selectedTeam,
-      start: startDateTime.unix(),
-      finish: finishDateTime.unix(),
+    console.log('Parsed startDateTime:', startDateTime.toString());
+    console.log('Parsed finishDateTime:', finishDateTime.toString());
+    console.log('Shift details for start and finish:', shiftDetails);
+    
+    const newShiftDetails = {
+      scheduleId: currentShiftDetails.scheduleId,
+      employeeId: selectedEmployee,
+      teamId: selectedTeam,
+      startTime: startDateTime.format('HH:mm'),
+      finishTime: finishDateTime.format('HH:mm'),
     };
   
-    console.log('handleSaveShift - Prepared shiftData:', shiftData);
+    setShiftDetails(newShiftDetails);
 
+    console.log('setShiftDetails(newShiftDetails):', newShiftDetails);
+  
     try {
-      if (shiftData.shiftId) {
+      if (currentShiftDetails && currentShiftDetails.shiftId) {
         // Existing shift, update it
-        await onUpdateShift(shiftData);
+        const updatedShift = {
+          id: currentShiftDetails.shiftId,
+          user_id: selectedEmployee.id,
+          department_id: selectedTeam.id,
+          start: startDateTime.unix(),
+          finish: finishDateTime.unix(),
+        };
+
+        await onUpdateShift(updatedShift);
+        alert('Shift updated successfully!');
       } else {
         // New shift, create it
-        await onAddShift(shiftData);
+        await onAddShift(newShiftDetails);
+        alert('Shift created successfully!');
       }
-    } catch (error) {
-      console.error('Error saving shift:', error);
-    }
-  };  
+      onClose();
+  } catch (error) {
+      console.error('Error saving/updating shift:', error);
+  }
+};
   
+
+const handleDeleteShift = async () => {
+  console.log("Deleting schedule with ID:", scheduleId);
+  try {
+    await onDeleteShift(scheduleId);
+    alert('Shift deleted successfully!');
+    onClose();
+  } catch (error) {
+    console.error('Error deleting shift:', error);
+  }
+};
+
+useEffect(() => {
+    console.log("Current Schedule ID in Modal: ", scheduleId);
+}, [scheduleId]);
+
+
   return isOpen && (
     <>
       <div className="fixed bg-black bg-opacity-10 inset-0 flex justify-center items-center">
@@ -172,7 +208,7 @@ const RosterModal = ({
             >
             </DotDotDot>
             <BinIcon
-              //onClick={}
+              onClick={handleDeleteShift}
               className="w-6 h-6 mr-3 cursor-pointer roster-icon"
             >
             </BinIcon>
@@ -188,7 +224,4 @@ const RosterModal = ({
     </>
 )}
 
-
 export default RosterModal;
-
-
