@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import ReactDOM from 'react-dom';
-import { getRosterForDate, getUsers, getAllDepartments, createSchedule, deleteSchedule, updateSchedule } from '../API/Utilities';
+import { getRosterForDate, getUsers, getAllDepartments, createSchedule, deleteSchedule, getScheduleById, updateSchedule } from '../API/Utilities';
 import WeekPickerComponent from '../Components/Roster&Timesheets/WeekPicker';
 import { formatShiftTime } from '../Components/Roster&Timesheets/CalculateHours';
 import AddScheduleModal from '../Components/Roster&Timesheets/AddScheduleModal';
@@ -25,6 +25,7 @@ const Roster = () => {
   const [employeeTeams, setEmployeeTeams] = useState([]);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [selectedTeam, setSelectedTeam] = useState(null);
+  const [currentScheduleDetails, setCurrentScheduleDetails] = useState(null);
 
   useEffect(() => {
     if (currentShiftDetails.userId) {
@@ -108,7 +109,7 @@ const Roster = () => {
           const finish = new Date(schedule.finish * 1000);
           const dayOfWeek = dayjs(start).format('dddd').toLowerCase();
           const teamId = schedule.department_id;
-          console.log("team id:", teamId);
+          const scheduleId = schedule.id;
 
           if (!userShiftMap[schedule.user_id]) {
             const user = currentUsers.find(u => u.id === schedule.user_id);
@@ -121,7 +122,7 @@ const Roster = () => {
           const shiftTime = `${formatShiftTime(start)} - ${formatShiftTime(finish)}`;
 
           if (userShiftMap[schedule.user_id].hasOwnProperty(dayOfWeek)) {
-            userShiftMap[schedule.user_id][dayOfWeek].push(shiftTime, teamId);
+            userShiftMap[schedule.user_id][dayOfWeek].push(shiftTime, teamId, scheduleId);
           }
         });
       });
@@ -227,7 +228,7 @@ const Roster = () => {
     }
   };
   
-  const openModalWithShiftDetails = (userId, dayIndex, shiftId) => {
+  const openModalWithShiftDetails = async (userId, dayIndex) => {
     console.log("Opening modal with shift details");
     console.log("Roster Data: ", rosterData);
     console.log("User ID: ", userId);
@@ -244,7 +245,15 @@ const Roster = () => {
       return;
     }
   
-    const fullDayNames = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+    const fullDayNames = [
+      "monday", 
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday",
+      "sunday"];
+
     const dayKey = fullDayNames[dayIndex];
     console.log("Day Key: ", dayKey);
   
@@ -256,15 +265,27 @@ const Roster = () => {
     console.log("Shift Data for the day: ", userShifts[dayKey]);
 
     const shiftData = userShifts[dayKey];
+
     if (!shiftData) {
       console.error(`No shift data found for user ID ${userId} on ${dayKey}`);
       return;
     }
     console.log("Raw Shift Data: ", shiftData);
 
-    const [shiftString, teamId] = shiftData.split(', ');
+    const [shiftString, teamId, scheduleIdString] = shiftData.split(', ');
     console.log("Parsed Shift String: ", shiftString);
     console.log("Parsed Team ID: ", teamId);
+    const scheduleId = parseInt(scheduleIdString);
+
+    console.log("Parsed Schedule ID: ", scheduleId);
+
+    try {
+      const scheduleDetails = await getScheduleById(scheduleId);
+      setCurrentScheduleDetails(scheduleDetails);
+      console.log('schedule details:', scheduleDetails)
+    } catch (error) {
+      console.error('Error fetching schedule details:', error);
+    }
 
     if (!shiftString) {
       console.error(`No shift string found for user ID ${userId} on ${dayKey}`);
@@ -282,14 +303,13 @@ const Roster = () => {
 
     const teamIdParsed = parseInt(teamId, 10);
 
-    console.log("Setting current shift details...");
     setCurrentShiftDetails({
        userId, 
        date: dateOfShift, 
        startTime, 
        finishTime, 
-       shiftId: parseInt(shiftId, 10),
-       teamId: teamIdParsed 
+       teamId: teamIdParsed,
+       shiftId: scheduleId
       });
       console.log("currentShiftDetails after update: ", currentShiftDetails);
 
@@ -305,58 +325,10 @@ const Roster = () => {
     setIsModalOpen(true);
   };
 
-  const updateShiftInRoster = async (shiftDetails) => {
-    console.log('updateShiftInRoster - Received shiftDetails:', shiftDetails);
-  
-    const { employeeId, teamId, startTime, finishTime, shiftId } = shiftDetails;
-    console.log('Start Time:', startTime, 'Finish Time:', finishTime, 'Shift ID:', shiftId);
-  
-    if (!shiftId || !employeeId || !teamId || !startTime || !finishTime) {
-      console.error('Missing shift details:', shiftDetails);
-      return;
-    }
-  
-    const startDateTime = dayjs(`${currentShiftDetails.date}T${startTime}`);
-    const finishDateTime = dayjs(`${currentShiftDetails.date}T${finishTime}`);
-    const startTimestamp = startDateTime.unix();
-    const finishTimestamp = finishDateTime.unix();
-  
-    const shiftForAPI = {
-      id: shiftId,
-      user_id: employeeId.id,
-      department_id: teamId.id, 
-      start: startTimestamp,
-      finish: finishTimestamp,
-    };
-  
-    console.log('updateShiftInRoster shiftForAPI:', shiftForAPI);
-  
-    try {
-      const updatedShift = await updateSchedule(shiftForAPI);
-      console.log('Shift updated:', updatedShift);
-  
-      setRosterData(currentRosterData => {
-        return currentRosterData.map(shift => shift.id === updatedShift.id ? updatedShift : shift);
-      });
-      alert('Shift updated successfully!');
-      setIsModalOpen(false);
-      fetchRoster(users); 
-    } catch (error) {
-      console.error('Error updating shift:', error);
-    }
-  };  
-  
-  const handleDeleteShift = async (scheduleId) => {
-    try {
-      await deleteSchedule(scheduleId);
-      alert('Shift deleted successfully!');
-      setIsModalOpen(false);
-      fetchRoster(users); 
-    } catch (error) {
-      console.error('Error deleting shift:', error);
-      alert('Failed to delete shift');
-    }
-  };
+  const handleModalClose = async () => {
+    setIsModalOpen(false);
+    await fetchRoster(users);
+};
 
     return (
         <div className="roster-container ">
@@ -394,10 +366,12 @@ const Roster = () => {
                       {isModalOpen && ReactDOM.createPortal(
                         <AddScheduleModal
                           isOpen={isModalOpen}
-                          onClose={() => setIsModalOpen(false)}
+                          onClose={handleModalClose}
+                          scheduleDetails={currentScheduleDetails}
                           onAddShift={addNewShiftToRoster}
-                          onUpdateShift={updateShiftInRoster}
-                          onDeleteShift={handleDeleteShift}
+                          onUpdateShift={updateSchedule}
+                          onDeleteShift={deleteSchedule}
+                          scheduleId={currentShiftDetails.shiftId}
                           employees={usersArray}
                           teams={employeeTeams}
                           selectedEmployee={selectedEmployee}
