@@ -30,6 +30,28 @@ export const getRosterForDate = async (date) => {
   }
 }
 
+
+// Fetches a single schedule by id
+export const getScheduleById = async (scheduleId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/schedules/${scheduleId}?show_costs=true&include_names=true&platform=false`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch schedule details. Status: ${response.status}`);
+    }
+
+    const scheduleData = await response.json();
+    console.log('Schedule data received:', scheduleData);
+    return scheduleData;
+  } catch (error) {
+    console.error('Error fetching schedule details:', error);
+    throw error;
+  }
+};
+
 // Fetches schedules by id
 export const getSchedules = async () => {
   console.log('Current document.cookie:', document.cookie);
@@ -99,9 +121,9 @@ export const getUsers = async (employeeId = null) => {
     let usersData = await response.json();
     console.log('Users data received:', usersData);
 
-    // Handle the case when the response is not an array (i.e., a single user is fetched)
+
     if (!Array.isArray(usersData)) {
-      usersData = [usersData]; // Convert the single user object to an array for consistent processing
+      usersData = [usersData]; 
     }
 
     return usersData.map(user => ({
