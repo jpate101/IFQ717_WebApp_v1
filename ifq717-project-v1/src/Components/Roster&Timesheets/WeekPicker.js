@@ -12,7 +12,7 @@ function WeekPickerComponent({ selectedDate, onDateChange }) {
     }
 
   return (
-      <div className="flex items-center -ml-0.5 pb-2">
+      <div className="flex items-center pb-2">
           <DatePicker.WeekPicker
               className="bg-white border p-2 rounded m-1 h-10"
               onChange={date => {
@@ -23,7 +23,7 @@ function WeekPickerComponent({ selectedDate, onDateChange }) {
               showToday={false}
               format="DD MMM"
               locale={locale}
-              size="large"
+              size="small"
           />
           <Button onClick={handleTodayButtonClick}
           className="border p-2 rounded background text-white h-10"
