@@ -2,7 +2,7 @@
 
 import GetToken from './GetToken';
 
-const setHeaders = () => {
+const SetHeaders = () => {
   const token = GetToken();
   return {
     'Content-Type': 'application/json',
@@ -10,4 +10,4 @@ const setHeaders = () => {
   };
 };
 
-export default setHeaders;
+export default SetHeaders;

@@ -10,11 +10,16 @@
     width: 75%;
     align-items: top;
     margin-top: 2rem;
-  }
+}
 
-  .login-button:focus {
+.login-labels {
+    margin-bottom: 0rem !important;
+    margin-top: 0.75rem;
+}
+
+.login-button:focus {
     outline: none !important;
-  }
+}
 
 .login-button {
   background-color: var(--button-green) !important; 
@@ -23,7 +28,7 @@
   color: white;
   border: 2px solid var(--button-green); 
   width: 100%;
-  margin: 20 20%;
+  margin-top: 1rem !important;
 }
 
 .login-button:hover {
@@ -38,6 +43,7 @@
 
 .login-fields {
     background-color: var(--background-color);
+    margin-left: 0px;
 }
 
 .login-alert {
@@ -57,6 +63,7 @@
     width: 100%;
     height: 70vh;
     position: relative;
+    border-radius: 2.5%;
   }
 
   .login-enticer-heading {

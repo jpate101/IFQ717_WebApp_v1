@@ -10,8 +10,11 @@ import ExchangeToken from "../API/Utilities/ExchangeToken";
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
+  const unauthorisedMessage = location.state ? location.state.message : null;
   
   // concatenate page path & params to generate a unique key
   // use key to force react to re-render the Login page when the URL changes 
@@ -25,6 +28,28 @@ export default function Login() {
     handleTokenExchange();
   };
 
+  // handle username validation
+  const handleUsernameValidation = (value) => {
+    if (!value) {
+      setUsernameError("Please enter a valid username");
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      setUsernameError("Please enter a valid username (email format)");
+    } else {
+      setUsernameError("");
+    }
+    setUsername(value);
+  };
+
+  // handle password validation
+  const handlePasswordValidation = (value) => {
+    if (!value) {
+      setPasswordError("Please enter a valid password");
+    } else {
+      setPasswordError("");
+    }
+    setPassword(value);
+  };
+
   // my basic login page //TODO: move to own component
   return (
     <Container fluid="lg" className="login-container">
@@ -32,9 +57,9 @@ export default function Login() {
         {/* Column 1 (visible on all devices) */}
         <Col xs={12} lg={6} className="d-flex align-items-center justify-content-center login-screen-column-1">
           <div className = "login-form">
-            {message ? (
+            {message || unauthorisedMessage ? (
               <Alert variant="danger">
-                {message}
+                {message || unauthorisedMessage}
               </Alert>
             ) : null}
             <Form onSubmit={handleLogin} >
@@ -44,9 +69,10 @@ export default function Login() {
                 placeholder="Enter username (valid email address)"
                 id="Username"
                 type="input"
-                onChange={setUsername}
+                onChange={handleUsernameValidation}
+                onBlur={() => handleUsernameValidation(username)}
                 className="login-fields"
-                
+                error={usernameError}
               />
               <TextField
                 value={password}
@@ -54,9 +80,10 @@ export default function Login() {
                 placeholder="Enter password"
                 id="Password"
                 type="password"
-                onChange={setPassword}
+                onChange={handlePasswordValidation}
+                onBlur={() => handlePasswordValidation(password)}
                 className="login-fields"
-               
+                error={passwordError}
               />
               <Button type="submit" variant="primary" className="mt-3 login-button">
                 Login

@@ -39,29 +39,29 @@
 
 .App {
   text-align: center;
-  padding: 20px; /* Adds space around the app to prevent the table from reaching the edge */
+  padding: 20px;
 }
 
 .scheduler {
   display: flex;
-  justify-content: space-between; /* Adjusted to space-between for consistent spacing */
+  justify-content: space-between; 
   width: 100%;
   overflow: hidden;
 }
 
 .day {
   flex: 1;
-  min-width: 60px; /* Reduced minimum width to fit more on smaller screens */
+  min-width: 60px; 
   border: 1px solid #ccc;
   text-align: center;
   padding: 1rem;
-  box-sizing: border-box; /* To ensure padding and border are included in the width */
+  box-sizing: border-box; 
 }
 
 @media (max-width: 600px) {
   .day {
     font-size: 0.7rem;
-    padding: 0.5rem; /* Reduced padding on smaller screens */
+    padding: 0.5rem; 
   }
 }
 
@@ -69,7 +69,8 @@
   width: 1.5rem;
   height: 1.5rem;
   margin-right: 0.5rem;
-  color: #19b3d9;
+  color: #3498db;
+  margin-top: .2rem;
 }
 
 .dropdown {
@@ -77,39 +78,37 @@
 }
 
 .tanda-dropdown .ant-select-item-option:hover {
-  background-color: #19b3d9;
+  background-color: #3498db;
  }
 
-/* Also, consider the focused state set by AntD */
-
 .ant-select-focused .ant-select-selector {
-  border-color: #19b3d9 !important;
+  border-color: #3498db !important;
   box-shadow: 0 0 0 .5px rgb(25,179,217) !important;
 }
 
 .ant-select:hover .ant-select-selector {
-  border-color: #19b3d9 !important;
+  border-color: #3498db !important;
   box-shadow: 0 0 0 .5px rgb(25,179,217) !important;
 }
 
 .timepicker:hover {
-  border-color: #19b3d9 !important;
+  border-color: #3498db !important;
   box-shadow: 0 0 0 .5px rgb(25,179,217) !important; 
 }
 
 .timepicker-panel {
-  border-color: #19b3d9 !important;
+  border-color: #3498db !important;
   box-shadow: 0 0 0 .5px rgb(25,179,217) !important; 
 
 }
 
 .ant-picker:hover {
-  border-color: #19b3d9 !important;
+  border-color: #3498db !important;
   box-shadow: 0 0 0 .5px rgb(25,179,217) !important; 
 }
 
 .ant-picker:focus {
-  border-color: #19b3d9 !important;
+  border-color: #3498db !important;
   box-shadow: 0 0 0 .5px rgb(25,179,217) !important;
 }
 
@@ -126,15 +125,13 @@
   justify-content: center !important;
 }
 textarea:focus {
-  outline-color: #19b3d9;
+  outline-color: #3498db;
 }
 
-/* Hide the header for the week column */
 .ant-picker-content thead th:first-child {
   display: none;
 }
 
-/* Hide each week cell in the rows */
 .ant-picker-cell-week {
   display: none;
 }
@@ -144,7 +141,7 @@ textarea:focus {
 }
 
 .ant-picker-focused.ant-picker {
-  border-color: #19b3d9;
+  border-color: #3498db;
   box-shadow: 0 0 0 .5px rgb(25,179,217) !important;
 }
 
@@ -305,7 +302,7 @@ textarea:focus {
 }
 
 .username-hover:hover {
-  color: #3498db; /* This is the color you want on hover */
+  color: #3498db; 
 }
 
 .timesheets-nav-dropdown .dropdown-menu {
@@ -324,4 +321,70 @@ textarea:focus {
 
 .timesheets-nav-dropdown .dropdown-item:active {
   background-color: transparent !important;
+}
+
+.custom-search .ant-btn.ant-input-search-button .anticon-search svg{
+  fill: white !important;
+}
+
+.custom-search .ant-btn.ant-input-search-button {
+  background-color: #3498db !important; 
+  border-color: #3498db !important;
+}
+
+.ant-input:hover {
+  background-color: white !important; 
+  outline-color: #3498db !important;
+  border-color: #3498db !important;
+  box-shadow: 0 0 0 0.2px rgb(25,179,217) !important;
+}
+
+.ant-input {
+  background-color: white !important;
+  text-emphasis-color: black !important;
+  color: black !important;
+}
+.ant-input:focus {
+  outline-color: #3498db !important;
+  border-color: #3498db !important;
+  box-shadow: 0 0 0 0.2px rgb(25,179,217) !important;
+}
+
+.form-check-input:checked {
+  background-color:#3498db !important;
+}
+
+.download-icon {
+  fill: white !important;
+  color:white !important;
+}
+
+.export-button {
+  background-color: #3498db !important; 
+  border-color: #3498db !important;
+}
+
+.selectAll-button:hover {
+  background-color: white !important;
+}
+
+.roster-icon {
+  color: #3498db !important;
+}
+.roster-icon:hover {
+  color: #1e40af !important;
+}
+
+.save-button {
+  color: white;
+  font-weight: bold;
+  border-color: #3498db;
+  background-color: #3498db;
+}
+
+.save-button:hover {
+  color: white;
+  font-weight: bold;
+  border-color: #1e40af;
+  background-color:#1e40af;
 }

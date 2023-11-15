@@ -18,11 +18,12 @@ function WeekPickerComponent({ selectedDate, onDateChange }) {
               onChange={date => {
                   onDateChange(date ? date.toDate() : null);
               }}
-              value={dayjs(selectedDate)} // Use the selectedDate from props
+              value={dayjs(selectedDate)} 
               allowClear={false}
               showToday={false}
               format="DD MMM"
               locale={locale}
+              size="large"
           />
           <Button onClick={handleTodayButtonClick}
           className="border p-2 rounded background text-white h-10"
