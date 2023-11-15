@@ -1,11 +1,7 @@
 import React from 'react';
-
 import { useState, useEffect } from 'react';
 
-
-
 function EmployeeManagement() {
-    const [content, setContent] = useState("under construction");
     const [showLocationForm, setShowLocationForm] = useState(false);
     const [showTeamsForm, setShowTeamsForm] = useState(false);
     const [showEmployeeForm, setShowEmployeeForm] = useState(false);
@@ -15,9 +11,8 @@ function EmployeeManagement() {
     const [showOnboardNewUser, setShowOnboardNewUser] = useState(false);
     const [showResult, setShowResult] = useState("");
 
-    //seach locations stuff 
-    const [locationsList, setLocationsList] = useState([
-    ]);
+    //search locations stuff 
+    const [locationsList, setLocationsList] = useState([]);
     const [searchLocation, setSearchLocation] = useState(''); // State for search query
     const [filteredLocations, setFilteredLocations] = useState([]); // State for filtered locations
 
@@ -161,10 +156,6 @@ function EmployeeManagement() {
             setFilteredTeams(filtered);
         }
     }, [searchTeams, teamsList]);
-
-
-    //
-
     // display functions 
     const handleCreateLocationsClick = () => {
         setShowLocationForm(true);
@@ -176,7 +167,6 @@ function EmployeeManagement() {
         setShowOnboardNewUser(false);
         setShowResult('');
     };
-
     const handleCreateTeamsClick = () => {
         setShowEmployeeForm(false);
         setShowLocationForm(false);
@@ -187,7 +177,6 @@ function EmployeeManagement() {
         setShowOnboardNewUser(false);
         setShowResult('');
     };
-
     const handleCreateUsersClick = () => {
         setShowLocationForm(false);
         setShowTeamsForm(false);
@@ -238,8 +227,6 @@ function EmployeeManagement() {
         setShowOnboardNewUser(true);
         setShowResult('');
     }
-
-
     //form
     const [formDataLocation, setFormDataLocation] = useState({
         locationsId: '',
@@ -254,7 +241,6 @@ function EmployeeManagement() {
             { date: '', from: '', to: '' },
         ],
     });
-
     const [formDataTeams, setFormDataTeams] = useState({
         Id: '',
         name: '',
@@ -266,7 +252,6 @@ function EmployeeManagement() {
         user_ids: [''],
         manager_ids: [''],
     });
-
     const [formDataEmployee, setFormDataEmployee] = useState({
         Id: '',
         name: '',
@@ -365,11 +350,7 @@ function EmployeeManagement() {
             }
         ],
         enable_login: null,
-
-
-
     });
-
     const [formDataOnboarding, setFormDataOnboarding] = useState({
         Id: '',
         Name: '',
@@ -379,7 +360,6 @@ function EmployeeManagement() {
 
     });
     //button functions 
-
     function handleCreateLocationSubmit(e) {
         e.preventDefault();
 
@@ -445,8 +425,6 @@ function EmployeeManagement() {
     function handleCreateTeamsSubmit(e) {
         // Handle team creation here
         e.preventDefault();
-
-
 
         if (!formDataTeams.name || !formDataTeams.location_id) {
             //alert("Please fill in all required fields.");
@@ -698,9 +676,10 @@ function EmployeeManagement() {
     }
 
     function handleUpdateUsersAndManagers(e) {
+        e.preventDefault();
         console.log('Update Team Users and Managers button pressed');
 
-        e.preventDefault();
+        
 
         if (!formDataTeams.Id) {
             setShowResult("Please fill in all required fields.");
@@ -712,19 +691,15 @@ function EmployeeManagement() {
             manager_ids: formDataTeams.manager_ids.map(Number),
         };
 
-        //delete teamUpdateRequestUsersManagers.user_ids;
-        //console.log(teamUpdateRequestUsersManagers.user_ids[0]);
-        if (teamUpdateRequestUsersManagers.user_ids[0] == 0 ) {
+        console.log(teamUpdateRequestUsersManagers);
+        if (teamUpdateRequestUsersManagers.user_ids[0] == 0) {
             delete teamUpdateRequestUsersManagers.user_ids;
         }
-        
+
         if (teamUpdateRequestUsersManagers.manager_ids[0] == 0) {
             delete teamUpdateRequestUsersManagers.manager_ids;
         }
 
-
-        
-        //console.log(teamUpdateRequestUsersManagers.user_ids[0]);
         console.log(teamUpdateRequestUsersManagers);
 
         const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
@@ -949,6 +924,44 @@ function EmployeeManagement() {
             });
     }
 
+    function handleResendOnboardInvitesUserSubmit(e) {
+        console.log('send invite button pressed');
+        e.preventDefault();
+
+        if (!formDataOnboarding.Id) {
+            setShowResult("Please fill in the User ID field.");
+            return;
+        }
+
+        const userId = formDataOnboarding.Id;
+        const apiKey = document.cookie.replace(
+            /(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/,
+            "$1"
+        );
+        fetch(`https://my.tanda.co/api/v2/users/${userId}/invite`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+            }
+        })
+            .then((response) => {
+                if (response.status === 201) {
+                    setShowResult("Existing user onboarded successfully!");
+                    console.log("Success Response:", response);
+                } else {
+                    return response.json().then((errorData) => {
+                        const errorMessage = errorData.error || 'Failed to onboard existing user.';
+                        setShowResult(errorMessage);
+                        console.error("Error Response:", errorData);
+                    });
+                }
+            })
+            .catch((error) => {
+                setShowResult("Network error: " + error.message);
+            });
+    }
+
 
 
     return (
@@ -1074,34 +1087,23 @@ function EmployeeManagement() {
                                         style={{ margin: '5px' }}
                                         placeholder="Location ID"
                                         value={formDataTeams.location_id}
-                                        onChange={e => setFormDataTeams({ ...formDataTeams, location_id: e.target.value })}
+                                        onChange={(e) => setFormDataTeams({ ...formDataTeams, location_id: e.target.value })}
                                     />
+                                    <select
+                                        value={formDataTeams.location_id}
+                                        onChange={(e) => setFormDataTeams({ ...formDataTeams, location_id: e.target.value })}
+                                    >
+                                        <option value="">Select Location ID</option>
+                                        {filteredLocations.map((location) => (
+                                            <option key={location.id} value={location.id}>
+                                                {location.name} - {location.short_name}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
-
-
                                 <button type="submit" style={{ margin: '10px' }} className="EM-button">Create Team</button>
                                 {showResult && <p>{showResult}</p>}
                             </form>
-                            <div className="location-list">
-                                <input
-                                    type="text"
-                                    style={{ margin: '5px' }}
-                                    placeholder="Search Locations"
-                                    value={searchLocation}
-                                    onChange={(e) => setSearchLocation(e.target.value)}
-                                />
-                                {searchLocation && (
-                                    <ul>
-                                        {filteredLocations.map((location) => (
-                                            <li key={location.id} className='li-EM '>
-                                                <p>ID: {location.id}</p>
-                                                <p>Name: {location.name}</p>
-                                                <p>Short Name: {location.short_name}</p>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </div>
                         </div>
                     ) : showEmployeeForm ? (
                         <form onSubmit={handleCreateEmployeeSubmit} style={{ padding: '30px' }} className="primary">
@@ -1228,7 +1230,7 @@ function EmployeeManagement() {
                                     Update Location
                                 </button>
                                 {showResult && <p>{showResult}</p>}
-                            </form>                        
+                            </form>
                         </div>
                     ) : showUpdateTeams ? (
                         <div className="flex-container">
@@ -1243,16 +1245,16 @@ function EmployeeManagement() {
                                         style={{ margin: '5px' }}
                                         placeholder="Team ID"
                                         value={formDataTeams.Id}
-                                        onChange={e => setFormDataTeams({ ...formDataTeams, Id: e.target.value })}
+                                        onChange={(e) => setFormDataTeams({ ...formDataTeams, Id: e.target.value })}
                                     />
                                     <select
                                         value={formDataTeams.Id}
-                                        onChange={(e) => setFormDataOnboarding({ ...formDataTeams, Id: e.target.value })}
+                                        onChange={(e) => setFormDataTeams({ ...formDataTeams, Id: e.target.value })}
                                     >
                                         <option value="">Select Team ID</option>
-                                        {filteredTeams.map((Teams) => (
-                                            <option key={Teams.Id} value={Teams.Id}>
-                                                {Teams.name} - {Teams.Id}
+                                        {filteredTeams.map((team) => (
+                                            <option key={team.id} value={team.id}>
+                                                {team.name} - {team.id}
                                             </option>
                                         ))}
                                     </select>
@@ -1299,8 +1301,6 @@ function EmployeeManagement() {
                                         onChange={(e) => setFormDataTeams({ ...formDataTeams, manager_ids: e.target.value.split(',') })}
                                     />
                                 </div>
-
-
                                 <button onClick={handleUpdateUsersAndManagers} type="submit" style={{ margin: '10px' }} className="EM-button">Update Team Users and managers</button>
                                 {showResult && <p>{showResult}</p>}
                             </form>
@@ -1533,38 +1533,73 @@ function EmployeeManagement() {
 
                                 {showResult && <p>{showResult}</p>}
                             </form>
-                            <form style={{ padding: '30px' }} className="primary">
-                                <h2 className="secondary h2-EM">Onboard A Existing User</h2>
+                            <div className=''>
+                                <form style={{ padding: '30px' }} className="primary">
+                                    <h2 className="secondary h2-EM">Onboard A Existing User</h2>
 
-                                <div>
-                                    <h3 className="secondary">User ID:</h3>
-                                    <input
-                                        type="text"
-                                        style={{ margin: '5px' }}
-                                        placeholder="User ID"
-                                        value={formDataOnboarding.Id}
-                                        onChange={e => setFormDataOnboarding({ ...formDataOnboarding, Id: e.target.value })}
-                                    />
-                                    <select
-                                        value={formDataOnboarding.Id}
-                                        onChange={(e) => setFormDataOnboarding({ ...formDataOnboarding, Id: e.target.value })}
-                                    >
-                                        <option value="">Select User ID</option>
-                                        {filteredUsers.map((user) => (
-                                            <option key={user.id} value={user.id}>
-                                                {user.name} - {user.email}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
+                                    <div>
+                                        <h3 className="secondary">User ID:</h3>
+                                        <input
+                                            type="text"
+                                            style={{ margin: '5px' }}
+                                            placeholder="User ID"
+                                            value={formDataOnboarding.Id}
+                                            onChange={e => setFormDataOnboarding({ ...formDataOnboarding, Id: e.target.value })}
+                                        />
+                                        <select
+                                            value={formDataOnboarding.Id}
+                                            onChange={(e) => setFormDataOnboarding({ ...formDataOnboarding, Id: e.target.value })}
+                                        >
+                                            <option value="">Select User ID</option>
+                                            {filteredUsers.map((user) => (
+                                                <option key={user.id} value={user.id}>
+                                                    {user.name} - {user.email}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
 
 
-                                <button onClick={handleOnboardExistingUserSubmit} type="submit" style={{ margin: '10px' }} className="EM-button">
-                                    Onboard New User
-                                </button>
+                                    <button onClick={handleOnboardExistingUserSubmit} type="submit" style={{ margin: '10px' }} className="EM-button">
+                                        Onboard New User
+                                    </button>
 
-                                {showResult && <p>{showResult}</p>}
-                            </form>
+                                    {showResult && <p>{showResult}</p>}
+                                </form>
+                                <form style={{ padding: '30px' }} className="primary">
+                                    <h2 className="secondary h2-EM">Resend Onbarding Invites</h2>
+
+                                    <div>
+                                        <h3 className="secondary">User ID:</h3>
+                                        <input
+                                            type="text"
+                                            style={{ margin: '5px' }}
+                                            placeholder="User ID"
+                                            value={formDataOnboarding.Id}
+                                            onChange={e => setFormDataOnboarding({ ...formDataOnboarding, Id: e.target.value })}
+                                        />
+                                        <select
+                                            value={formDataOnboarding.Id}
+                                            onChange={(e) => setFormDataOnboarding({ ...formDataOnboarding, Id: e.target.value })}
+                                        >
+                                            <option value="">Select User ID</option>
+                                            {filteredUsers.map((user) => (
+                                                <option key={user.id} value={user.id}>
+                                                    {user.name} - {user.email}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+
+                                    <button onClick={handleResendOnboardInvitesUserSubmit} type="submit" style={{ margin: '10px' }} className="EM-button">
+                                        Resend Onbarding Invites
+                                    </button>
+
+                                    {showResult && <p>{showResult}</p>}
+                                </form>
+                            </div>
+
                         </div>
                     ) : (
                         <div style={{ paddingLeft: '20px' }}>
