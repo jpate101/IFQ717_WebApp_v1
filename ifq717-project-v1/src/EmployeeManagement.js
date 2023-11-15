@@ -11,6 +11,7 @@ function EmployeeManagement() {
     const [showUpdateLocations, setShowUpdateLocations] = useState(false);
     const [showUpdateTeams, setShowUpdateTeams] = useState(false);
     const [showOnboardNewUser, setShowOnboardNewUser] = useState(false);
+    const [showInactivateEmployee, setShowInactivateEmployee] = useState(false);
     const [showResult, setShowResult] = useState("");
 
     //input form variables 
@@ -173,6 +174,7 @@ function EmployeeManagement() {
         setShowUpdateLocations(false);
         setShowUpdateTeams(false);
         setShowOnboardNewUser(false);
+        setShowInactivateEmployee(false);
         setShowResult('');
     };
     const handleCreateTeamsClick = () => {
@@ -183,6 +185,7 @@ function EmployeeManagement() {
         setShowUpdateLocations(false);
         setShowUpdateTeams(false);
         setShowOnboardNewUser(false);
+        setShowInactivateEmployee(false);
         setShowResult('');
     };
     const handleCreateUsersClick = () => {
@@ -193,6 +196,7 @@ function EmployeeManagement() {
         setShowUpdateLocations(false);
         setShowUpdateTeams(false);
         setShowOnboardNewUser(false);
+        setShowInactivateEmployee(false);
         setShowResult('');
     };
     const handleUpdateUsersClick = () => {
@@ -203,6 +207,7 @@ function EmployeeManagement() {
         setShowTeamsForm(false);
         setShowEmployeeForm(false);
         setShowOnboardNewUser(false);
+        setShowInactivateEmployee(false);
         setShowResult('');
     }
     const handleUpdateLocationsClick = () => {
@@ -213,6 +218,7 @@ function EmployeeManagement() {
         setShowTeamsForm(false);
         setShowEmployeeForm(false);
         setShowOnboardNewUser(false);
+        setShowInactivateEmployee(false);
         setShowResult('');
     }
     const handleUpdateTeamsClick = () => {
@@ -223,6 +229,7 @@ function EmployeeManagement() {
         setShowTeamsForm(false);
         setShowEmployeeForm(false);
         setShowOnboardNewUser(false);
+        setShowInactivateEmployee(false);
         setShowResult('');
     }
     const handleOnboardNewUserClick = () => {
@@ -233,6 +240,19 @@ function EmployeeManagement() {
         setShowTeamsForm(false);
         setShowEmployeeForm(false);
         setShowOnboardNewUser(true);
+        setShowInactivateEmployee(false);
+        setShowResult('');
+    }
+
+    const handleInactivateEmployeeClick = () => {
+        setShowUpdateUsers(false);
+        setShowUpdateLocations(false);
+        setShowUpdateTeams(false);
+        setShowLocationForm(false);
+        setShowTeamsForm(false);
+        setShowEmployeeForm(false);
+        setShowOnboardNewUser(false);
+        setShowInactivateEmployee(true);
         setShowResult('');
     }
 
@@ -839,6 +859,45 @@ function EmployeeManagement() {
             });
     }
 
+    function handleInactivateEmployeeSubmit(e)  {
+        console.log('deactivate user button pressed');
+        e.preventDefault();
+
+        if (!formDataOnboarding.Id) {
+            setShowResult("Please fill in the User ID field.");
+            return;
+        }
+
+        const userId = formDataOnboarding.Id;
+        const apiKey = document.cookie.replace(
+            /(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/,
+            "$1"
+        );
+        fetch(`https://my.tanda.co/api/v2/users/${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+            }
+        })
+            .then((response) => {
+                if (response.status === 200) {
+                    setShowResult("Employee Deactivated Successfully!");
+                    console.log("Success Response:", response);
+                    fetchUsers();
+                } else {
+                    return response.json().then((errorData) => {
+                        const errorMessage = errorData.error || 'Failed to Deactivate Employee user.';
+                        setShowResult(errorMessage);
+                        console.error("Error Response:", errorData);
+                    });
+                }
+            })
+            .catch((error) => {
+                setShowResult("Network error: " + error.message);
+            });
+    }
+
 
 
     return (
@@ -867,6 +926,9 @@ function EmployeeManagement() {
                         </li>
                         <li>
                             <a onClick={handleOnboardNewUserClick}>Send Onboard User Invites</a>
+                        </li>
+                        <li>
+                            <a onClick={handleInactivateEmployeeClick}>Deactivate employee</a>
                         </li>
                     </ul>
                 </div>
@@ -1478,6 +1540,41 @@ function EmployeeManagement() {
                             </div>
 
                         </div>
+                    ) : showInactivateEmployee ? (
+                        <div>
+                            <form style={{ padding: '30px' }} className="primary">
+                                <h2 className="secondary h2-EM">Deactivate Employee</h2>
+
+                                <div>
+                                    <h3 className="secondary">User ID:</h3>
+                                    <input
+                                        type="text"
+                                        style={{ margin: '5px' }}
+                                        placeholder="User ID"
+                                        value={formDataOnboarding.Id}
+                                        onChange={e => setFormDataOnboarding({ ...formDataOnboarding, Id: e.target.value })}
+                                    />
+                                    <select
+                                        value={formDataOnboarding.Id}
+                                        onChange={(e) => setFormDataOnboarding({ ...formDataOnboarding, Id: e.target.value })}
+                                    >
+                                        <option value="">Select User ID</option>
+                                        {filteredUsers.map((user) => (
+                                            <option key={user.id} value={user.id}>
+                                                {user.name} - {user.email}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+
+                                <button onClick={handleInactivateEmployeeSubmit} type="submit" style={{ margin: '10px' }} className="EM-button">
+                                    Deactivate  a Employee
+                                </button>
+
+                                {showResult && <p>{showResult}</p>}
+                            </form>
+                        </div>
                     ) : (
                         <div style={{ paddingLeft: '20px' }}>
                             <h2 className="secondary h2-EM">Welcome to Employee Management</h2>
@@ -1497,4 +1594,4 @@ function EmployeeManagement() {
     );
 }
 
-export default EmployeeManagement;
+export default EmployeeManagement; 
