@@ -266,8 +266,8 @@ function EmployeeManagement() {
             ],
         };
         const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
-        console.log(requestBody);
-        console.log(apiKey);
+        //console.log(requestBody);
+        //console.log(apiKey);
 
         // Send a POST request to your API endpoint
         fetch('https://my.tanda.co/api/v2/locations', {
