@@ -426,3 +426,25 @@ export const getCurrentRosters = async () => {
     throw error;
   }
 };
+
+// Create shift reminder
+
+export const createShiftReminder = async (minutesBeforeShiftStart) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/shift_reminders`, { 
+      method: 'POST', 
+      headers: getHeaders(), 
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Shift reminder created:', data);
+    return data;
+  } catch (error) {
+    console.error('Error creating shift reminder:', error);
+    throw error;
+  }
+};
