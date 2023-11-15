@@ -70,7 +70,7 @@ export default function App() {
             <Route
               path="Timesheets/:userId"
               element={<PrivateRoute element={<TimesheetForUser />}
-              isLoggedIn={isLoggedIn} />}
+              authorised={isLoggedIn} />}
             />
             <Route
               path="/Timesheets/exportTimesheets"
