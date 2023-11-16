@@ -25,6 +25,9 @@ function EmployeeManagement() {
     const [searchLocation, setSearchLocation] = useState(''); // State for search query
     const [filteredLocations, setFilteredLocations] = useState([]); // State for filtered locations
 
+    //key
+    const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
+
     const fetchLocations = async () => {
         try {
             const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
@@ -285,7 +288,7 @@ function EmployeeManagement() {
                 },
             ],
         };
-        const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
+        //const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
         //console.log(requestBody);
         //console.log(apiKey);
 
@@ -334,7 +337,7 @@ function EmployeeManagement() {
             location_id: formDataTeams.location_id,
         };
 
-        const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
+        //const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
 
         // Send a POST request to create a team
         fetch('https://my.tanda.co/api/v2/departments', {
@@ -385,7 +388,7 @@ function EmployeeManagement() {
             // Include more properties here
         };
 
-        const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
+        //const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
 
         // Send a POST request to create an employee
         fetch('https://my.tanda.co/api/v2/users', {
@@ -445,7 +448,7 @@ function EmployeeManagement() {
             ],
         };
 
-        const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
+        //const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
 
         // Send a POST request to create an employee
         fetch(`https://my.tanda.co/api/v2/locations/${locationId}`, {
@@ -497,7 +500,7 @@ function EmployeeManagement() {
 
         };
 
-        const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
+        //const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
         const teamId = parseInt(formDataTeams.Id); // Assuming formDataTeams.Id is the ID of the team to be updated
 
 
@@ -541,7 +544,7 @@ function EmployeeManagement() {
 
         console.log(teamUpdateRequestQualification);
 
-        const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
+        //const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
 
         const teamId = parseInt(formDataTeams.Id);
 
@@ -599,7 +602,7 @@ function EmployeeManagement() {
 
         console.log(teamUpdateRequestUsersManagers);
 
-        const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
+        //const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
         const teamId = parseInt(formDataTeams.Id);
 
 
@@ -707,7 +710,7 @@ function EmployeeManagement() {
         console.log(updatedData);
         //console.log("----------");
 
-        const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
+        //const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
 
         // Send a fetch request to update the user's information
         fetch(`https://my.tanda.co/api/v2/users/${formDataEmployee.Id}`, {
@@ -740,7 +743,7 @@ function EmployeeManagement() {
         e.preventDefault();
         //console.log('Onboard New User button pressed ');
 
-        if (!formDataOnboarding.Name || !formDataOnboarding.Email || !formDataOnboarding.Phone || !formDataOnboarding.Custom_Message) {
+        if (!formDataOnboarding.Name || !formDataOnboarding.Email || !formDataOnboarding.Phone) {
             setShowResult("Please fill in all required fields.");
             return;
         }
@@ -752,10 +755,10 @@ function EmployeeManagement() {
             custom_message: formDataOnboarding.Custom_Message,
         };
 
-        const apiKey = document.cookie.replace(
+        /*const apiKey = document.cookie.replace(
             /(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/,
             "$1"
-        );
+        );*/
 
         fetch('https://my.tanda.co/api/v2/users/onboarding', {
             method: 'POST',
@@ -792,10 +795,10 @@ function EmployeeManagement() {
         }
 
         const userId = formDataOnboarding.Id;
-        const apiKey = document.cookie.replace(
+        /*const apiKey = document.cookie.replace(
             /(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/,
             "$1"
-        );
+        );*/
 
         fetch(`https://my.tanda.co/api/v2/users/${userId}/onboard`, {
             method: 'POST',
@@ -831,10 +834,10 @@ function EmployeeManagement() {
         }
 
         const userId = formDataOnboarding.Id;
-        const apiKey = document.cookie.replace(
+        /*const apiKey = document.cookie.replace(
             /(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/,
             "$1"
-        );
+        );*/
         fetch(`https://my.tanda.co/api/v2/users/${userId}/invite`, {
             method: 'POST',
             headers: {
@@ -859,7 +862,7 @@ function EmployeeManagement() {
             });
     }
 
-    function handleInactivateEmployeeSubmit(e)  {
+    function handleInactivateEmployeeSubmit(e) {
         console.log('deactivate user button pressed');
         e.preventDefault();
 
@@ -1280,8 +1283,8 @@ function EmployeeManagement() {
                                         onChange={e => setFormDataEmployee({ ...formDataEmployee, Id: e.target.value })}
                                     />
                                     <select
-                                        value={formDataOnboarding.Id}
-                                        onChange={(e) => setFormDataOnboarding({ ...formDataOnboarding, Id: e.target.value })}
+                                        value={formDataEmployee.Id}
+                                        onChange={(e) => setFormDataEmployee({ ...formDataEmployee, Id: e.target.value })}
                                     >
                                         <option value="">Select User ID</option>
                                         {filteredUsers.map((user) => (
