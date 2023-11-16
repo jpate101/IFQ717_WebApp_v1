@@ -17,8 +17,9 @@ import { formatShiftTime } from '../Components/Roster&Timesheets/CalculateHours'
 import AddScheduleModal from '../Components/Roster&Timesheets/AddScheduleModal';
 import { PlusCircleIcon } from '../Components/Roster&Timesheets/RosterIcons';
 import PublishShiftModal from '../Components/Roster&Timesheets/PublishShiftModal'
-
+import SelectEmployeeModal from '../Components/Roster&Timesheets/SelectEmployeeModal';
 dayjs.extend(utc);
+
 dayjs.extend(timezone);
 
 const Roster = () => {
@@ -35,6 +36,7 @@ const Roster = () => {
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [currentScheduleDetails, setCurrentScheduleDetails] = useState(null);
   const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
+  const [isSelectEmployeeModalOpen, setIsSelectEmployeeModalOpen] = useState(false);
 
   useEffect(() => {
     if (currentShiftDetails.userId) {
@@ -178,6 +180,10 @@ const Roster = () => {
         teamId });
     } else {
       setCurrentShiftDetails({ userId, date: dateOfShift });
+    }
+  
+    if (userId === null) {
+      setCurrentShiftDetails({ userId, date: dayjs(selectedDate).startOf('week').add(dayIndex, 'day').format('YYYY-MM-DD') });
     }
   
     setIsModalOpen(true);
@@ -416,104 +422,154 @@ const handlePublish = async (publishOption) => {
   };
 
   const hasShiftsInSelectedWeek = () => {
-    const startOfWeek = dayjs(selectedDate).startOf('week');
-    const endOfWeek = dayjs(selectedDate).endOf('week');
-    return rosterData.some(shift => {
-      const shiftDate = dayjs(shift.date);
-      return shiftDate.isAfter(startOfWeek) && shiftDate.isBefore(endOfWeek);
-    });
+
+    return rosterData.some(shift => shift.userId);
   };
   
-    return (
-        <div className="roster-container ">
-            <div className="flex items-center justify-between">
-                <WeekPickerComponent
-                  selectedDate={selectedDate}
-                  onDateChange={handleDateChange}
-                />
-                <button 
-                  onClick={() => {
-                    if (hasShiftsInSelectedWeek()) {
-                      setIsPublishModalOpen(true);
-                    } else {
-                      alert('No shifts to publish for the selected week.');
-                    }
-                  }}
-                  className="border p-2 rounded background text-white h-10 -mt-2"
-                  style={{backgroundColor: '#3498db'}}
-                  >
-                  Publish shifts
-                </button>
-            </div>
-            <div className="overflow-x-auto">
-        {loading ? (
-          <p>Loading...</p>
-        ) : (
-          <div className="w-full">
-            <div className="grid grid-cols-8 gap-1">
-              <div className="day bg-gray-100 border p-2 rounded m-1 overflow-hidden">Staff</div>
-              {dayAbbreviations.map((dayAbbrev, index) => (
-                <div key={index} className="day bg-gray-100 border p-2 rounded m-1 overflow-hidden">
-                  <div>{dayAbbrev}</div>
-                  <div>{dayjs(weekDates[index]).format('DD MMM')}</div>
-                </div>
-              ))}
+  const handleOpenSelectEmployeeModal = () => {
+    setIsSelectEmployeeModalOpen(true);
+  };
 
-              {rosterData.map((row, rowIndex) => (
-                <React.Fragment key={rowIndex}>
-                  <div className="day bg-gray-100 border p-2 rounded m-1 overflow-hidden">{row.name}</div>
-                  {[row.monday, row.tuesday, row.wednesday, row.thursday, row.friday, row.saturday, row.sunday].map((dayHours, dayIndex) => (
-                    <div key={dayIndex} className="roster-table-font day p-2 rounded m-1 overflow-hidden relative">
-                      <div className="flex flex-col items-center justify-center">
-                      <PlusCircleIcon
-                        className="cursor-pointer hover:text-primary mb-2"
-                        onClick={() => openModalToAddShift(row.userId, dayIndex)}
-                      >
-                      </PlusCircleIcon>
-                      {isModalOpen && ReactDOM.createPortal(
-                        <AddScheduleModal
-                          isOpen={isModalOpen}
-                          onClose={handleModalClose}
-                          scheduleDetails={currentScheduleDetails}
-                          onAddShift={addNewShiftToRoster}
-                          onUpdateShift={updateSchedule}
-                          onDeleteShift={deleteSchedule}
-                          scheduleId={currentShiftDetails.shiftId}
-                          employees={usersArray}
-                          teams={employeeTeams}
-                          selectedEmployee={selectedEmployee}
-                          selectedTeam={selectedTeam}
-                          employeeId={currentShiftDetails.userId}
-                          teamId={currentShiftDetails.teamId}
-                          shiftDate={dayjs(currentShiftDetails.date).toDate()}
-                          shiftId={currentShiftDetails.shiftId}
-                          shiftStartTime={currentShiftDetails.startTime}
-                          shiftFinishTime={currentShiftDetails.finishTime}
-                          currentShiftDetails={currentShiftDetails}
-                        />,
-                        document.getElementById('modal-root')
-                      )}
-                      {isPublishModalOpen && ReactDOM.createPortal(
-                        <PublishShiftModal
-                          isOpen={isPublishModalOpen}
-                          onClose={() => setIsPublishModalOpen(false)}
-                          weekRange={getWeekRange()}
-                          onPublish={handlePublish}
-                        />,
-                        document.getElementById('modal-root')
-                      )}
-                      <div onClick={() => openModalWithShiftDetails(row.userId, dayIndex)}>
-                        {dayHours}
+  const handleEmployeeSelect = employeeId => {
+    const selectedEmployee = users.find(user => user.id === employeeId);
+    if (selectedEmployee) {
+      const newEmployeeShift = {
+        userId: selectedEmployee.id,
+        name: selectedEmployee.name,
+        monday: '', tuesday: '', wednesday: '', thursday: '', friday: '', saturday: '', sunday: '',
+      };
+  
+      setRosterData([...rosterData, newEmployeeShift]);
+    }
+    setIsSelectEmployeeModalOpen(false);
+  };
+  
+
+    return (
+      <div className="roster-container">
+        <div className="flex items-center justify-between">
+          <WeekPickerComponent
+            selectedDate={selectedDate}
+            onDateChange={handleDateChange}
+          />
+          <button 
+            onClick={() => {
+              if (hasShiftsInSelectedWeek()) {
+                setIsPublishModalOpen(true);
+              } else {
+                alert('No shifts to publish for the selected week.');
+              }
+            }}
+            className="border p-2 rounded background text-white h-10 -mt-2"
+            style={{backgroundColor: '#3498db'}}
+            >
+            Publish shifts
+          </button>
+        </div>
+        <div className="overflow-x-auto">
+          {loading ? (
+            <p>Loading...</p>
+            ) : (
+              <div className="w-full">
+                <div className="grid grid-cols-8 gap-1">
+                  <div
+                    className="day bg-gray-100 border p-2 rounded m-1 overflow-hidden">
+                      Staff
+                  </div>
+                  {dayAbbreviations.map((dayAbbrev, index) => (
+                    <div 
+                      key={index}
+                      className="day bg-gray-100 border p-2 rounded m-1 overflow-hidden">
+                      <div>
+                        {dayAbbrev}
                       </div>
+                      <div>
+                        {dayjs(weekDates[index]).format('DD MMM')}
                       </div>
                     </div>
                   ))}
-                </React.Fragment>
-              ))}
-            </div>
+                {rosterData.map((row, rowIndex) => (
+                  <React.Fragment key={rowIndex}>
+                    <div className="day bg-gray-100 border p-2 rounded m-1 overflow-hidden">{row.name}</div>
+                    {[row.monday, row.tuesday, row.wednesday, row.thursday, row.friday, row.saturday, row.sunday].map((dayHours, dayIndex) => (
+                      <div key={dayIndex} className="roster-table-font day p-2 rounded m-1 overflow-hidden relative">
+                        <div className="flex flex-col items-center justify-center">
+                        <PlusCircleIcon
+                          className="cursor-pointer hover:text-primary mb-2"
+                          onClick={() => openModalToAddShift(row.userId, dayIndex)}>
+                        </PlusCircleIcon>
+                        
+                        {isModalOpen && ReactDOM.createPortal(
+                          <AddScheduleModal
+                            isOpen={isModalOpen}
+                            onClose={handleModalClose}
+                            scheduleDetails={currentScheduleDetails}
+                            onAddShift={addNewShiftToRoster}
+                            onUpdateShift={updateSchedule}
+                            onDeleteShift={deleteSchedule}
+                            scheduleId={currentShiftDetails.shiftId}
+                            employees={usersArray}
+                            teams={employeeTeams}
+                            selectedEmployee={selectedEmployee}
+                            selectedTeam={selectedTeam}
+                            employeeId={currentShiftDetails.userId}
+                            teamId={currentShiftDetails.teamId}
+                            shiftDate={dayjs(currentShiftDetails.date).toDate()}
+                            shiftId={currentShiftDetails.shiftId}
+                            shiftStartTime={currentShiftDetails.startTime}
+                            shiftFinishTime={currentShiftDetails.finishTime}
+                            currentShiftDetails={currentShiftDetails}
+                          />,
+                          document.getElementById('modal-root')
+                        )}
+                        {isPublishModalOpen && ReactDOM.createPortal(
+                          <PublishShiftModal
+                            isOpen={isPublishModalOpen}
+                            onClose={() => setIsPublishModalOpen(false)}
+                            weekRange={getWeekRange()}
+                            onPublish={handlePublish}
+                          />,
+                          document.getElementById('modal-root')
+                        )}
+                      <div 
+                        onClick={() => openModalWithShiftDetails(row.userId, dayIndex)}>
+                        {dayHours}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </React.Fragment>
+            ))}
           </div>
+        </div>
+      )}
+    </div>
+    <div style={{ 
+      display: 'flex', 
+      justifyContent: 'center',
+      margin: '20px 0'
+      }}>
+      <button 
+        onClick={handleOpenSelectEmployeeModal}
+        className="border p-2 rounded background text-white h-10 -mt-2"
+        style={{
+          backgroundColor: '#3498db',
+          padding: '10px 20px',
+          fontSize: '16px',
+          borderRadius: '5px',
+          cursor: 'pointer' }}
+        >
+          Add Shifts
+      </button>
+    </div>
+        {isSelectEmployeeModalOpen && (
+          <SelectEmployeeModal
+            isOpen={isSelectEmployeeModalOpen}
+            onClose={() => setIsSelectEmployeeModalOpen(false)}
+            employees={users}
+            onEmployeeSelect={handleEmployeeSelect}
+          />
         )}
-      </div>
       {error && <p>Error fetching roster: {error}</p>}
     </div>
   );
