@@ -1510,6 +1510,8 @@ function EmployeeManagement() {
                                 </form>
                                 <form style={{ padding: '30px' }} className="primary">
                                     <h2 className="secondary h2-EM">Resend Onbarding Invites</h2>
+                                    <p>Must change email or phone number to resend invite</p>
+                                    <p>note that this will also change employees email and phone within system</p>
 
                                     <div>
                                         <h3 className="secondary">User ID:</h3>
@@ -1531,6 +1533,27 @@ function EmployeeManagement() {
                                                 </option>
                                             ))}
                                         </select>
+
+
+                                    </div>
+
+                                    <div>
+                                        <input
+                                            type="text"
+                                            style={{ margin: '5px' }}
+                                            placeholder="Email"
+                                            value={formDataOnboarding.email}
+                                            onChange={e => setFormDataOnboarding({ ...formDataOnboarding, email: e.target.value })}
+                                        />
+                                    </div>
+                                    <div>
+                                        <input
+                                            type="text"
+                                            style={{ margin: '5px' }}
+                                            placeholder="Phone"
+                                            value={formDataOnboarding.phone}
+                                            onChange={e => setFormDataOnboarding({ ...formDataOnboarding, phone: e.target.value })}
+                                        />
                                     </div>
 
 
