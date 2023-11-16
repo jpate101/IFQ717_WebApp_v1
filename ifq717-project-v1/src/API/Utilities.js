@@ -448,3 +448,27 @@ export const createShiftReminder = async (minutesBeforeShiftStart) => {
     throw error;
   }
 };
+
+// Creates a vacant schedule
+export const createVacantSchedule = async (startTimestamp) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/schedules`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({
+        start: startTimestamp
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Vacant schedule created:', data);
+    return data;
+  } catch (error) {
+    console.error('Error creating vacant schedule:', error);
+    throw error;
+  }
+};

@@ -3,9 +3,11 @@ import EmployeesDropdown from './EmployeesDropdown';
 import TeamsDropdown from './TeamsDropdown';
 import DateFormItem from './DateFormItem';
 import TimePickerComponent from './TimePicker';
+import CreateShiftReminder from './CreateShiftReminder';
 import { getUsers, getAllDepartments } from '../../API/Utilities';
 import { ReactComponent as BinIcon } from '../../svg/trash3.svg';
 import { ReactComponent as DotDotDot } from '../../svg/three-dots.svg';
+
 import dayjs from 'dayjs';
 
 const RosterModal = ({ 
@@ -137,6 +139,8 @@ const RosterModal = ({
   } catch (error) {
       console.error('Error saving/updating shift:', error);
   }
+
+  
 };
   
 
@@ -155,6 +159,9 @@ useEffect(() => {
     console.log("Current Schedule ID in Modal: ", scheduleId);
 }, [scheduleId]);
 
+const handleReminderCreated = (reminder) => {
+  console.log('Reminder has been set with data:', reminder);
+};
 
   return isOpen && (
     <>
@@ -196,6 +203,11 @@ useEffect(() => {
             selectedTeamId={selectedTeam ? selectedTeam.id : null}
           >
           </TeamsDropdown>
+        </div>
+        <div className="my-2">
+          <CreateShiftReminder
+            onReminderCreated={handleReminderCreated}
+          />
         </div>
         <div className="flex justify-between my-2">
           <div>{}</div>
