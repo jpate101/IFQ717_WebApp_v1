@@ -13,6 +13,7 @@ import ExportTimesheets from './Timesheets/exportTimesheets'
 import Roster from './Roster/Roster';
 import TimesheetForUser from './Timesheets/TimesheetForUser';
 import PrivateRoute from './Components/PrivateRoute';
+import Leave from './Employee/Leave';
 
 export default function App() {
   const [cookies, setCookie, removeCookie] = useCookies(['token']);
@@ -75,6 +76,11 @@ export default function App() {
             <Route
               path="/Timesheets/exportTimesheets"
               element={<PrivateRoute element={<ExportTimesheets />}
+              authorised={isLoggedIn} />}
+            />
+            <Route
+              path="/Leave"
+              element={<PrivateRoute element={<Leave />}
               authorised={isLoggedIn} />}
             />
             <Route path="*" element={<Navigate to="/" />} />
