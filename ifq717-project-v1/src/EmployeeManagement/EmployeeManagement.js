@@ -30,7 +30,6 @@ function EmployeeManagement() {
 
     const fetchLocations = async () => {
         try {
-            const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
             const response = await fetch(`https://my.tanda.co/api/v2/locations?platform=false&show_business_hours=false`, {
                 method: 'GET',
                 headers: {
@@ -77,7 +76,6 @@ function EmployeeManagement() {
 
     const fetchUsers = async () => {
         try {
-            const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
             const response = await fetch(`https://my.tanda.co/api/v2/users?show_wages=false`, {
                 method: 'GET',
                 headers: {
@@ -128,7 +126,6 @@ function EmployeeManagement() {
     const fetchTeams = async () => {
         try {
             //console.log("fetch teams exe");
-            const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
             const response = await fetch(`https://my.tanda.co/api/v2/departments`, {
                 method: 'GET',
                 headers: {
@@ -288,7 +285,6 @@ function EmployeeManagement() {
                 },
             ],
         };
-        //const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
         //console.log(requestBody);
         //console.log(apiKey);
 
@@ -336,9 +332,6 @@ function EmployeeManagement() {
             name: formDataTeams.name,
             location_id: formDataTeams.location_id,
         };
-
-        //const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
-
         // Send a POST request to create a team
         fetch('https://my.tanda.co/api/v2/departments', {
             method: 'POST',
@@ -387,8 +380,6 @@ function EmployeeManagement() {
 
             // Include more properties here
         };
-
-        //const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
 
         // Send a POST request to create an employee
         fetch('https://my.tanda.co/api/v2/users', {
@@ -447,9 +438,6 @@ function EmployeeManagement() {
                 },
             ],
         };
-
-        //const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
-
         // Send a POST request to create an employee
         fetch(`https://my.tanda.co/api/v2/locations/${locationId}`, {
             method: 'PUT', // Use PUT method for updating
@@ -499,8 +487,6 @@ function EmployeeManagement() {
             name: formDataTeams.name,
 
         };
-
-        //const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
         const teamId = parseInt(formDataTeams.Id); // Assuming formDataTeams.Id is the ID of the team to be updated
 
 
@@ -543,8 +529,6 @@ function EmployeeManagement() {
         };
 
         console.log(teamUpdateRequestQualification);
-
-        //const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
 
         const teamId = parseInt(formDataTeams.Id);
 
@@ -601,12 +585,7 @@ function EmployeeManagement() {
         }
 
         console.log(teamUpdateRequestUsersManagers);
-
-        //const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
         const teamId = parseInt(formDataTeams.Id);
-
-
-
         fetch(`https://my.tanda.co/api/v2/departments/${teamId}`, {
             method: 'PUT',
             headers: {
@@ -708,10 +687,6 @@ function EmployeeManagement() {
 
         // console.log("bsb check:", updatedData.bank_details.bsb);
         console.log(updatedData);
-        //console.log("----------");
-
-        //const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
-
         // Send a fetch request to update the user's information
         fetch(`https://my.tanda.co/api/v2/users/${formDataEmployee.Id}`, {
             method: 'PUT',
@@ -755,11 +730,6 @@ function EmployeeManagement() {
             custom_message: formDataOnboarding.Custom_Message,
         };
 
-        /*const apiKey = document.cookie.replace(
-            /(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/,
-            "$1"
-        );*/
-
         fetch('https://my.tanda.co/api/v2/users/onboarding', {
             method: 'POST',
             headers: {
@@ -772,6 +742,7 @@ function EmployeeManagement() {
                 if (response.status === 201) {
                     setShowResult("New user onboarded successfully!");
                     console.log("Success Response:", response);
+                    fetchUsers();
                 } else {
                     return response.json().then((errorData) => {
                         const errorMessage = errorData.error || 'Failed to onboard new user.';
@@ -801,44 +772,6 @@ function EmployeeManagement() {
         );*/
 
         fetch(`https://my.tanda.co/api/v2/users/${userId}/onboard`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`,
-            }
-        })
-            .then((response) => {
-                if (response.status === 201) {
-                    setShowResult("Existing user onboarded successfully!");
-                    console.log("Success Response:", response);
-                } else {
-                    return response.json().then((errorData) => {
-                        const errorMessage = errorData.error || 'Failed to onboard existing user.';
-                        setShowResult(errorMessage);
-                        console.error("Error Response:", errorData);
-                    });
-                }
-            })
-            .catch((error) => {
-                setShowResult("Network error: " + error.message);
-            });
-    }
-
-    function handleResendOnboardInvitesUserSubmit(e) {
-        console.log('send invite button pressed');
-        e.preventDefault();
-
-        if (!formDataOnboarding.Id) {
-            setShowResult("Please fill in the User ID field.");
-            return;
-        }
-
-        const userId = formDataOnboarding.Id;
-        /*const apiKey = document.cookie.replace(
-            /(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/,
-            "$1"
-        );*/
-        fetch(`https://my.tanda.co/api/v2/users/${userId}/invite`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -899,6 +832,12 @@ function EmployeeManagement() {
             .catch((error) => {
                 setShowResult("Network error: " + error.message);
             });
+    }
+
+    function handleResendOnboardInvitesUserSubmit(e) {
+        console.log('resend onboarding invite pressed');
+        e.preventDefault();
+
     }
 
 

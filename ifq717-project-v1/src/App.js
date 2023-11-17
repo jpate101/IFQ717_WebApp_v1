@@ -7,7 +7,7 @@ import Footer from './Components/Footer';
 import Home from './Home';
 import Login from './Login/Login';
 import Dashboard from './Dashboard/Dashboard';
-import EmployeeManagement from './EmployeeManagement';
+import EmployeeManagement from './EmployeeManagement/EmployeeManagement';
 import ApproveTimesheets from './Timesheets/approveTimesheets';
 import ExportTimesheets from './Timesheets/exportTimesheets'
 import Roster from './Roster/Roster';
