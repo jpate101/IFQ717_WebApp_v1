@@ -21,7 +21,7 @@ const NavTabs = ({ activeTab, setActiveTab }) => {
   );
 };
 
-const TabContent = ({ activeTab, pendingRequests }) => {
+const TabContent = ({ activeTab, pendingRequests, approvedRequests, rejectedRequests }) => {
   switch (activeTab) {
     case 'pending':
         return (
@@ -39,9 +39,35 @@ const TabContent = ({ activeTab, pendingRequests }) => {
             </div>
           );
     case 'approved':
-      return <div className="tab-pane">Approved requests content</div>;
+        return (
+            <div className="tab-pane">
+              <h3>Approved Requests</h3>
+              {approvedRequests.length > 0 ? (
+                approvedRequests.map(request => (
+                  <div key={request.id}>
+                    {request.reason} - {request.start} to {request.finish}
+                  </div>
+                ))
+              ) : (
+                <p>No approved requests.</p>
+              )}
+            </div>
+          );
     case 'rejected':
-      return <div className="tab-pane">Rejected requests content</div>;
+        return (
+            <div className="tab-pane">
+              <h3>Rejected Requests</h3>
+              {rejectedRequests.length > 0 ? (
+                rejectedRequests.map(request => (
+                  <div key={request.id}>
+                    {request.reason} - {request.start} to {request.finish}
+                  </div>
+                ))
+              ) : (
+                <p>No rejected requests.</p>
+              )}
+            </div>
+          );
     default:
       return <div className="tab-pane">Select a tab</div>;
   }
@@ -52,28 +78,35 @@ const LeaveRequestTabs = () => {
     const [showLeaveSidebar, setShowLeaveSidebar] = useState(false);
     const [showUnavailabilitySidebar, setShowUnavailabilitySidebar] = useState(false);
     const [pendingRequests, setPendingRequests] = useState([]);
+    const [approvedRequests, setApprovedRequests] = useState([]);
+    const [rejectedRequests, setRejectedRequests] = useState([]);
     const [dateRange, setDateRange] = useState([
         dayjs(),
         dayjs().add(6, 'months')
       ]);
 
-    useEffect(() => {
-        if (activeTab === 'pending') {
-          getCurrentUser().then(userData => {
-            console.log('Fetched user data:', userData);
-            const from = dateRange[0].format('YYYY-MM-DD');
-            const to = dateRange[1].format('YYYY-MM-DD');
-            return getLeaveList([userData.id], from, to);
-          })
-          .then(data => {
+      useEffect(() => {
+        getCurrentUser().then(userData => {
+          console.log('Fetched user data:', userData);
+          const from = dateRange[0].format('YYYY-MM-DD');
+          const to = dateRange[1].format('YYYY-MM-DD');
+          return getLeaveList([userData.id], from, to);
+        })
+        .then(data => {
+          if (activeTab === 'pending') {
             const pending = data.filter(request => request.status === 'pending');
             setPendingRequests(pending);
-          })
-          .catch(error => console.error('Error fetching pending leave requests:', error));
-        }
-      }, [activeTab, dateRange]);
+          } else if (activeTab === 'approved') {
+            const approved = data.filter(request => request.status === 'approved');
+            setApprovedRequests(approved);
+          } else if (activeTab === 'rejected') {
+            const rejected = data.filter(request => request.status === 'rejected');
+            setRejectedRequests(rejected);
+          }
+        })
+        .catch(error => console.error(`Error fetching ${activeTab} leave requests:`, error));
+    }, [activeTab, dateRange]);
       
-
     const handleLeaveClick = () => {
         setShowLeaveSidebar(true);
     };
@@ -103,6 +136,8 @@ const LeaveRequestTabs = () => {
             <TabContent 
                 activeTab={activeTab}
                 pendingRequests={pendingRequests}
+                approvedRequests={approvedRequests}
+                rejectedRequests={rejectedRequests}
             />
             <LeaveSidebar show={showLeaveSidebar} handleClose={() => setShowLeaveSidebar(false)} />
             <UnavailabilitySidebar show={showUnavailabilitySidebar} handleClose={() => setShowUnavailabilitySidebar(false)} />
