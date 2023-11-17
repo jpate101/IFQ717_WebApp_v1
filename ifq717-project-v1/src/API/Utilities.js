@@ -472,3 +472,107 @@ export const createVacantSchedule = async (startTimestamp) => {
     throw error;
   }
 };
+
+// Creates a leave request
+
+export const createLeaveRequest = async (leaveRequestData) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/leave`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(leaveRequestData),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Leave request created:', data);
+    return data;
+  } catch (error) {
+    console.error('Error creating leave request:', error);
+    throw error;
+  }
+};
+
+// Gets a specific leave request by ID
+export const getLeaveRequest = async (leaveRequestId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/leave/${leaveRequestId}`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Fetched leave request:', data);
+    return data;
+  } catch (error) {
+    console.error('Error fetching leave request:', error);
+    throw error;
+  }
+};
+
+// Updates a specific leave request by ID
+export const updateLeaveRequest = async (leaveRequestId, updateData) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/leave/${leaveRequestId}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(updateData),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Leave request updated:', data);
+    return data;
+  } catch (error) {
+    console.error('Error updating leave request:', error);
+    throw error;
+  }
+};
+
+// Gets the leave types available for a specific user
+export const getLeaveTypesForUser = async (userId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/leave/types_for/${userId}`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const leaveTypes = await response.json();
+    console.log('Leave types for user:', leaveTypes);
+    return leaveTypes;
+  } catch (error) {
+    console.error('Error fetching leave types for user:', error);
+    throw error;
+  }
+};
+
+// Gets the default leave hours for a specific user, date range, and leave type
+export const getDefaultLeaveHours = async (userId, startDate, finishDate, leaveType) => {
+  try {
+    const queryParams = new URLSearchParams({
+      user_id: userId,
+      start: startDate,
+      finish: finishDate,
+      leave_type: leaveType
+    });
+    const response = await fetch(`${API_BASE_URL}/leave/hours_between?${queryParams}`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const result = await response.json();
+    console.log('Default leave hours:', result);
+    return result.hours;
+  } catch (error) {
+    console.error('Error fetching default leave hours:', error);
+    throw error;
+  }
+};
