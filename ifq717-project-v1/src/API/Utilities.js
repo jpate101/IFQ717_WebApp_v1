@@ -476,6 +476,7 @@ export const createVacantSchedule = async (startTimestamp) => {
 // Creates a leave request
 
 export const createLeaveRequest = async (leaveRequestData) => {
+  console.log('Request Data for Leave Request:', leaveRequestData);
   try {
     const response = await fetch(`${API_BASE_URL}/leave`, {
       method: 'POST',
@@ -573,6 +574,25 @@ export const getDefaultLeaveHours = async (userId, startDate, finishDate, leaveT
     return result.hours;
   } catch (error) {
     console.error('Error fetching default leave hours:', error);
+    throw error;
+  }
+};
+
+// Gets details of the current user
+export const getCurrentUser = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/users/me`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const userData = await response.json();
+    console.log('Current user data:', userData);
+    return userData;
+  } catch (error) {
+    console.error('Error fetching current user data:', error);
     throw error;
   }
 };
