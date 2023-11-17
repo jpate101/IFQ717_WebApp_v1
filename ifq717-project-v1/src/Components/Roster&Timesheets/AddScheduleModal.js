@@ -36,7 +36,8 @@ const RosterModal = ({
     startTime: '',
     finishTime: '',
     employeeId:'',
-    teamId:''
+    teamId:'',
+    scheduleId:''
   });
 
   useEffect(() => {
@@ -163,6 +164,13 @@ const handleReminderCreated = (reminder) => {
   console.log('Reminder has been set with data:', reminder);
 };
 
+const handleTeamChange = (newTeamId) => {
+  console.log(`Team changed to: ${newTeamId}`);
+  const newSelectedTeam = allTeams.find(team => team.id === parseInt(newTeamId, 10));
+  setSelectedTeam(newSelectedTeam);
+};
+
+
   return isOpen && (
     <>
       <div className="fixed bg-black bg-opacity-10 inset-0 flex justify-center items-center">
@@ -199,7 +207,7 @@ const handleReminderCreated = (reminder) => {
         <div className="my-2">
           <TeamsDropdown
             teams={teams}
-            onSelectChange={setSelectedTeam}
+            onSelectChange={handleTeamChange}
             selectedTeamId={selectedTeam ? selectedTeam.id : null}
           >
           </TeamsDropdown>
