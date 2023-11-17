@@ -488,7 +488,6 @@ textarea:focus {
   background-color: #3498db !important;
   color: white !important;
   border-color: #3498db !important;
-  margin-bottom: 20px;
 }
 
 .custom-dropdown:focus {
@@ -504,4 +503,9 @@ textarea:focus {
   color: white !important;
   background-color: #3498db !important;
   font-weight: bold;
+}
+
+.dropdown-datepicker-container {
+  display: flex;
+  margin-bottom: 20px;
 }
