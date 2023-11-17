@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 const API_BASE_URL = 'https://my.tanda.co/api/v2';
 const getHeaders = () => {
   const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, "$1");
+  console.log('token:', token)
   return {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${token}`
@@ -593,6 +594,36 @@ export const getCurrentUser = async () => {
     return userData;
   } catch (error) {
     console.error('Error fetching current user data:', error);
+    throw error;
+  }
+};
+
+// Fetches a list of leave requests based off leave id's, user id's or to/from date
+export const getLeaveList = async (userIds, from, to) => {
+  try {
+    let queryParams = new URLSearchParams();
+    if (userIds && userIds.length > 0) {
+      queryParams.append('user_ids', userIds.join(','));
+    }
+    if (from) {
+      queryParams.append('from', from);
+    }
+    if (to) {
+      queryParams.append('to', to);
+    }
+
+    const response = await fetch(`${API_BASE_URL}/leave?${queryParams.toString()}`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Fetched leave list:', data);
+    return data;
+  } catch (error) {
+    console.error('Error fetching leave list:', error);
     throw error;
   }
 };
