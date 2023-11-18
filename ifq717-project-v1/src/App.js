@@ -13,7 +13,9 @@ import ExportTimesheets from './Timesheets/exportTimesheets'
 import Roster from './Roster/Roster';
 import TimesheetForUser from './Timesheets/TimesheetForUser';
 import PrivateRoute from './Components/PrivateRoute';
-import Leave from './Employee/Leave';
+import EmployeeLeave from './Employee/EmployeeLeave';
+import EmployeeRoster from './Employee/EmployeeRoster';
+import EmployeeDashboard from './Employee/EmployeeDashboard';
 
 export default function App() {
   const [cookies, setCookie, removeCookie] = useCookies(['token']);
@@ -80,7 +82,17 @@ export default function App() {
             />
             <Route
               path="/Leave"
-              element={<PrivateRoute element={<Leave />}
+              element={<PrivateRoute element={<EmployeeLeave />}
+              authorised={isLoggedIn} />}
+            />
+            <Route
+              path="/EmployeeDashboard"
+              element={<PrivateRoute element={<EmployeeDashboard />}
+              authorised={isLoggedIn} />}
+            />
+            <Route
+              path="/EmployeeRoster"
+              element={<PrivateRoute element={<EmployeeRoster />}
               authorised={isLoggedIn} />}
             />
             <Route path="*" element={<Navigate to="/" />} />

@@ -5,6 +5,7 @@ import LeaveSidebar from '../Components/Leave/LeaveSidebar';
 import UnavailabilitySidebar from '../Components/Leave/UnavailabilitySidebar';
 import { getCurrentUser, getLeaveList } from '../API/Utilities';
 import dayjs from 'dayjs';
+import locale from 'antd/es/date-picker/locale/en_GB'
 import '../App.css';
 
 const { RangePicker } = DatePicker;
@@ -130,6 +131,7 @@ const LeaveRequestTabs = () => {
                 <RangePicker
                     defaultValue={dateRange}
                     onChange={(dates) => setDateRange(dates)}
+                    locale={locale}
                 />
             </div>
             <NavTabs activeTab={activeTab} setActiveTab={setActiveTab} />
