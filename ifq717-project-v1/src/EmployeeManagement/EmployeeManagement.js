@@ -614,10 +614,6 @@ function EmployeeManagement() {
             setShowResult("Please fill in the Team ID field.");
             return;
         }
-
-        // Create a copy of the formDataEmployee object
-        //let updatedData = { ...formDataEmployee };
-
         let updatedData = {
             name: formDataEmployee.name,
             employee_id: formDataEmployee.employee_id,
@@ -682,8 +678,6 @@ function EmployeeManagement() {
                 delete updatedData[field];
             }
         }
-
-
 
         // console.log("bsb check:", updatedData.bank_details.bsb);
         console.log(updatedData);
@@ -766,10 +760,6 @@ function EmployeeManagement() {
         }
 
         const userId = formDataOnboarding.Id;
-        /*const apiKey = document.cookie.replace(
-            /(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/,
-            "$1"
-        );*/
 
         fetch(`https://my.tanda.co/api/v2/users/${userId}/onboard`, {
             method: 'POST',
@@ -803,12 +793,7 @@ function EmployeeManagement() {
             setShowResult("Please fill in the User ID field.");
             return;
         }
-
         const userId = formDataOnboarding.Id;
-        const apiKey = document.cookie.replace(
-            /(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/,
-            "$1"
-        );
         fetch(`https://my.tanda.co/api/v2/users/${userId}`, {
             method: 'DELETE',
             headers: {
@@ -834,13 +819,69 @@ function EmployeeManagement() {
             });
     }
 
-    function handleResendOnboardInvitesUserSubmit(e) {
-        console.log('resend onboarding invite pressed');
-        e.preventDefault();
-
+    async function updateUser(userId, updatedData) {
+        try {
+            const response = await fetch(`https://my.tanda.co/api/v2/users/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`,
+                },
+                body: JSON.stringify(updatedData),
+            });
+    
+            if (!response.ok) {
+                throw new Error('Failed to update user data');
+            }
+    
+            return { success: true, message: 'User updated successfully!' };
+        } catch (error) {
+            return { success: false, message: `Error: ${error.message}` };
+        }
     }
 
+    async function sendOnboardingInvite(userId) {
+        try {
+            const response = await fetch(`https://my.tanda.co/api/v2/users/${userId}/onboard`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`,
+                },
+            });
+    
+            if (response.status === 201) {
+                return { success: true, message: 'Onboarding invite sent successfully!' };
+            } else {
+                const errorData = await response.json();
+                const errorMessage = errorData.error || 'Failed to send onboarding invite.';
+                throw new Error(errorMessage);
+            }
+        } catch (error) {
+            return { success: false, message: `Error: ${error.message}` };
+        }
+    }
 
+    async function handleResendOnboardInvitesUserSubmit(e) {
+        console.log('Resend onboarding invite pressed');
+        e.preventDefault();
+        const { Id, email, phone } = formDataOnboarding;
+        try {
+            if (email || phone) {
+                const payload = {};
+                if (email) payload.email = email;
+                if (phone) payload.phone = phone;
+                await updateUser(Id, payload); // You need to replace 'updateUser' with the actual function to update user data
+                await sendOnboardingInvite(Id); // You need to replace 'sendOnboardingInvite' with the actual function to send an onboarding invite
+                setShowResult('Onboarding invite sent successfully');
+            } else {
+                setShowResult('Error: Please provide either email or phone for updating');
+            }
+        } catch (error) {
+            console.error('Error during onboarding invite resend:', error);
+            setShowResult('Error: Unable to resend onboarding invite');
+        }
+    }
 
     return (
         <div className="background" >
