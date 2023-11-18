@@ -429,12 +429,12 @@ function EmployeeManagement() {
             public_holiday_regions: formDataLocation.public_holiday_regions,
             specific_holiday_dates: [
                 {
-                    date: '2016-03-14',
+                    date: '',
                 },
                 {
-                    date: '2016-08-08',
-                    from: 12,
-                    to: 17,
+                    date: '',
+                    from: null,
+                    to: null,
                 },
             ],
         };
@@ -871,8 +871,8 @@ function EmployeeManagement() {
                 const payload = {};
                 if (email) payload.email = email;
                 if (phone) payload.phone = phone;
-                await updateUser(Id, payload); // You need to replace 'updateUser' with the actual function to update user data
-                await sendOnboardingInvite(Id); // You need to replace 'sendOnboardingInvite' with the actual function to send an onboarding invite
+                await updateUser(Id, payload); 
+                await sendOnboardingInvite(Id); 
                 setShowResult('Onboarding invite sent successfully');
             } else {
                 setShowResult('Error: Please provide either email or phone for updating');
