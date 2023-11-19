@@ -1,5 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
+import { useLocationForm, useTeamsForm, useEmployeeForm, useOnboardingForm } from './EmployeeManagementFormData';
+
 
 function EmployeeManagement() {
     const [showLocationForm, setShowLocationForm] = useState(false);
@@ -9,16 +11,25 @@ function EmployeeManagement() {
     const [showUpdateLocations, setShowUpdateLocations] = useState(false);
     const [showUpdateTeams, setShowUpdateTeams] = useState(false);
     const [showOnboardNewUser, setShowOnboardNewUser] = useState(false);
+    const [showInactivateEmployee, setShowInactivateEmployee] = useState(false);
     const [showResult, setShowResult] = useState("");
+
+    //input form variables 
+    const [formDataLocation, setFormDataLocation] = useLocationForm();
+    const [formDataTeams, setFormDataTeams] = useTeamsForm();
+    const [formDataEmployee, setFormDataEmployee] = useEmployeeForm();
+    const [formDataOnboarding, setFormDataOnboarding] = useOnboardingForm();
 
     //search locations stuff 
     const [locationsList, setLocationsList] = useState([]);
     const [searchLocation, setSearchLocation] = useState(''); // State for search query
     const [filteredLocations, setFilteredLocations] = useState([]); // State for filtered locations
 
+    //key
+    const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
+
     const fetchLocations = async () => {
         try {
-            const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
             const response = await fetch(`https://my.tanda.co/api/v2/locations?platform=false&show_business_hours=false`, {
                 method: 'GET',
                 headers: {
@@ -65,7 +76,6 @@ function EmployeeManagement() {
 
     const fetchUsers = async () => {
         try {
-            const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
             const response = await fetch(`https://my.tanda.co/api/v2/users?show_wages=false`, {
                 method: 'GET',
                 headers: {
@@ -116,7 +126,6 @@ function EmployeeManagement() {
     const fetchTeams = async () => {
         try {
             //console.log("fetch teams exe");
-            const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
             const response = await fetch(`https://my.tanda.co/api/v2/departments`, {
                 method: 'GET',
                 headers: {
@@ -165,6 +174,7 @@ function EmployeeManagement() {
         setShowUpdateLocations(false);
         setShowUpdateTeams(false);
         setShowOnboardNewUser(false);
+        setShowInactivateEmployee(false);
         setShowResult('');
     };
     const handleCreateTeamsClick = () => {
@@ -175,6 +185,7 @@ function EmployeeManagement() {
         setShowUpdateLocations(false);
         setShowUpdateTeams(false);
         setShowOnboardNewUser(false);
+        setShowInactivateEmployee(false);
         setShowResult('');
     };
     const handleCreateUsersClick = () => {
@@ -185,6 +196,7 @@ function EmployeeManagement() {
         setShowUpdateLocations(false);
         setShowUpdateTeams(false);
         setShowOnboardNewUser(false);
+        setShowInactivateEmployee(false);
         setShowResult('');
     };
     const handleUpdateUsersClick = () => {
@@ -195,6 +207,7 @@ function EmployeeManagement() {
         setShowTeamsForm(false);
         setShowEmployeeForm(false);
         setShowOnboardNewUser(false);
+        setShowInactivateEmployee(false);
         setShowResult('');
     }
     const handleUpdateLocationsClick = () => {
@@ -205,6 +218,7 @@ function EmployeeManagement() {
         setShowTeamsForm(false);
         setShowEmployeeForm(false);
         setShowOnboardNewUser(false);
+        setShowInactivateEmployee(false);
         setShowResult('');
     }
     const handleUpdateTeamsClick = () => {
@@ -215,9 +229,10 @@ function EmployeeManagement() {
         setShowTeamsForm(false);
         setShowEmployeeForm(false);
         setShowOnboardNewUser(false);
+        setShowInactivateEmployee(false);
         setShowResult('');
     }
-    const handleOnbooardNewUserClick = () => {
+    const handleOnboardNewUserClick = () => {
         setShowUpdateUsers(false);
         setShowUpdateLocations(false);
         setShowUpdateTeams(false);
@@ -225,140 +240,22 @@ function EmployeeManagement() {
         setShowTeamsForm(false);
         setShowEmployeeForm(false);
         setShowOnboardNewUser(true);
+        setShowInactivateEmployee(false);
         setShowResult('');
     }
-    //form
-    const [formDataLocation, setFormDataLocation] = useState({
-        locationsId: '',
-        name: '',
-        short_name: '',
-        latitude: '',
-        longitude: '',
-        address: '',
-        public_holiday_regions: ['au'],
-        specific_holiday_dates: [
-            { date: '' },
-            { date: '', from: '', to: '' },
-        ],
-    });
-    const [formDataTeams, setFormDataTeams] = useState({
-        Id: '',
-        name: '',
-        location_id: '',
-        export_name: '',
-        colour: '',
-        team_group: '',
-        qualification_ids: [''],
-        user_ids: [''],
-        manager_ids: [''],
-    });
-    const [formDataEmployee, setFormDataEmployee] = useState({
-        Id: '',
-        name: '',
-        date_of_birth: '',
-        employment_start_date: '',
-        employee_id: '',
-        passcode: '',
-        department_ids: [''],
-        preferred_hours: null,
-        part_time_fixed_hours: null,
-        award_template_id: null,
-        award_template_organisation_id: null,
-        award_tag_ids: [''],
-        report_department_id: null,
-        managed_department_ids: [''],
-        email: '',
-        phone: '',
-        days_overtime_averaged_over: null,
-        overtime_calculated_over_period_start: '',
-        can_see_costs: false,
-        user_levels: [''],
-        yearly_salary: null,
-        next_pay_group_id: null,
-        hourly_rate: null,
-        bank_details_bsb: null,
-        bank_details_account_number: null,
-        bank_details_account_name: null,
-        address: {
-            street_line_one: '',
-            street_line_two: '',
-            city: '',
-            state: '',
-            country: '',
-            postcode: '',
-        },
-        tax_declaration: {
-            previous_family_name: '',
-            australian_tax_resident: false,
-            australian_tax_residency_status: '',
-            tax_free_threshold: false,
-            senior_tax_offset: false,
-            zone_overseas_carer: false,
-            student_loan: false,
-            financial_supplement_debt: false,
-            tax_code: false,
-            employment_basis: '',
-            tax_file_number: 0,
-            student_loan_plans: [''],
-            uk_tax_year_status: '',
-            tax_scale_type: '',
-            income_type: '',
-            home_country: '',
-            employment_type: '',
-            senior_marital_status: '',
-        },
-        bank_details: {
-            bsb: null,
-            account_number: null,
-            account_name: '',
-        },
-        super_fund_membership: {
-            request: {
-                employer_default: false,
-                ioof: false,
-                own_choice: false,
-                elevate: false,
-            },
-            config: {
-                super_contribution_type: '',
-                trustee_director: false,
-                member_number: '',
-                occupational_rating: '',
-                super_fund_id: null,
-            },
-        },
-        regular_hours: {
-            start_date: '',
-            schedules: {
-                week: null,
-                day: '',
-                start: '',
-                end: '',
-                breaks: '',
-                department_id: null,
-            },
-        },
-        temporary_employee_type: '',
-        qualifications: [
-            {
-                qualification_id: null,
-                enabled: null,
-                license_number: "",
-                expires: "",
-                in_training: null,
-                file_id: ""
-            }
-        ],
-        enable_login: null,
-    });
-    const [formDataOnboarding, setFormDataOnboarding] = useState({
-        Id: '',
-        Name: '',
-        Email: '',
-        Phone: '',
-        Custom_Message: '',
 
-    });
+    const handleInactivateEmployeeClick = () => {
+        setShowUpdateUsers(false);
+        setShowUpdateLocations(false);
+        setShowUpdateTeams(false);
+        setShowLocationForm(false);
+        setShowTeamsForm(false);
+        setShowEmployeeForm(false);
+        setShowOnboardNewUser(false);
+        setShowInactivateEmployee(true);
+        setShowResult('');
+    }
+
     //button functions 
     function handleCreateLocationSubmit(e) {
         e.preventDefault();
@@ -388,9 +285,8 @@ function EmployeeManagement() {
                 },
             ],
         };
-        const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
-        console.log(requestBody);
-        console.log(apiKey);
+        //console.log(requestBody);
+        //console.log(apiKey);
 
         // Send a POST request to your API endpoint
         fetch('https://my.tanda.co/api/v2/locations', {
@@ -436,9 +332,6 @@ function EmployeeManagement() {
             name: formDataTeams.name,
             location_id: formDataTeams.location_id,
         };
-
-        const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
-
         // Send a POST request to create a team
         fetch('https://my.tanda.co/api/v2/departments', {
             method: 'POST',
@@ -488,8 +381,6 @@ function EmployeeManagement() {
             // Include more properties here
         };
 
-        const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
-
         // Send a POST request to create an employee
         fetch('https://my.tanda.co/api/v2/users', {
             method: 'POST',
@@ -538,18 +429,15 @@ function EmployeeManagement() {
             public_holiday_regions: formDataLocation.public_holiday_regions,
             specific_holiday_dates: [
                 {
-                    date: '2016-03-14',
+                    date: '',
                 },
                 {
-                    date: '2016-08-08',
-                    from: 12,
-                    to: 17,
+                    date: '',
+                    from: null,
+                    to: null,
                 },
             ],
         };
-
-        const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
-
         // Send a POST request to create an employee
         fetch(`https://my.tanda.co/api/v2/locations/${locationId}`, {
             method: 'PUT', // Use PUT method for updating
@@ -599,8 +487,6 @@ function EmployeeManagement() {
             name: formDataTeams.name,
 
         };
-
-        const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
         const teamId = parseInt(formDataTeams.Id); // Assuming formDataTeams.Id is the ID of the team to be updated
 
 
@@ -644,8 +530,6 @@ function EmployeeManagement() {
 
         console.log(teamUpdateRequestQualification);
 
-        const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
-
         const teamId = parseInt(formDataTeams.Id);
 
         fetch(`https://my.tanda.co/api/v2/departments/${teamId}`, {
@@ -679,7 +563,7 @@ function EmployeeManagement() {
         e.preventDefault();
         console.log('Update Team Users and Managers button pressed');
 
-        
+
 
         if (!formDataTeams.Id) {
             setShowResult("Please fill in all required fields.");
@@ -701,12 +585,7 @@ function EmployeeManagement() {
         }
 
         console.log(teamUpdateRequestUsersManagers);
-
-        const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
         const teamId = parseInt(formDataTeams.Id);
-
-
-
         fetch(`https://my.tanda.co/api/v2/departments/${teamId}`, {
             method: 'PUT',
             headers: {
@@ -735,10 +614,6 @@ function EmployeeManagement() {
             setShowResult("Please fill in the Team ID field.");
             return;
         }
-
-        // Create a copy of the formDataEmployee object
-        //let updatedData = { ...formDataEmployee };
-
         let updatedData = {
             name: formDataEmployee.name,
             employee_id: formDataEmployee.employee_id,
@@ -804,14 +679,8 @@ function EmployeeManagement() {
             }
         }
 
-
-
         // console.log("bsb check:", updatedData.bank_details.bsb);
         console.log(updatedData);
-        //console.log("----------");
-
-        const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
-
         // Send a fetch request to update the user's information
         fetch(`https://my.tanda.co/api/v2/users/${formDataEmployee.Id}`, {
             method: 'PUT',
@@ -843,7 +712,7 @@ function EmployeeManagement() {
         e.preventDefault();
         //console.log('Onboard New User button pressed ');
 
-        if (!formDataOnboarding.Name || !formDataOnboarding.Email || !formDataOnboarding.Phone || !formDataOnboarding.Custom_Message) {
+        if (!formDataOnboarding.Name || !formDataOnboarding.Email || !formDataOnboarding.Phone) {
             setShowResult("Please fill in all required fields.");
             return;
         }
@@ -854,11 +723,6 @@ function EmployeeManagement() {
             phone: formDataOnboarding.Phone,
             custom_message: formDataOnboarding.Custom_Message,
         };
-
-        const apiKey = document.cookie.replace(
-            /(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/,
-            "$1"
-        );
 
         fetch('https://my.tanda.co/api/v2/users/onboarding', {
             method: 'POST',
@@ -872,6 +736,7 @@ function EmployeeManagement() {
                 if (response.status === 201) {
                     setShowResult("New user onboarded successfully!");
                     console.log("Success Response:", response);
+                    fetchUsers();
                 } else {
                     return response.json().then((errorData) => {
                         const errorMessage = errorData.error || 'Failed to onboard new user.';
@@ -895,10 +760,6 @@ function EmployeeManagement() {
         }
 
         const userId = formDataOnboarding.Id;
-        const apiKey = document.cookie.replace(
-            /(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/,
-            "$1"
-        );
 
         fetch(`https://my.tanda.co/api/v2/users/${userId}/onboard`, {
             method: 'POST',
@@ -924,34 +785,30 @@ function EmployeeManagement() {
             });
     }
 
-    function handleResendOnboardInvitesUserSubmit(e) {
-        console.log('send invite button pressed');
+    function handleInactivateEmployeeSubmit(e) {
+        console.log('deactivate user button pressed');
         e.preventDefault();
 
         if (!formDataOnboarding.Id) {
             setShowResult("Please fill in the User ID field.");
             return;
         }
-
         const userId = formDataOnboarding.Id;
-        const apiKey = document.cookie.replace(
-            /(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/,
-            "$1"
-        );
-        fetch(`https://my.tanda.co/api/v2/users/${userId}/invite`, {
-            method: 'POST',
+        fetch(`https://my.tanda.co/api/v2/users/${userId}`, {
+            method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${apiKey}`,
             }
         })
             .then((response) => {
-                if (response.status === 201) {
-                    setShowResult("Existing user onboarded successfully!");
+                if (response.status === 200) {
+                    setShowResult("Employee Deactivated Successfully!");
                     console.log("Success Response:", response);
+                    fetchUsers();
                 } else {
                     return response.json().then((errorData) => {
-                        const errorMessage = errorData.error || 'Failed to onboard existing user.';
+                        const errorMessage = errorData.error || 'Failed to Deactivate Employee user.';
                         setShowResult(errorMessage);
                         console.error("Error Response:", errorData);
                     });
@@ -962,7 +819,69 @@ function EmployeeManagement() {
             });
     }
 
+    async function updateUser(userId, updatedData) {
+        try {
+            const response = await fetch(`https://my.tanda.co/api/v2/users/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`,
+                },
+                body: JSON.stringify(updatedData),
+            });
+    
+            if (!response.ok) {
+                throw new Error('Failed to update user data');
+            }
+    
+            return { success: true, message: 'User updated successfully!' };
+        } catch (error) {
+            return { success: false, message: `Error: ${error.message}` };
+        }
+    }
 
+    async function sendOnboardingInvite(userId) {
+        try {
+            const response = await fetch(`https://my.tanda.co/api/v2/users/${userId}/onboard`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`,
+                },
+            });
+    
+            if (response.status === 201) {
+                return { success: true, message: 'Onboarding invite sent successfully!' };
+            } else {
+                const errorData = await response.json();
+                const errorMessage = errorData.error || 'Failed to send onboarding invite.';
+                throw new Error(errorMessage);
+            }
+        } catch (error) {
+            return { success: false, message: `Error: ${error.message}` };
+        }
+    }
+
+    async function handleResendOnboardInvitesUserSubmit(e) {
+        console.log('Resend onboarding invite pressed');
+        e.preventDefault();
+        const { Id, email, phone } = formDataOnboarding;
+        try {
+            if (email || phone) {
+                const payload = {};
+                if (email) payload.email = email;
+                if (phone) payload.phone = phone;
+                await updateUser(Id, payload); 
+                await sendOnboardingInvite(Id); 
+                setShowResult('Onboarding invite sent successfully');
+            } else {
+                setShowResult('Error: Please provide either email or phone for updating');
+            }
+        } catch (error) {
+            console.error('Error during onboarding invite resend:', error);
+            setShowResult('Error: Unable to resend onboarding invite');
+        }
+    }
 
     return (
         <div className="background" >
@@ -989,7 +908,10 @@ function EmployeeManagement() {
                             <a onClick={handleUpdateTeamsClick}>Update Teams</a>
                         </li>
                         <li>
-                            <a onClick={handleOnbooardNewUserClick}>Send Onboard User Invites</a>
+                            <a onClick={handleOnboardNewUserClick}>Send Onboard User Invites</a>
+                        </li>
+                        <li>
+                            <a onClick={handleInactivateEmployeeClick}>Deactivate employee</a>
                         </li>
                     </ul>
                 </div>
@@ -1341,8 +1263,8 @@ function EmployeeManagement() {
                                         onChange={e => setFormDataEmployee({ ...formDataEmployee, Id: e.target.value })}
                                     />
                                     <select
-                                        value={formDataOnboarding.Id}
-                                        onChange={(e) => setFormDataOnboarding({ ...formDataOnboarding, Id: e.target.value })}
+                                        value={formDataEmployee.Id}
+                                        onChange={(e) => setFormDataEmployee({ ...formDataEmployee, Id: e.target.value })}
                                     >
                                         <option value="">Select User ID</option>
                                         {filteredUsers.map((user) => (
@@ -1568,6 +1490,8 @@ function EmployeeManagement() {
                                 </form>
                                 <form style={{ padding: '30px' }} className="primary">
                                     <h2 className="secondary h2-EM">Resend Onbarding Invites</h2>
+                                    <p>Must change email or phone number to resend invite</p>
+                                    <p>note that this will also change employees email and phone within system</p>
 
                                     <div>
                                         <h3 className="secondary">User ID:</h3>
@@ -1589,6 +1513,27 @@ function EmployeeManagement() {
                                                 </option>
                                             ))}
                                         </select>
+
+
+                                    </div>
+
+                                    <div>
+                                        <input
+                                            type="text"
+                                            style={{ margin: '5px' }}
+                                            placeholder="Email"
+                                            value={formDataOnboarding.email}
+                                            onChange={e => setFormDataOnboarding({ ...formDataOnboarding, email: e.target.value })}
+                                        />
+                                    </div>
+                                    <div>
+                                        <input
+                                            type="text"
+                                            style={{ margin: '5px' }}
+                                            placeholder="Phone"
+                                            value={formDataOnboarding.phone}
+                                            onChange={e => setFormDataOnboarding({ ...formDataOnboarding, phone: e.target.value })}
+                                        />
                                     </div>
 
 
@@ -1600,6 +1545,41 @@ function EmployeeManagement() {
                                 </form>
                             </div>
 
+                        </div>
+                    ) : showInactivateEmployee ? (
+                        <div>
+                            <form style={{ padding: '30px' }} className="primary">
+                                <h2 className="secondary h2-EM">Deactivate Employee</h2>
+
+                                <div>
+                                    <h3 className="secondary">User ID:</h3>
+                                    <input
+                                        type="text"
+                                        style={{ margin: '5px' }}
+                                        placeholder="User ID"
+                                        value={formDataOnboarding.Id}
+                                        onChange={e => setFormDataOnboarding({ ...formDataOnboarding, Id: e.target.value })}
+                                    />
+                                    <select
+                                        value={formDataOnboarding.Id}
+                                        onChange={(e) => setFormDataOnboarding({ ...formDataOnboarding, Id: e.target.value })}
+                                    >
+                                        <option value="">Select User ID</option>
+                                        {filteredUsers.map((user) => (
+                                            <option key={user.id} value={user.id}>
+                                                {user.name} - {user.email}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+
+                                <button onClick={handleInactivateEmployeeSubmit} type="submit" style={{ margin: '10px' }} className="EM-button">
+                                    Deactivate  a Employee
+                                </button>
+
+                                {showResult && <p>{showResult}</p>}
+                            </form>
                         </div>
                     ) : (
                         <div style={{ paddingLeft: '20px' }}>
@@ -1620,4 +1600,4 @@ function EmployeeManagement() {
     );
 }
 
-export default EmployeeManagement;
+export default EmployeeManagement; 
