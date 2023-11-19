@@ -28,6 +28,7 @@ function EmployeeManagement() {
     //key
     const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
 
+    //search locations stuff 
     const fetchLocations = async () => {
         try {
             const response = await fetch(`https://my.tanda.co/api/v2/locations?platform=false&show_business_hours=false`, {
