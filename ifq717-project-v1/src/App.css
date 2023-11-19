@@ -128,14 +128,6 @@ textarea:focus {
   outline-color: #3498db;
 }
 
-.ant-picker-content thead th:first-child {
-  display: none;
-}
-
-.ant-picker-cell-week {
-  display: none;
-}
-
 .ant-picker-dropdown .ant-picker-week-panel-row-selected td.ant-picker-cell:before {
   background: #3498db;
 }
@@ -387,4 +379,158 @@ textarea:focus {
   font-weight: bold;
   border-color: #1e40af;
   background-color:#1e40af;
+}
+
+.shift-container {
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+@media (max-width: 600px) {
+  .shift-container {
+    padding: 5px;
+    font-size: 0.8em;
+  }
+}
+
+@media (max-width: 800px) {
+  .shift-container {
+    padding: 5px;
+    font-size: 0.8em;
+  }
+}
+
+.shift-details {
+  white-space: nowrap; 
+}
+
+.nav-tabs-container {
+  display:flex;
+  width: 100%;
+  border-radius: 8px 8px 0 0 ;
+  overflow:hidden;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+.nav-tabs {
+  list-style-type: none;
+  padding: 0;
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 0;
+  width: 100%;
+  background-color: #fff;
+}
+
+.nav-tabs li {
+  flex-grow: 1;
+  text-align: center;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 3px solid #ebebeb;
+}
+
+.nav-tabs li.pending:hover {
+  color: orange;
+  font-weight: bold;
+}
+
+.nav-tabs li.approved:hover {
+  color: green;
+  font-weight: bold;
+}
+
+.nav-tabs li.rejected:hover {
+  color: red;
+  font-weight: bold;
+}
+
+.nav-tabs li.active.pending {
+  color: orange;
+  border-bottom: 3px solid orange;
+  font-weight: bold;
+}
+
+.nav-tabs li.active.approved {
+  color: green;
+  border-bottom: 3px solid green;
+  font-weight: bold;
+}
+
+.nav-tabs li.active.rejected {
+  color: red;
+  border-bottom: 3px solid red;
+  font-weight: bold;
+}
+
+.tab-pane {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 0 0 8px 8px ;
+  margin-bottom: 20px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
+.leave-requests {
+  margin: 5px;
+}
+
+.custom-dropdown {
+  background-color: #3498db !important;
+  color: white !important;
+  border-color: #3498db !important;
+}
+
+.custom-dropdown:focus {
+  font-weight: bold;
+}
+
+.dropdown-menu .dropdown-item {
+  color: #3498db !important; 
+  background-color: white !important;
+}
+
+.dropdown-menu .dropdown-item:hover, .dropdown-menu .dropdown-item:focus {
+  color: white !important;
+  background-color: #3498db !important;
+  font-weight: bold;
+}
+
+.dropdown-datepicker-container {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.leave-custom-dropdown .dropdown-toggle {
+  background-color: #3498db !important; 
+  color: white !important;
+  border-color: #3498db !important;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.leave-custom-dropdown .dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.5); 
+}
+
+.create-button {
+  background-color: #3498db !important; 
+  color: white !important;
+  border-color: #3498db !important;
+  margin-top: 20px;
+}
+
+img {
+  max-width: 100%;
+  width: auto\9;
+  height: auto;
+  vertical-align: middle;
+  border: 0;
+  overflow: clip;
+  border-radius: 50%;
+  height: 5rem;
+  min-height: 5rem;
+  min-width: 5rem;
+  width: 5rem;
 }

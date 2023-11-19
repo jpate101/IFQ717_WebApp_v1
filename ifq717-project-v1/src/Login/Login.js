@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import './login.css';
 import '../Resources/iStock-Chefs.jpg';
 import '../Resources/logo-white.svg';
-import ExchangeToken from "../API/Utilities/ExchangeToken";
+import useTokenAuthentication from "../Hooks/useTokenAuthentication";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -20,12 +20,12 @@ export default function Login() {
   // use key to force react to re-render the Login page when the URL changes 
   const key = location.pathname + location.search;
 
-  const { message, isLoggedIn, handleTokenExchange } = ExchangeToken({ username, password });
+  const { message, isLoggedIn, handleTokenExchange } = useTokenAuthentication({ username, password });
 
   // handle login form submission 
-  const handleLogin = (event) => {
+  const handleLogin = async (event) => {
     event.preventDefault();
-    handleTokenExchange();
+    await handleTokenExchange();
   };
 
   // handle username validation

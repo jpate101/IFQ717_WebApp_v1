@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 const API_BASE_URL = 'https://my.tanda.co/api/v2';
 const getHeaders = () => {
   const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, "$1");
+  console.log('token:', token)
   return {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${token}`
@@ -423,6 +424,206 @@ export const getCurrentRosters = async () => {
     return await response.json();
   } catch (error) {
     console.error('Error fetching current rosters:', error);
+    throw error;
+  }
+};
+
+// Create shift reminder
+
+export const createShiftReminder = async (minutesBeforeShiftStart) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/shift_reminders`, { 
+      method: 'POST', 
+      headers: getHeaders(), 
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Shift reminder created:', data);
+    return data;
+  } catch (error) {
+    console.error('Error creating shift reminder:', error);
+    throw error;
+  }
+};
+
+// Creates a vacant schedule
+export const createVacantSchedule = async (startTimestamp) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/schedules`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({
+        start: startTimestamp
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Vacant schedule created:', data);
+    return data;
+  } catch (error) {
+    console.error('Error creating vacant schedule:', error);
+    throw error;
+  }
+};
+
+// Creates a leave request
+
+export const createLeaveRequest = async (leaveRequestData) => {
+  console.log('Request Data for Leave Request:', leaveRequestData);
+  try {
+    const response = await fetch(`${API_BASE_URL}/leave`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(leaveRequestData),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Leave request created:', data);
+    return data;
+  } catch (error) {
+    console.error('Error creating leave request:', error);
+    throw error;
+  }
+};
+
+// Gets a specific leave request by ID
+export const getLeaveRequest = async (leaveRequestId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/leave/${leaveRequestId}`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Fetched leave request:', data);
+    return data;
+  } catch (error) {
+    console.error('Error fetching leave request:', error);
+    throw error;
+  }
+};
+
+// Updates a specific leave request by ID
+export const updateLeaveRequest = async (leaveRequestId, updateData) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/leave/${leaveRequestId}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(updateData),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Leave request updated:', data);
+    return data;
+  } catch (error) {
+    console.error('Error updating leave request:', error);
+    throw error;
+  }
+};
+
+// Gets the leave types available for a specific user
+export const getLeaveTypesForUser = async (userId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/leave/types_for/${userId}`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const leaveTypes = await response.json();
+    console.log('Leave types for user:', leaveTypes);
+    return leaveTypes;
+  } catch (error) {
+    console.error('Error fetching leave types for user:', error);
+    throw error;
+  }
+};
+
+// Gets the default leave hours for a specific user, date range, and leave type
+export const getDefaultLeaveHours = async (userId, startDate, finishDate, leaveType) => {
+  try {
+    const queryParams = new URLSearchParams({
+      user_id: userId,
+      start: startDate,
+      finish: finishDate,
+      leave_type: leaveType
+    });
+    const response = await fetch(`${API_BASE_URL}/leave/hours_between?${queryParams}`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const result = await response.json();
+    console.log('Default leave hours:', result);
+    return result.hours;
+  } catch (error) {
+    console.error('Error fetching default leave hours:', error);
+    throw error;
+  }
+};
+
+// Gets details of the current user
+export const getCurrentUser = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/users/me`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const userData = await response.json();
+    console.log('Current user data:', userData);
+    return userData;
+  } catch (error) {
+    console.error('Error fetching current user data:', error);
+    throw error;
+  }
+};
+
+// Fetches a list of leave requests based off leave id's, user id's or to/from date
+export const getLeaveList = async (userIds, from, to) => {
+  try {
+    let queryParams = new URLSearchParams();
+    if (userIds && userIds.length > 0) {
+      queryParams.append('user_ids', userIds.join(','));
+    }
+    if (from) {
+      queryParams.append('from', from);
+    }
+    if (to) {
+      queryParams.append('to', to);
+    }
+
+    const response = await fetch(`${API_BASE_URL}/leave?${queryParams.toString()}`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Fetched leave list:', data);
+    return data;
+  } catch (error) {
+    console.error('Error fetching leave list:', error);
     throw error;
   }
 };

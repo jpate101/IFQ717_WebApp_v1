@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
-import GetToken from '../API/Utilities/GetToken';
-import GetUserDetails from '../API/Utilities/GetUserDetails';
+import getUserToken from '../API/Utilities/getUserToken';
+import useUserDetails from '../Hooks/useUserDetails';
 import TaskList from '../Components/TaskList/TaskList';
 import '../../src/style.css';
 
 export default function Dashboard() {
-  const token = GetToken();
-  const user = GetUserDetails(token);
+  const token = getUserToken();
+  const user = useUserDetails(token);
 
   return (
     <main className="flex-grow-1">
