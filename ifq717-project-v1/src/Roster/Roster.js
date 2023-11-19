@@ -1,16 +1,25 @@
 import React, {useState, useEffect} from 'react';
 import ReactDOM from 'react-dom';
-import { getRosterForDate, getUsers, getAllDepartments, createSchedule, deleteSchedule, getScheduleById, updateSchedule } from '../API/Utilities';
-import WeekPickerComponent from '../Components/Roster&Timesheets/WeekPicker';
-import { formatShiftTime } from '../Components/Roster&Timesheets/CalculateHours';
-import AddScheduleModal from '../Components/Roster&Timesheets/AddScheduleModal';
-import { PlusCircleIcon } from '../Components/Roster&Timesheets/RosterIcons';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en-gb';
 import utc from 'dayjs/plugin/utc'; 
 import timezone from 'dayjs/plugin/timezone';
-
+import {
+  getRosterForDate,
+  getUsers, 
+  getAllDepartments, 
+  createSchedule, 
+  deleteSchedule, 
+  getScheduleById, 
+  updateSchedule } from '../API/Utilities';
+import WeekPickerComponent from '../Components/Roster&Timesheets/WeekPicker';
+import { formatShiftTime } from '../Components/Roster&Timesheets/CalculateHours';
+import AddScheduleModal from '../Components/Roster&Timesheets/AddScheduleModal';
+import { PlusCircleIcon } from '../Components/Roster&Timesheets/RosterIcons';
+import PublishShiftModal from '../Components/Roster&Timesheets/PublishShiftModal'
+import SelectEmployeeModal from '../Components/Roster&Timesheets/SelectEmployeeModal';
 dayjs.extend(utc);
+
 dayjs.extend(timezone);
 
 const Roster = () => {
@@ -26,6 +35,8 @@ const Roster = () => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [currentScheduleDetails, setCurrentScheduleDetails] = useState(null);
+  const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
+  const [isSelectEmployeeModalOpen, setIsSelectEmployeeModalOpen] = useState(false);
 
   useEffect(() => {
     if (currentShiftDetails.userId) {
@@ -71,12 +82,18 @@ const Roster = () => {
   
       fetchDepartments();
   }, []);
-  
-    const fetchRoster = async (currentUsers) => {
+
+  useEffect(() => {
+  if (departments.length > 0 && Object.keys(users).length > 0) {
+    fetchRoster(users, departments);
+  }
+}, [selectedDate, users, departments]);  // Add departments as a dependency
+
+    const fetchRoster = async (currentUsers, currentDepartments) => {
       setLoading(true);
       try {
         const roster = await getRosterForDate(selectedDate);
-        setRosterData(formatRosterData(roster.schedules, currentUsers));
+        setRosterData(formatRosterData(roster.schedules, currentUsers, currentDepartments));
         setError(null);
       } catch (error) {
         setError(error.message);
@@ -100,7 +117,7 @@ const Roster = () => {
       fetchRoster();
     }, [selectedDate]);
     
-  const formatRosterData = (schedules, currentUsers) => {
+    const formatRosterData = (schedules, currentUsers) => {
       const userShiftMap = {};
     
       schedules.forEach(scheduleByDate => {
@@ -110,36 +127,46 @@ const Roster = () => {
           const dayOfWeek = dayjs(start).format('dddd').toLowerCase();
           const teamId = schedule.department_id;
           const scheduleId = schedule.id;
-
+          const team = departments.find(dept => dept.id === teamId);
+          const teamName = team ? team.name : 'Unknown Team';
+    
           if (!userShiftMap[schedule.user_id]) {
             const user = currentUsers.find(u => u.id === schedule.user_id);
-              userShiftMap[schedule.user_id] = {
-                  userId: schedule.user_id,
-                  monday: [], tuesday: [], wednesday: [], thursday: [], friday: [], saturday: [], sunday: [],
-              };
+            userShiftMap[schedule.user_id] = {
+              userId: schedule.user_id,
+              name: user ? user.name : 'Unknown',
+              shiftDetails: {},
+              monday: [], tuesday: [], wednesday: [], thursday: [], friday: [], saturday: [], sunday: [],
+            };
           }
     
           const shiftTime = `${formatShiftTime(start)} - ${formatShiftTime(finish)}`;
-
-          if (userShiftMap[schedule.user_id].hasOwnProperty(dayOfWeek)) {
-            userShiftMap[schedule.user_id][dayOfWeek].push(shiftTime, teamId, scheduleId);
+    
+          if (!userShiftMap[schedule.user_id].shiftDetails[dayOfWeek]) {
+            userShiftMap[schedule.user_id].shiftDetails[dayOfWeek] = [];
           }
+    
+          userShiftMap[schedule.user_id].shiftDetails[dayOfWeek].push({
+            time: shiftTime,
+            teamName,
+            scheduleId
+          });
         });
       });
     
       return Object.values(userShiftMap).map(userShifts => {
-        Object.keys(userShifts).forEach(day => {
-          if (day !== 'userId' && day !== 'name') {
-            userShifts[day] = userShifts[day].join(', ');
-          } else {
-            const user = currentUsers.find(u => u.id === userShifts.userId);
-            userShifts.name = user ? user.name : 'Unknown';
-          }
+        Object.entries(userShifts.shiftDetails).forEach(([day, shifts]) => {
+          userShifts[day] = shifts.map(shift => `${shift.time}, ${shift.teamName}`).join(', ');
         });
-        return userShifts;
+    
+        return {
+          userId: userShifts.userId,
+          name: userShifts.name,
+          ...userShifts.shiftDetails
+        };
       });
     };
-    
+
   const getWeekDates = (selectedDate) => {
       dayjs.locale('en-gb');
       const startOfWeek = dayjs(selectedDate).startOf('week');
@@ -169,6 +196,10 @@ const Roster = () => {
       setCurrentShiftDetails({ userId, date: dateOfShift });
     }
   
+    if (userId === null) {
+      setCurrentShiftDetails({ userId, date: dayjs(selectedDate).startOf('week').add(dayIndex, 'day').format('YYYY-MM-DD') });
+    }
+  
     setIsModalOpen(true);
   };
   
@@ -186,7 +217,7 @@ const Roster = () => {
   }, [selectedDate, users]);
 
   const addNewShiftToRoster = async (shiftDetails) => {
-    console.log('addNewShiftToRoster shiftDetails:', shiftDetails);
+    console.log('Preparing to add/update shift with details:', shiftDetails);
   
     const { employeeId, teamId, startTime, finishTime } = shiftDetails;
     console.log('Start Time:', startTime, 'Finish Time:', finishTime);
@@ -195,16 +226,15 @@ const Roster = () => {
       console.error('Missing shift details:', shiftDetails);
       return;
     }
- 
+  
     const startDateTime = dayjs(`${currentShiftDetails.date}T${startTime}`);
     const finishDateTime = dayjs(`${currentShiftDetails.date}T${finishTime}`);
     const startTimestamp = startDateTime.unix();
     const finishTimestamp = finishDateTime.unix();
-    
-
+  
     const shiftForAPI = {
-      user_id: employeeId.id,  
-      department_id: teamId,  
+      user_id: employeeId.id,
+      department_id: teamId.id, 
       start: startTimestamp,
       finish: finishTimestamp,
     };
@@ -213,7 +243,7 @@ const Roster = () => {
   
     try {
       const createdShift = await createSchedule(shiftForAPI);
-      console.log('Shift created:', createdShift);
+      console.log('Shift created response:', createdShift);
   
       if (createdShift && createdShift.user_id) {
         setRosterData(currentRosterData => [...currentRosterData, createdShift]);
@@ -227,6 +257,7 @@ const Roster = () => {
       console.error('Error creating shift:', error);
     }
   };
+  
   
   const openModalWithShiftDetails = async (userId, dayIndex) => {
     console.log("Opening modal with shift details");
@@ -257,147 +288,270 @@ const Roster = () => {
     const dayKey = fullDayNames[dayIndex];
     console.log("Day Key: ", dayKey);
   
-    if (!userShifts[dayKey]) {
-      console.error(`No shifts found for user ID ${userId} on ${dayKey}`);
-      return;
-    }
-    
-    console.log("Shift Data for the day: ", userShifts[dayKey]);
+    const shiftDetailsForDay = userShifts[dayKey];
 
-    const shiftData = userShifts[dayKey];
+  if (!shiftDetailsForDay || shiftDetailsForDay.length === 0) {
+    console.error(`No shifts found for user ID ${userId} on ${dayKey}`);
+    return;
+  }
 
-    if (!shiftData) {
-      console.error(`No shift data found for user ID ${userId} on ${dayKey}`);
-      return;
-    }
-    console.log("Raw Shift Data: ", shiftData);
+  const firstShiftForDay = shiftDetailsForDay[0];
 
-    const [shiftString, teamId, scheduleIdString] = shiftData.split(', ');
-    console.log("Parsed Shift String: ", shiftString);
-    console.log("Parsed Team ID: ", teamId);
-    const scheduleId = parseInt(scheduleIdString);
+  const selectedEmployee = users.find(user => user.id === userId);
+  const selectedTeam = departments.find(department => department.name === firstShiftForDay.teamName.trim());
+  const teamId = selectedTeam ? selectedTeam.id : null;
 
-    console.log("Parsed Schedule ID: ", scheduleId);
+  setCurrentShiftDetails({
+    userId,
+    date: dayjs(selectedDate).startOf('week').add(dayIndex, 'day').format('YYYY-MM-DD'),
+    startTime: firstShiftForDay.time.split(' - ')[0],
+    finishTime: firstShiftForDay.time.split(' - ')[1],
+    teamId,
+    shiftId: firstShiftForDay.scheduleId
+  });
 
-    try {
-      const scheduleDetails = await getScheduleById(scheduleId);
-      setCurrentScheduleDetails(scheduleDetails);
-      console.log('schedule details:', scheduleDetails)
-    } catch (error) {
-      console.error('Error fetching schedule details:', error);
-    }
+  setSelectedEmployee(selectedEmployee);
+  setSelectedTeam(selectedTeam);
 
-    if (!shiftString) {
-      console.error(`No shift string found for user ID ${userId} on ${dayKey}`);
-      return;
-    }
-
-    const [startTime, finishTime] = shiftString.split(' - ');
-    console.log("Parsed Start Time: ", startTime);
-    console.log("Parsed Finish Time: ", finishTime);
-
-    if (!startTime || !finishTime) {
-      console.error(`Invalid shift times for user ID ${userId} on ${dayKey}: ${shiftString}`);
-      return;
-    }
-
-    const teamIdParsed = parseInt(teamId, 10);
-
-    setCurrentShiftDetails({
-       userId, 
-       date: dateOfShift, 
-       startTime, 
-       finishTime, 
-       teamId: teamIdParsed,
-       shiftId: scheduleId
-      });
-      console.log("currentShiftDetails after update: ", currentShiftDetails);
-
-    const selectedEmployee = users.find(user => user.id === userId);
-    const selectedTeam = departments.find(department => department.id === teamIdParsed);
-
-    setSelectedEmployee(selectedEmployee);
-    setSelectedTeam(selectedTeam);
-
-    console.log("Selected employee:", selectedEmployee);
-    console.log("Selected team:", selectedTeam);
-
-    setIsModalOpen(true);
+  setIsModalOpen(true);
   };
 
   const handleModalClose = async () => {
     setIsModalOpen(false);
     await fetchRoster(users);
+  };
+
+const handlePublish = async (publishOption) => {
+  console.log(`Publishing option selected: ${publishOption}`);
+  setIsPublishModalOpen(false);
+
+  const startOfWeek = dayjs(selectedDate).startOf('week').unix();
+  const endOfWeek = dayjs(selectedDate).endOf('week').unix();
+
+  let shiftsToPublish = [];
+  rosterData.forEach(userShifts => {
+    Object.entries(userShifts).forEach(([dayKey, shiftData]) => {
+      if (dayKey === 'userId' || dayKey === 'name' || !shiftData.includes(',')) {
+        console.log(`Skipping non-shift data or empty shift for ${dayKey}`);
+        return;
+      }
+
+      const [shiftTime, teamId, scheduleIdString] = shiftData.split(', ');
+      const scheduleId = parseInt(scheduleIdString, 10);
+
+      if (isNaN(scheduleId)) {
+        console.log(`Skipping day ${dayKey} as there is no shift`);
+        return;
+      }
+
+      console.log(`Found shift: Day ${dayKey}, ID: ${scheduleId}`);
+
+      const shiftStartUnix = dayjs(`${selectedDate} ${shiftTime.split(' - ')[0]}`).unix();
+      if (shiftStartUnix >= startOfWeek && shiftStartUnix <= endOfWeek) {
+        shiftsToPublish.push({ id: scheduleId });
+      }
+    });
+  });
+
+  console.log(`Shifts found to publish:`, shiftsToPublish);
+
+  const filteredShiftsToPublish = await Promise.all(
+    shiftsToPublish.map(async (shift) => {
+      const scheduleDetails = await getScheduleById(shift.id);
+      const shouldPublish =
+        publishOption === 'all' || 
+        (publishOption === 'updates' && scheduleDetails && scheduleDetails.last_published_at === null);
+      return shouldPublish ? shift : null;
+    })
+  );
+
+  const shiftsToActuallyPublish = filteredShiftsToPublish.filter(shift => shift !== null);
+
+  console.log(`Filtered shifts to be published:`, shiftsToActuallyPublish);
+
+  if (shiftsToActuallyPublish.length > 0) {
+    try {
+      const publishPromises = shiftsToActuallyPublish.map(async (shift) => {
+        const updatedShift = { id: shift.id, last_published_at: Math.floor(Date.now() / 1000) };
+        return await updateSchedule(updatedShift);
+      });
+      await Promise.all(publishPromises);
+      console.log('Selected shifts have been published.');
+      alert('Shifts published successfully');
+      fetchRoster(users);
+    } catch (error) {
+      console.error('Error publishing shifts:', error);
+      alert('An error occurred while publishing shifts');
+    }
+  } else {
+    console.log('No shifts to publish');
+    alert('No shifts to publish');
+  }
 };
 
-    return (
-        <div className="roster-container ">
-            <div className="flex items-center">
-                <WeekPickerComponent
-                  selectedDate={selectedDate}
-                  onDateChange={handleDateChange}
-                />
-            </div>
-            <div className="overflow-x-auto">
-        {loading ? (
-          <p>Loading...</p>
-        ) : (
-          <div className="w-full">
-            <div className="grid grid-cols-8 gap-1">
-              <div className="day bg-gray-100 border p-2 rounded m-1 overflow-hidden">Staff</div>
-              {dayAbbreviations.map((dayAbbrev, index) => (
-                <div key={index} className="day bg-gray-100 border p-2 rounded m-1 overflow-hidden">
-                  <div>{dayAbbrev}</div>
-                  <div>{dayjs(weekDates[index]).format('DD MMM')}</div>
-                </div>
-              ))}
+  const getWeekRange = () => {
+    const startOfWeek = dayjs(selectedDate).startOf('week').format('DD MMM');
+    const endOfWeek = dayjs(selectedDate).endOf('week').format('DD MMM');
+    return `Week Range: ${startOfWeek} - ${endOfWeek}`;
+  };
 
-              {rosterData.map((row, rowIndex) => (
-                <React.Fragment key={rowIndex}>
-                  <div className="day bg-gray-100 border p-2 rounded m-1 overflow-hidden">{row.name}</div>
-                  {[row.monday, row.tuesday, row.wednesday, row.thursday, row.friday, row.saturday, row.sunday].map((dayHours, dayIndex) => (
-                    <div key={dayIndex} className="roster-table-font day p-2 rounded m-1 overflow-hidden relative">
-                      <div className="flex flex-col items-center justify-center">
-                      <PlusCircleIcon
-                        className="cursor-pointer hover:text-primary mb-2"
-                        onClick={() => openModalToAddShift(row.userId, dayIndex)}
-                      >
-                      </PlusCircleIcon>
-                      {isModalOpen && ReactDOM.createPortal(
-                        <AddScheduleModal
-                          isOpen={isModalOpen}
-                          onClose={handleModalClose}
-                          scheduleDetails={currentScheduleDetails}
-                          onAddShift={addNewShiftToRoster}
-                          onUpdateShift={updateSchedule}
-                          onDeleteShift={deleteSchedule}
-                          scheduleId={currentShiftDetails.shiftId}
-                          employees={usersArray}
-                          teams={employeeTeams}
-                          selectedEmployee={selectedEmployee}
-                          selectedTeam={selectedTeam}
-                          employeeId={currentShiftDetails.userId}
-                          teamId={currentShiftDetails.teamId}
-                          shiftDate={dayjs(currentShiftDetails.date).toDate()}
-                          shiftId={currentShiftDetails.shiftId}
-                          shiftStartTime={currentShiftDetails.startTime}
-                          shiftFinishTime={currentShiftDetails.finishTime}
-                          currentShiftDetails={currentShiftDetails}
-                        />,
-                        document.getElementById('modal-root')
-                      )}
-                      <div onClick={() => openModalWithShiftDetails(row.userId, dayIndex)}>
-                        {dayHours}
+  const hasShiftsInSelectedWeek = () => {
+
+    return rosterData.some(shift => shift.userId);
+  };
+  
+  const handleOpenSelectEmployeeModal = () => {
+    setIsSelectEmployeeModalOpen(true);
+  };
+
+  const handleEmployeeSelect = employeeId => {
+    const selectedEmployee = users.find(user => user.id === employeeId);
+    if (selectedEmployee) {
+      const newEmployeeShift = {
+        userId: selectedEmployee.id,
+        name: selectedEmployee.name,
+        monday: '', tuesday: '', wednesday: '', thursday: '', friday: '', saturday: '', sunday: '',
+      };
+  
+      setRosterData([...rosterData, newEmployeeShift]);
+    }
+    setIsSelectEmployeeModalOpen(false);
+  };
+  
+
+    return (
+      <div className="roster-container">
+        <div className="flex items-center justify-between">
+          <WeekPickerComponent
+            selectedDate={selectedDate}
+            onDateChange={handleDateChange}
+          />
+          <button 
+            onClick={() => {
+              if (hasShiftsInSelectedWeek()) {
+                setIsPublishModalOpen(true);
+              } else {
+                alert('No shifts to publish for the selected week.');
+              }
+            }}
+            className="border p-2 rounded background text-white h-10 -mt-2"
+            style={{backgroundColor: '#3498db'}}
+            >
+            Publish shifts
+          </button>
+        </div>
+        <div className="overflow-x-auto">
+          {loading ? (
+            <p>Loading...</p>
+            ) : (
+              <div className="w-full">
+                <div className="grid grid-cols-8 gap-1">
+                  <div
+                    className="day bg-gray-100 border p-2 rounded m-1 overflow-hidden">
+                      Staff
+                  </div>
+                  {dayAbbreviations.map((dayAbbrev, index) => (
+                    <div 
+                      key={index}
+                      className="day bg-gray-100 border p-2 rounded m-1 overflow-hidden">
+                      <div>
+                        {dayAbbrev}
                       </div>
+                      <div>
+                        {dayjs(weekDates[index]).format('DD MMM')}
                       </div>
                     </div>
                   ))}
-                </React.Fragment>
-              ))}
-            </div>
+                {rosterData.map((row, rowIndex) => (
+                  <React.Fragment key={rowIndex}>
+                    <div className="day bg-gray-100 border p-2 rounded m-1 overflow-hidden">{row.name}</div>
+                    {[row.monday, row.tuesday, row.wednesday, row.thursday, row.friday, row.saturday, row.sunday].map((shifts, dayIndex) => (
+                      <div key={dayIndex} className="roster-table-font day p-2 rounded m-1 overflow-hidden relative">
+                        <div className="flex flex-col items-center justify-center">
+                          <PlusCircleIcon
+                            className="cursor-pointer hover:text-primary mb-2"
+                            onClick={() => openModalToAddShift(row.userId, dayIndex)}>
+                          </PlusCircleIcon>
+                        
+                        {isModalOpen && ReactDOM.createPortal(
+                          <AddScheduleModal
+                            isOpen={isModalOpen}
+                            onClose={handleModalClose}
+                            scheduleDetails={currentScheduleDetails}
+                            onAddShift={addNewShiftToRoster}
+                            onUpdateShift={updateSchedule}
+                            onDeleteShift={deleteSchedule}
+                            scheduleId={currentShiftDetails.shiftId}
+                            employees={usersArray}
+                            teams={employeeTeams}
+                            selectedEmployee={selectedEmployee}
+                            selectedTeam={selectedTeam}
+                            employeeId={currentShiftDetails.userId}
+                            teamId={currentShiftDetails.teamId}
+                            shiftDate={dayjs(currentShiftDetails.date).toDate()}
+                            shiftId={currentShiftDetails.shiftId}
+                            shiftStartTime={currentShiftDetails.startTime}
+                            shiftFinishTime={currentShiftDetails.finishTime}
+                            currentShiftDetails={currentShiftDetails}
+                          />,
+                          document.getElementById('modal-root')
+                        )}
+                        {isPublishModalOpen && ReactDOM.createPortal(
+                          <PublishShiftModal
+                            isOpen={isPublishModalOpen}
+                            onClose={() => setIsPublishModalOpen(false)}
+                            weekRange={getWeekRange()}
+                            onPublish={handlePublish}
+                          />,
+                          document.getElementById('modal-root')
+                        )}
+                        <div onClick={() => openModalWithShiftDetails(row.userId, dayIndex)}>
+                          {Array.isArray(shifts) ? shifts.map((shift, shiftIndex) => (
+                            <div key={shiftIndex} className="text-center shift-container">
+                              <div className= "shift-container shift-details">
+                                {shift.time}
+                              </div>
+                              <div className="shift-details shift-container">
+                                {shift.teamName}
+                              </div>
+                            </div>
+                          )) : <div></div>}
+                        </div>
+                    </div>
+                  </div>
+                ))}
+              </React.Fragment>
+            ))}
           </div>
+        </div>
+      )}
+    </div>
+    <div style={{ 
+      display: 'flex', 
+      justifyContent: 'center',
+      margin: '20px 0'
+      }}>
+      <button 
+        onClick={handleOpenSelectEmployeeModal}
+        className="border p-2 rounded background text-white h-10 -mt-2"
+        style={{
+          backgroundColor: '#3498db',
+          padding: '10px 20px',
+          fontSize: '16px',
+          borderRadius: '5px',
+          cursor: 'pointer' }}
+        >
+          Add Shifts
+      </button>
+    </div>
+        {isSelectEmployeeModalOpen && (
+          <SelectEmployeeModal
+            isOpen={isSelectEmployeeModalOpen}
+            onClose={() => setIsSelectEmployeeModalOpen(false)}
+            employees={users}
+            onEmployeeSelect={handleEmployeeSelect}
+          />
         )}
-      </div>
       {error && <p>Error fetching roster: {error}</p>}
     </div>
   );
