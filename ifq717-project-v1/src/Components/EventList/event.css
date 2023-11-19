@@ -1,0 +1,9 @@
+/* CSS for Events list - work anniversary event + birthday event - display in widget on dash */
+.events-icons {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+.no-wrap {
+  white-space: nowrap;
+}
