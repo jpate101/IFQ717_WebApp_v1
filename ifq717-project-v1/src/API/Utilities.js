@@ -130,7 +130,9 @@ export const getUsers = async (employeeId = null) => {
       id: user.id,
       name: user.name,
       hourly_rate: user.hourly_rate,
-      department_ids: user.department_ids
+      department_ids: user.department_ids,
+      date_of_birth: user.date_of_birth,
+      employment_start_date: user.employment_start_date
     }));
 
   } catch (error) {
