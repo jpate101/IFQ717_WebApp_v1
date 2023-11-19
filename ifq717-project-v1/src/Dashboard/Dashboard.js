@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import getUserToken from '../API/Utilities/getUserToken';
 import useUserDetails from '../Hooks/useUserDetails';
 import TaskList from '../Components/TaskList/TaskList';
+import EventList from '../Components/EventList/EventList';
 import '../../src/style.css';
 
 export default function Dashboard() {
@@ -16,7 +17,7 @@ export default function Dashboard() {
       </header>
       {user && (
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 mt-4 mx-1 md:mx-0 dashboard-cards-container" style={{ gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))' }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 mt-4 mx-1 md:mx-0 dashboard-cards-container items-start" style={{ gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, min-content)' }}>
             <div className="bg-white rounded-lg w-full md:w-auto mx-2 md:mx-0">
               <div className="p-1">
               <h2 className="text-lg  mb-2 primary text-center">Onboarding Progress</h2>
@@ -26,7 +27,8 @@ export default function Dashboard() {
             </div>
             <div className="bg-white rounded-lg w-full md:w-auto mx-2 md:mx-0">
               <div className="p-1">
-                <h2 className="text-lg  mb-2 primary text-center">Sprint 2 widget placeholder</h2>
+              <h2 className="text-lg  mb-2 primary text-center">Birthdays and work anniversaries</h2>
+                <EventList />
               </div>
             </div>
           </div>
