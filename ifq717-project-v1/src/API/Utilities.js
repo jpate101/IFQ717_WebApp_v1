@@ -629,3 +629,76 @@ export const getLeaveList = async (userIds, from, to) => {
     throw error;
   }
 };
+
+// Creates unavailability request
+
+export const createUnavailability = async (unavailabilityData) => {
+  console.log('Request Data for Unavailability:', unavailabilityData);
+  try {
+    const response = await fetch(`${API_BASE_URL}/unavailability`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(unavailabilityData),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Unavailability created:', data);
+    return data;
+  } catch (error) {
+    console.error('Error creating unavailability:', error);
+    throw error;
+  }
+};
+
+// Fetches a list of unavailabilities based off ids, from/to dates, user_ids & recently updated
+
+export const getUnavailabilityList = async ({ ids, from, to, user_ids, updated_after }) => {
+  const queryParams = new URLSearchParams();
+  
+  if (ids) queryParams.append('ids', ids);
+  if (from) queryParams.append('from', from);
+  if (to) queryParams.append('to', to);
+  if (user_ids) queryParams.append('user_ids', user_ids);
+  if (updated_after) queryParams.append('updated_after', updated_after);
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/unavailability?${queryParams.toString()}`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log('Unavailability list:', data);
+    return data;
+  } catch (error) {
+    console.error('Error fetching unavailability list:', error);
+    throw error;
+  }
+};
+
+// Deletes an unavailability request
+
+export const deleteUnavailability = async (unavailabilityId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/unavailability/${unavailabilityId}`, {
+      method: 'DELETE',
+      headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    console.log('Unavailability deleted:', unavailabilityId);
+    return unavailabilityId;
+  } catch (error) {
+    console.error('Error deleting unavailability:', error);
+    throw error;
+  }
+};

@@ -534,3 +534,31 @@ img {
   min-width: 5rem;
   width: 5rem;
 }
+
+.daysOfWeek {
+  background-color: #3498db !important;
+  border-color: #3498db !important;
+  color: white !important;
+  margin-right: 5px !important;
+  margin-bottom: 5px !important;
+  border-radius: 50% !important; 
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 0 !important; 
+  box-shadow: none !important;
+}
+
+.daysOfWeekSelected {
+  background-color: #3498db !important;
+  border-color: #3498db !important;
+  color: white !important;
+}
+
+.daysOfWeekUnselected {
+  background-color: #f0f2f5 !important;
+  border-color: #f0f2f5 !important;
+  color: #536171 !important;
+}

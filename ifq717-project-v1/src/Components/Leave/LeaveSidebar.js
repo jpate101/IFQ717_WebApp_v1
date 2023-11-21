@@ -125,8 +125,7 @@ const LeaveSidebar = ({ show, handleClose }) => {
                 <Form.Group>
                     <Form.Label>All-day</Form.Label>
                     <FormCheck
-                        type="checkbox"
-                        role="switch"
+                        type="switch"
                         checked={isAllDay}
                         onChange={() => setIsAllDay(!isAllDay)}
                         className="mb-3"
