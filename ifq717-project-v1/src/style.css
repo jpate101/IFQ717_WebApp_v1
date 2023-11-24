@@ -50,8 +50,8 @@ h3 {
 }
   
 input {
-    color: rgb(30, 64, 175); /* Change to blue text color */
-    border: 1px solid rgb(30, 64, 175); /* Add blue outline */
+    color: var(--secondary-color); /* Change to blue text color */
+    border: 1px solid var(--secondary-color); /* Add blue outline */
     font-size: 16px; /* Adjust font size as needed */
     padding: 10px;
     margin: 10px; 
@@ -62,7 +62,7 @@ input {
   
 input:focus {
     color: rgb(249, 250, 251);
-    background-color: rgb(30, 64, 175);
+    background-color: var(--secondary-color);
   }
   
   
@@ -85,12 +85,12 @@ input:focus {
 .navEM li {
     list-style-type: none;
     padding: 8px; /* Adjust padding as needed */
-    border: 1px solid rgb(30, 64, 175); /* Blue border when not highlighted */
+    border: 1px solid var(--primary-color); /* Blue border when not highlighted */
     border-radius: 5px; /* Rounded edges */
     margin-bottom: 5px; /* Add spacing between list items */
     text-align: center; /* Center text horizontally */
     transition: background-color 0.3s, color 0.3s; /* Smooth color transition */
-    background-color: rgb(30, 64, 175); /* Blue background when not highlighted */
+    background-color: var(--primary-color); /* Blue background when not highlighted */
     color: rgb(249, 250, 251); /* White text when not highlighted */
     font-size: 16px; /* Adjust the font size */
     font-weight: bold; /* Add font-weight for bold text */
@@ -98,7 +98,7 @@ input:focus {
 
 .navEM li:hover {
     background-color: rgb(249, 250, 251); /* White background on hover */
-    color: rgb(30, 64, 175); /* Blue text on hover */
+    color: var(--primary-color); /* Blue text on hover */
 }
 
 .left-column-nav-EM {

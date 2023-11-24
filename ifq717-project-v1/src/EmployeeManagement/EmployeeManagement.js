@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { useLocationForm, useTeamsForm, useEmployeeForm, useOnboardingForm } from './EmployeeManagementFormData';
+import { useLocationForm, useTeamsForm, useEmployeeForm, useOnboardingForm, useDataBusinessHours } from './EmployeeManagementFormData';
 
 
 function EmployeeManagement() {
@@ -19,11 +19,15 @@ function EmployeeManagement() {
     const [formDataTeams, setFormDataTeams] = useTeamsForm();
     const [formDataEmployee, setFormDataEmployee] = useEmployeeForm();
     const [formDataOnboarding, setFormDataOnboarding] = useOnboardingForm();
+    const [formDataBusinessHours, setFormDataBusinessHours] = useDataBusinessHours();
 
     //search locations stuff 
     const [locationsList, setLocationsList] = useState([]);
     const [searchLocation, setSearchLocation] = useState(''); // State for search query
     const [filteredLocations, setFilteredLocations] = useState([]); // State for filtered locations
+
+    //update Business hours 
+    const [showBusinessHoursResult, setShowBusinessHoursResult] = useState('');
 
     //key
     const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
@@ -286,9 +290,6 @@ function EmployeeManagement() {
                 },
             ],
         };
-        //console.log(requestBody);
-        //console.log(apiKey);
-
         // Send a POST request to your API endpoint
         fetch('https://my.tanda.co/api/v2/locations', {
             method: 'POST',
@@ -303,6 +304,9 @@ function EmployeeManagement() {
                     // Handle success
                     console.log("Location created successfully!");
                     setShowResult("Location created successfully!");
+                    fetchLocations();
+                    fetchTeams();
+                    fetchUsers();
                 } else if (response.status === 403) {
                     // Handle 403 error (forbidden)
                     console.log("You do not have the required permissions to create a location.");
@@ -439,6 +443,21 @@ function EmployeeManagement() {
                 },
             ],
         };
+
+        // Filter out properties with empty or null values
+        const requestBodyTrim = Object.fromEntries(
+            Object.entries(requestBody).filter(([key, value]) => {
+                if (value === NaN || value === '' || value === null || (Array.isArray(value) && value.length === 0)) {
+                    return false; // Exclude empty values
+                }
+                if ((key === 'latitude' || key === 'longitude') && isNaN(parseFloat(value))) {
+                    return false;
+                }
+                return true;
+            })
+        );
+
+        console.log(requestBodyTrim);
         // Send a POST request to create an employee
         fetch(`https://my.tanda.co/api/v2/locations/${locationId}`, {
             method: 'PUT', // Use PUT method for updating
@@ -446,7 +465,7 @@ function EmployeeManagement() {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${apiKey}`,
             },
-            body: JSON.stringify(requestBody),
+            body: JSON.stringify(requestBodyTrim),
         })
             .then(response => {
                 if (response.ok) {
@@ -469,9 +488,7 @@ function EmployeeManagement() {
                 setShowResult("Network error: " + error.message);
             });
     }
-    function handleUpdateTeamsSubmit(e) {
 
-    }
     function handleUpdateName(e) {
         console.log('Update Team Name button pressed');
         // Perform the Update Team Name action
@@ -830,11 +847,11 @@ function EmployeeManagement() {
                 },
                 body: JSON.stringify(updatedData),
             });
-    
+
             if (!response.ok) {
                 throw new Error('Failed to update user data');
             }
-    
+
             return { success: true, message: 'User updated successfully!' };
         } catch (error) {
             return { success: false, message: `Error: ${error.message}` };
@@ -850,7 +867,7 @@ function EmployeeManagement() {
                     'Authorization': `Bearer ${apiKey}`,
                 },
             });
-    
+
             if (response.status === 201) {
                 return { success: true, message: 'Onboarding invite sent successfully!' };
             } else {
@@ -872,8 +889,8 @@ function EmployeeManagement() {
                 const payload = {};
                 if (email) payload.email = email;
                 if (phone) payload.phone = phone;
-                await updateUser(Id, payload); 
-                await sendOnboardingInvite(Id); 
+                await updateUser(Id, payload);
+                await sendOnboardingInvite(Id);
                 setShowResult('Onboarding invite sent successfully');
             } else {
                 setShowResult('Error: Please provide either email or phone for updating');
@@ -882,6 +899,98 @@ function EmployeeManagement() {
             console.error('Error during onboarding invite resend:', error);
             setShowResult('Error: Unable to resend onboarding invite');
         }
+    }
+
+    const getWeekdayName = (weekday) => {
+        const weekdayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        return weekdayNames[weekday];
+    };
+
+
+    const handleUpdateBusinessHoursSubmit = async (e) => {
+        e.preventDefault();
+
+        // Validation
+        if (!formDataLocation.locationsId || formDataBusinessHours.business_hours.length === 0) {
+            setShowBusinessHoursResult("Please fill in all required fields.");
+            return;
+        }
+
+        const locationId = formDataLocation.locationsId;
+
+
+        const updatedFormDataBusinessHours = {
+            ...formDataBusinessHours,
+            business_hours: formDataBusinessHours.business_hours
+                .filter(({ start, finish }) => start !== '' && finish !== '')
+                .map((hours, index) => ({ weekday: index, ...hours })),
+        };
+
+        console.log(updatedFormDataBusinessHours)
+
+
+
+        try {
+            const response = await fetch(`https://my.tanda.co/api/v2/locations/${locationId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`, // Replace apiKey with your actual API key
+                },
+                body: JSON.stringify(updatedFormDataBusinessHours),
+            });
+
+            if (response.ok) {
+                console.log("Business hours updated successfully!");
+                setShowBusinessHoursResult("Business hours updated successfully!");
+                // You might want to refresh the entire form or update other related components here
+                fetchLocations(); // Replace with the actual function that fetches and updates location data
+                // Handle any additional actions after successful update.
+            } else if (response.status === 403) {
+                console.log("You do not have the required permissions to update business hours for this location.");
+                setShowBusinessHoursResult("You do not have the required permissions to update business hours for this location.");
+            } else {
+                console.log("Failed to update business hours");
+                setShowBusinessHoursResult("Failed to update business hours");
+            }
+        } catch (error) {
+            // Handle network errors
+            console.error("Network error:", error);
+            setShowBusinessHoursResult("Network error: " + error.message);
+        } finally {
+            /*setFormDataBusinessHours({
+                locationsId: '',
+                business_hours: Array(7).fill({ start: '', finish: '' }), // Reset to default values
+            });*/
+        }
+    };
+
+    const handleBusinessHoursChange = (weekday, field, value) => {
+        // Assuming formDataBusinessHours is a state variable that holds business hours data
+        setFormDataBusinessHours((prevData) => {
+            const updatedBusinessHours = prevData.business_hours.map((hours) => {
+                if (hours.weekday === weekday) {
+                    return {
+                        ...hours,
+                        [field]: value,
+                    };
+                }
+                return hours;
+            });
+
+            return {
+                ...prevData,
+                business_hours: updatedBusinessHours,
+            };
+        });
+    };
+
+
+
+
+
+    function handleUpdateTeamsSubmit(e) {
+
     }
 
     return (
@@ -965,9 +1074,13 @@ function EmployeeManagement() {
                             </div>
                             <div>
                                 <h3 className="secondary">Set Location Public Holiday Regions Details:</h3>
+                                <p> To select muitiple Regions hold CTRL and click on each region </p>
                                 <select
-                                    value={formDataLocation.public_holiday_regions[0]}
-                                    onChange={e => setFormDataLocation({ ...formDataLocation, public_holiday_regions: [e.target.value] })}
+                                    multiple
+                                    value={formDataLocation.public_holiday_regions}
+                                    onChange={(e) =>
+                                        setFormDataLocation({ ...formDataLocation, public_holiday_regions: Array.from(e.target.selectedOptions, option => option.value) })
+                                    }
                                 >
                                     <option value="au">Australia</option>
                                     <option value="us">United States</option>
@@ -1047,7 +1160,7 @@ function EmployeeManagement() {
                             {showResult && <p>{showResult}</p>}
                         </form>
                     ) : showUpdateLocations ? (
-                        <div className="flex-container">
+                        <div className="">
                             <form
                                 onSubmit={handleUpdateLocationSubmit}
                                 style={{ padding: '30px' }}
@@ -1131,10 +1244,12 @@ function EmployeeManagement() {
                                 </div>
                                 <div>
                                     <h3 className="secondary">Set Location Public Holiday Regions Details:</h3>
+                                    <p> To select muitiple Regions hold CTRL and click on each region </p>
                                     <select
-                                        value={formDataLocation.public_holiday_regions[0]}
+                                        multiple
+                                        value={formDataLocation.public_holiday_regions}
                                         onChange={(e) =>
-                                            setFormDataLocation({ ...formDataLocation, public_holiday_regions: [e.target.value] })
+                                            setFormDataLocation({ ...formDataLocation, public_holiday_regions: Array.from(e.target.selectedOptions, option => option.value) })
                                         }
                                     >
                                         <option value="au">Australia</option>
@@ -1153,6 +1268,63 @@ function EmployeeManagement() {
                                     Update Location
                                 </button>
                                 {showResult && <p>{showResult}</p>}
+                            </form>
+                            <form
+                                onSubmit={handleUpdateBusinessHoursSubmit}
+                                style={{ padding: '30px' }}
+                                className="primary"
+                            >
+                                <h2 className="secondary h2-EM">Update Business Hours</h2>
+
+                                <p>ID must be provided</p>
+
+                                <input
+                                    type="text"
+                                    placeholder="Location ID"
+                                    value={formDataLocation.locationsId}
+                                    onChange={(e) =>
+                                        setFormDataLocation({ ...formDataLocation, locationsId: e.target.value })
+                                    }
+                                />
+
+                                <select
+                                    value={formDataLocation.locationsId}
+                                    onChange={(e) => setFormDataLocation({ ...formDataLocation, locationsId: e.target.value })}
+                                >
+                                    <option value="">Select Location ID</option>
+                                    {filteredLocations.map((location) => (
+                                        <option key={location.id} value={location.id}>
+                                            {location.name} - {location.short_name}
+                                        </option>
+                                    ))}
+                                </select>
+
+                                <div>
+                                    <h3 className="secondary">Set Business Hours:</h3>
+                                    <p>In the below input fields please use 24 hour time. eg 07:00 for 7am or 14:00 for 2pm</p>
+                                    {formDataBusinessHours.business_hours.map((hours) => (
+                                        <div key={hours.weekday}>
+                                            <h3>{getWeekdayName(hours.weekday)}</h3>
+                                            <input
+                                                type="text"
+                                                placeholder="Start time"
+                                                value={hours.start}
+                                                onChange={(e) => handleBusinessHoursChange(hours.weekday, 'start', e.target.value)}
+                                            />
+                                            <input
+                                                type="text"
+                                                placeholder="Finish time"
+                                                value={hours.finish}
+                                                onChange={(e) => handleBusinessHoursChange(hours.weekday, 'finish', e.target.value)}
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <button type="submit" style={{ margin: '10px' }} className="EM-button">
+                                    Update Business Hours
+                                </button>
+                                {showBusinessHoursResult && <p>{showBusinessHoursResult}</p>}
                             </form>
                         </div>
                     ) : showUpdateTeams ? (
