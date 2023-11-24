@@ -14,7 +14,6 @@ export const useLocationForm = () => {
             { date: '' },
             { date: '', from: '', to: '' },
         ],
-        business_hours: Array(7).fill({ start: '', finish: '' }), // Initialize with empty values for each day
     });
     return [formDataLocation, setFormDataLocation];
 };

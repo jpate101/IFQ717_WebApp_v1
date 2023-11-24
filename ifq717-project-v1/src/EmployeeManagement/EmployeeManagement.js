@@ -21,6 +21,14 @@ function EmployeeManagement() {
     const [formDataOnboarding, setFormDataOnboarding] = useOnboardingForm();
     const [formDataBusinessHours, setFormDataBusinessHours] = useDataBusinessHours();
 
+
+    const [inputSpecificHolidayDates, setInputSpecificHolidayDates] = useState('');
+
+    const handleSpecificHolidayDateChange = (e) => {
+        setInputSpecificHolidayDates(e.target.value);
+    };
+
+
     //search locations stuff 
     const [locationsList, setLocationsList] = useState([]);
     const [searchLocation, setSearchLocation] = useState(''); // State for search query
@@ -279,16 +287,6 @@ function EmployeeManagement() {
             longitude: parseFloat(formDataLocation.longitude),
             address: formDataLocation.address,
             public_holiday_regions: formDataLocation.public_holiday_regions,
-            specific_holiday_dates: [
-                {
-                    date: '',
-                },
-                {
-                    date: '',
-                    from: null,
-                    to: null,
-                },
-            ],
         };
         // Send a POST request to your API endpoint
         fetch('https://my.tanda.co/api/v2/locations', {
@@ -425,6 +423,8 @@ function EmployeeManagement() {
         }
         const locationId = formDataLocation.locationsId;
 
+        const specificHolidayDatesArray = inputSpecificHolidayDates ? inputSpecificHolidayDates.split(',') : [];
+
         const requestBody = {
             name: formDataLocation.name,
             short_name: formDataLocation.short_name,
@@ -432,16 +432,7 @@ function EmployeeManagement() {
             longitude: parseFloat(formDataLocation.longitude),
             address: formDataLocation.address,
             public_holiday_regions: formDataLocation.public_holiday_regions,
-            specific_holiday_dates: [
-                {
-                    date: '',
-                },
-                {
-                    date: '',
-                    from: null,
-                    to: null,
-                },
-            ],
+            specific_holiday_dates: specificHolidayDatesArray.map((date) => ({ date: date.trim() })),
         };
 
         // Filter out properties with empty or null values
@@ -989,6 +980,8 @@ function EmployeeManagement() {
 
 
 
+
+
     function handleUpdateTeamsSubmit(e) {
 
     }
@@ -1090,13 +1083,7 @@ function EmployeeManagement() {
                                     {/* Add more options for other regions if needed */}
                                 </select>
                             </div>
-                            <div>
-                                <h3 className="secondary">Optional: Set Location Public Holiday Regions Details by Individual Dates</h3>
-                                <p>todo: add forms later</p>
 
-
-
-                            </div>
                             <button type="submit" style={{ margin: '10px' }} className="EM-button" >Create Location</button>
                             {showResult && <p>{showResult}</p>}
                         </form>
@@ -1261,8 +1248,16 @@ function EmployeeManagement() {
                                     </select>
                                 </div>
                                 <div>
-                                    <h3 className="secondary">Optional: Set Location Public Holiday Regions Details by Individual Dates</h3>
-                                    <p>todo: add forms later</p>
+                                    <h3 className="secondary">Set Specific Holiday Dates:</h3>
+                                    <p>Inputs for Specific Holiday Dates should look like this for example -  eg 2016-03-14 , 2016-03-15</p>
+                                    <p>separate using commas</p>
+                                    <input
+                                        type="text"
+                                        placeholder="Date"
+                                        value={inputSpecificHolidayDates}
+                                        onChange={handleSpecificHolidayDateChange}
+                                    />
+
                                 </div>
                                 <button type="submit" style={{ margin: '10px' }} className="EM-button">
                                     Update Location
