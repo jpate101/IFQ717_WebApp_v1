@@ -10,6 +10,7 @@ const EventList = () => {
   const [error, setError] = useState(null);
 
   // TODO: refactor - see what can be split into a function or a reusable hook
+  // logic for calculating next birthday and next anniversary
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -32,7 +33,7 @@ const EventList = () => {
                                    moment(`${start.format('MM-DD')}-${moment().format('YYYY')}`, 'MM-DD-YYYY');
             console.log('calculated as: ', nextAnniversary);
             const yearsOfService = nextAnniversary.year() - start.year();
-            userEvents.push({ type: 'Work Anniversary', date: nextAnniversary, name: user.name, years: yearsOfService });
+            userEvents.push({ type: 'Milestone', date: nextAnniversary, name: user.name, years: yearsOfService });
           }
           return userEvents;
         });
