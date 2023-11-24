@@ -562,3 +562,21 @@ img {
   border-color: #f0f2f5 !important;
   color: #536171 !important;
 }
+
+.leave-card-container {
+  display: flex;
+  flex-direction: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.custom-leave-card {
+  max-width: 500px;
+  flex: 1 0 auto;
+  margin-bottom: 20px;
+}
+
+.less-column-padding .col-6 {
+  padding-right: 5px;
+  padding-left: 5px; 
+}
