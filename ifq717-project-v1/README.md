@@ -69,8 +69,11 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 
-### Dependencies / References
+### Dependencies
 
 react-bootstrap
 react-cookie
+
+### References
+birthday, anniversary event images sourced from Canva, by Favas Design: https://www.canva.com/p/favas-design/
 
