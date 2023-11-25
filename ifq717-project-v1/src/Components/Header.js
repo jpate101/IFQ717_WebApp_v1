@@ -23,7 +23,7 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
   return (
     <header className="admin-header bg-background text-primary">
       <Navbar expand="md" >
-        <Container fluid>
+        <Container fluid className="tanda-launchpad-header">
           <Navbar.Brand href="#" className="d-flex align-items-center">
             <img
               src={require("./../Resources/logo-navy.svg").default}
@@ -52,7 +52,7 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
                     Leave, for admin log in
                   </HighlightLink>
                   <HighlightLink to="/ClockIn" as={Link}>
-                    Temp - Clockin
+                    Temporary - Clockin
                   </HighlightLink>
                     {/* Need to fix spacing issue here */}
                   <NavDropdown title="Timesheets" id="timesheets-nav-dropdown" className="timesheets-nav-dropdown">

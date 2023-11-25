@@ -9,7 +9,8 @@
   --button-green: #93c732;
   --button-green-hover: #7fb329;
   --button-green-active: #6ea127;
-  --accent: rgba(50, 157, 199);
+  --accent: #3fafd7;
+  --dark-color: #104860;
   --subtle-highlight: rgba(50, 157, 199, 0.1);
 }
 
@@ -178,16 +179,22 @@ input:focus {
 .admin-header .nav-link:active,
 .admin-header .nav-link .show,
 #navbarSupportedContent > div > a.nav-link.active {
-  color: var(--secondary-color);
+  color: var(--dark-color);
 }
 
 .admin-header .nav-link:not(.active):not(:hover) {
-  color: var(--primary-color);
+  color: var(--background-color);
 }
 
 .admin-header-logo {
   height: 50px;
   padding: 10px;
+}
+
+.tanda-launchpad-header {
+  background-color: var(--accent);
+  align-items: center;
+  font-size: small;
 }
 
 
@@ -247,7 +254,5 @@ input:focus {
     padding-top: 5px;
   }
   
-
-
   }
   
