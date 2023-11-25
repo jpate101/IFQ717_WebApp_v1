@@ -3,11 +3,15 @@ import React, { useEffect, useState } from 'react';
 import Event from './Event';
 import { getUsers } from '../../API/Utilities.js';
 import moment from 'moment';
+import usePagination from '../../Hooks/usePagination';
+import Pagination from '../Pagination.js';
 
 const EventList = () => {
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const itemsPerPage = 10;
+  const [currentItems, totalItems, setCurrentPage, currentPage] = usePagination(events, itemsPerPage);
 
   // TODO: refactor - see what can be split into a function or a reusable hook
   // logic for calculating next birthday and next anniversary
@@ -26,13 +30,21 @@ const EventList = () => {
             userEvents.push({ type: 'Birthday', date: nextBirthday, name: user.name, years: age });
           }
           if (user.employment_start_date) {
-            const start = moment(user.employment_start_date);
-            console.log(user.name, start);
-            const nextAnniversary = start.dayOfYear() < moment().dayOfYear() ?
-                                   moment(`${start.format('MM-DD')}-${moment().add(1, 'years').format('YYYY')}`, 'MM-DD-YYYY') : 
-                                   moment(`${start.format('MM-DD')}-${moment().format('YYYY')}`, 'MM-DD-YYYY');
-            console.log('calculated as: ', nextAnniversary);
-            const yearsOfService = nextAnniversary.year() - start.year();
+            //console.log('employment start date', user.employment_start_date)
+            const employmentStartDate = moment(user.employment_start_date);
+            let nextAnniversary;
+            let yearsOfService;
+          
+            if (employmentStartDate.isAfter(moment())) {
+              yearsOfService = 0;
+              nextAnniversary = moment(`${employmentStartDate.format('MM-DD')}-${employmentStartDate.year()}`, 'MM-DD-YYYY');
+            } else {
+              nextAnniversary = employmentStartDate.dayOfYear() < moment().dayOfYear() ?
+                                moment(`${employmentStartDate.format('MM-DD')}-${moment().add(1, 'years').format('YYYY')}`, 'MM-DD-YYYY') : 
+                                moment(`${employmentStartDate.format('MM-DD')}-${moment().format('YYYY')}`, 'MM-DD-YYYY');
+              yearsOfService = nextAnniversary.year() - employmentStartDate.year();
+            }
+          
             userEvents.push({ type: 'Milestone', date: nextAnniversary, name: user.name, years: yearsOfService });
           }
           return userEvents;
@@ -59,9 +71,15 @@ const EventList = () => {
       )}
       {!isLoading && !error && (
         <div className="w-full">
-          {events.map((event, index) => (
+          {currentItems.map((event, index) => (
             <Event key={index} event={event} />
           ))}
+          <Pagination
+            itemsPerPage={itemsPerPage}
+            totalItems={totalItems}
+            paginate={setCurrentPage}
+            currentPage={currentPage}
+          />
         </div>
       )}
     </div>
