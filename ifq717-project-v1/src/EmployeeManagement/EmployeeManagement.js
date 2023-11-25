@@ -1068,6 +1068,7 @@ function EmployeeManagement() {
                             <div>
                                 <h3 className="secondary">Set Location Public Holiday Regions Details:</h3>
                                 <p> To select muitiple Regions hold CTRL and click on each region </p>
+                                <p> To unselect hold CTRL and click already selected region </p>
                                 <select
                                     multiple
                                     value={formDataLocation.public_holiday_regions}
@@ -1758,6 +1759,19 @@ function EmployeeManagement() {
                             <p>
                                 Use the navigation on the left to get started. If you have any questions or need assistance, feel free to reach out to our support team.
                             </p>
+                            <p>
+                                Here's a brief overview of what you can do:
+                            </p>
+                            <ul>
+                                <li><strong>Create Locations:</strong> Click on "Create Locations" to add new locations to your system.</li>
+                                <li><strong>Update Locations:</strong> Use "Update Locations" to modify existing location details.</li>
+                                <li><strong>Create Users:</strong> Click on "Create Users" to add new employees to your system.</li>
+                                <li><strong>Update Users:</strong> Use "Update Users" to edit employee information or make changes.</li>
+                                <li><strong>Create Teams:</strong> Click on "Create Teams" to form new teams within your organization.</li>
+                                <li><strong>Update Teams:</strong> Use "Update Teams" to modify existing team details.</li>
+                                <li><strong>Send Onboard User Invites:</strong> Click on "Send Onboard User Invites" to initiate the onboarding process for new users.</li>
+                                <li><strong>Deactivate Employee:</strong> Use "Deactivate Employee" to deactivate or remove an employee from the system.</li>
+                            </ul>
                         </div>
                     )
                     }
