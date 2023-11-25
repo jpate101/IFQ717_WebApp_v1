@@ -704,3 +704,24 @@ export const deleteUnavailability = async (unavailabilityId) => {
     throw error;
   }
 };
+
+// Updates an unavailability request
+
+export const updateUnavailabilityRequest = async (unavailabilityId, updateData) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/unavailability/${unavailabilityId}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(updateData),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Unavailability updated:', data);
+    return data;
+  } catch (error) {
+    console.error('Error updating unavailability:', error);
+    throw error;
+  }
+};

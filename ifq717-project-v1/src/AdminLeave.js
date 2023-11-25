@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Dropdown, Card } from 'react-bootstrap';
+import { Dropdown, Card, Button } from 'react-bootstrap';
 import { DatePicker } from 'antd';
 import LeaveSidebar from './Components/Leave/LeaveSidebar';
 import UnavailabilitySidebar from './Components/Leave/UnavailabilitySidebar';
-import { getUsers, getLeaveList, getUnavailabilityList } from './API/Utilities';
+import { 
+  getUsers, 
+  getLeaveList, 
+  getUnavailabilityList, 
+  updateLeaveRequest, 
+  updateUnavailabilityRequest 
+} from './API/Utilities';
 import dayjs from 'dayjs';
 import locale from 'antd/es/date-picker/locale/en_GB'
 import './App.css';
@@ -100,6 +106,59 @@ const LeaveRequestTabs = () => {
     setShowUnavailabilitySidebar(true);
   };
 
+  const handleApproveLeave = async (requestId) => {
+    try {
+      await updateLeaveRequest(requestId, { status: 'approved' });
+      setPendingRequests(prev => prev.filter(req => req.id !== requestId));
+      setApprovedRequests(prev => [...prev, { ...pendingRequests.find(req => req.id === requestId), status: 'approved' }]);
+    } catch (error) {
+      console.error(`Error approving leave request:`, error);
+    }
+  };
+
+  const handleDeclineLeave = async (requestId) => {
+    try {
+      await updateLeaveRequest(requestId, { status: 'rejected' });
+      setPendingRequests(prev => prev.filter(req => req.id !== requestId));
+      setRejectedRequests(prev => [...prev, { ...pendingRequests.find(req => req.id === requestId), status: 'rejected' }]);
+    } catch (error) {
+      console.error(`Error declining leave request:`, error);
+    }
+  };
+
+  const handleApproveUnavailability = async (request) => {
+    try {
+      const updateData = {
+        status: 'approved',
+        title: request.title,
+        start: request.start,
+        finish: request.finish
+
+      };
+      await updateUnavailabilityRequest(request.id, updateData);
+      setPendingUnavailabilityRequests(prev => prev.filter(req => req.id !== request.id));
+      setApprovedUnavailabilityRequests(prev => [...prev, { ...request, status: 'approved' }]);
+    } catch (error) {
+      console.error(`Error approving unavailability request:`, error);
+    }
+  };
+  
+  const handleDeclineUnavailability = async (request) => {
+    try {
+      const updateData = {
+        status: 'rejected',
+        title: request.title,
+        start: request.start,
+        finish: request.finish
+      };
+      await updateUnavailabilityRequest(request.id, updateData);
+      setPendingUnavailabilityRequests(prev => prev.filter(req => req.id !== request.id));
+      setRejectedUnavailabilityRequests(prev => [...prev, { ...request, status: 'rejected' }]);
+    } catch (error) {
+      console.error(`Error declining unavailability request:`, error);
+    }
+  };
+
   const TabContent = ({
     activeTab, 
     pendingRequests, 
@@ -150,8 +209,27 @@ const LeaveRequestTabs = () => {
               <div className="col-6">{request.reason}</div>
             </div>
           </Card.Body>
-          <Card.Footer>
-            Your request hasn't been approved or declined yet. You will receive an email when it is actioned.
+            <Card.Footer className="d-flex justify-content-between">
+            {activeTab === 'pending' ? (
+              <>
+                <Button 
+                  className="approve-button "
+                  variant="success" 
+                  onClick={() => handleApproveLeave(request.id)}
+                  >
+                    Approve
+                </Button>
+                <Button 
+                className="decline-button"
+                variant="danger"
+                onClick={() => handleDeclineLeave(request.id)}
+                >
+                  Decline
+                </Button>
+              </>
+            ) : (
+              'Your request has been ' + request.status + '.'
+            )}
           </Card.Footer>
         </Card>
       );
@@ -199,8 +277,27 @@ const LeaveRequestTabs = () => {
               <div className="col-6">{request.title}</div>
             </div>
           </Card.Body>
-          <Card.Footer>
-              Your request hasn't been approved or declined yet. You will receive an email when it is actioned.
+          <Card.Footer className="d-flex justify-content-between">
+            {activeTab === 'pending' ? (
+              <>
+                <Button 
+                  className="approve-button"
+                  variant="success" 
+                  onClick={() => handleApproveUnavailability(request)}
+                >
+                  Approve
+                </Button>
+                <Button 
+                  className="decline-button"
+                  variant="danger"
+                  onClick={() => handleDeclineUnavailability(request)}
+                >
+                  Decline
+                </Button>
+              </>
+            ) : (
+              'Your unavailability request has been ' + request.status + '.'
+            )}
           </Card.Footer>
         </Card>
       );
