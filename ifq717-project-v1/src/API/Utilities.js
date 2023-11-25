@@ -723,3 +723,23 @@ export const updateUnavailabilityRequest = async (unavailabilityId, updateData) 
     throw error;
   }
 };
+
+// Get leave balance by ID
+
+export const getLeaveBalance = async (leaveBalanceId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/leave_balances/${leaveBalanceId}`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Fetched leave balance:', data);
+    return data;
+  } catch (error) {
+    console.error('Error fetching leave balance:', error);
+    throw error;
+  }
+};
