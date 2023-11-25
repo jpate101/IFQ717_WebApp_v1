@@ -743,3 +743,36 @@ export const getLeaveBalance = async (leaveBalanceId) => {
     throw error;
   }
 };
+
+// Creates a temporary file
+export const createTemporaryFile = async (file, contentTypes) => {
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    if (contentTypes) {
+      formData.append('content_types', contentTypes);
+    }
+
+    const headers = getHeaders();
+
+    const response = await fetch(`${API_BASE_URL}/temporary_files`, {
+      method: 'POST',
+      headers: {
+        'Authorization': headers.Authorization
+      },
+      body: formData
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Created temporary file:', data);
+    return data.file_id;
+  } catch (error) {
+    console.error('Error creating temporary file:', error);
+    throw error;
+  }
+};
