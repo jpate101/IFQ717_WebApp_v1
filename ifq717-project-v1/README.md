@@ -75,5 +75,10 @@ react-bootstrap
 react-cookie
 
 ### References
+
 birthday, anniversary event images sourced from Canva, by Favas Design: https://www.canva.com/p/favas-design/
+
+clockin users grid created using AgGrid https://www.ag-grid.com 
+
+rocket icons sourced via: https://www.iconfinder.com
 

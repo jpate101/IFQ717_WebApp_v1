@@ -17,6 +17,7 @@ import EmployeeLeave from './Employee/EmployeeLeave';
 import EmployeeRoster from './Employee/EmployeeRoster';
 import EmployeeDashboard from './Employee/EmployeeDashboard';
 import AdminLeave from './AdminLeave';
+import ClockIn from './ClockIn/Clockin';
 
 export default function App() {
   const [cookies, setCookie, removeCookie] = useCookies(['token']);
@@ -54,6 +55,11 @@ export default function App() {
             <Route
               path="/dashboard"
               element={<PrivateRoute element={<Dashboard />}
+              authorised={isLoggedIn} />}
+            />
+            <Route
+              path="/ClockIn"
+              element={<PrivateRoute element={<ClockIn />}
               authorised={isLoggedIn} />}
             />
             <Route
