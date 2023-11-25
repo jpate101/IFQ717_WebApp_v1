@@ -16,6 +16,7 @@ import PrivateRoute from './Components/PrivateRoute';
 import EmployeeLeave from './Employee/EmployeeLeave';
 import EmployeeRoster from './Employee/EmployeeRoster';
 import EmployeeDashboard from './Employee/EmployeeDashboard';
+import AdminLeave from './AdminLeave';
 
 export default function App() {
   const [cookies, setCookie, removeCookie] = useCookies(['token']);
@@ -82,6 +83,11 @@ export default function App() {
             />
             <Route
               path="/Leave"
+              element={<PrivateRoute element={<AdminLeave />}
+              authorised={isLoggedIn} />}
+            />
+            <Route
+              path="/EmployeeLeave"
               element={<PrivateRoute element={<EmployeeLeave />}
               authorised={isLoggedIn} />}
             />
