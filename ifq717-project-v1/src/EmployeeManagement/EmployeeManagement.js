@@ -24,10 +24,6 @@ function EmployeeManagement() {
 
     const [inputSpecificHolidayDates, setInputSpecificHolidayDates] = useState('');
 
-    const handleSpecificHolidayDateChange = (e) => {
-        setInputSpecificHolidayDates(e.target.value);
-    };
-
 
     //search locations stuff 
     const [locationsList, setLocationsList] = useState([]);
@@ -616,106 +612,7 @@ function EmployeeManagement() {
             });
     }
 
-    const handleUpdateEmployee = (e) => {
-        e.preventDefault();
 
-        if (!formDataEmployee.Id) {
-            setShowResult("Please fill in the Team ID field.");
-            return;
-        }
-        let updatedData = {
-            name: formDataEmployee.name,
-            employee_id: formDataEmployee.employee_id,
-            passcode: formDataEmployee.passcode,
-            phone: formDataEmployee.phone,
-            date_of_birth: formDataEmployee.date_of_birth,
-            employment_start_date: formDataEmployee.employment_start_date,
-            email: formDataEmployee.email,
-
-            hourly_rate: parseFloat(formDataEmployee.hourly_rate),
-            enable_login: formDataEmployee.enable_login,
-
-
-            //bank_details: {
-            //    bsb: parseFloat(formDataEmployee.bank_details_bsb),
-            //    account_number: parseFloat(formDataEmployee.bank_details_account_number),
-            //    account_name: parseFloat(formDataEmployee.bank_details_account_name),
-            //}
-            /*
-            //create seperate update for qualifications
-            qualifications: [//
-                {
-                    qualification_id: parseFloat(formDataEmployee.qualifications.qualification_id),
-                    enabled: formDataEmployee.qualifications.enabled,
-                    license_number: formDataEmployee.qualifications.license_number,
-                    expires: formDataEmployee.qualifications.expires,
-                    in_training: formDataEmployee.qualifications.in_training,
-                    file_id: formDataEmployee.qualifications.file_id
-                }
-            ]
-            */
-
-        }
-        console.log(updatedData.employment_start_date);
-
-        if (updatedData.name === '') {
-            delete updatedData.name;
-        }
-        if (updatedData.email === '') {
-            delete updatedData.email;
-        }
-        if (updatedData.enable_login === null) {
-            delete updatedData.enable_login;
-        }
-        if (updatedData.date_of_birth === "") {
-            delete updatedData.date_of_birth;
-        }
-        if (updatedData.employment_start_date === '') {
-            delete updatedData.employment_start_date;
-        }
-
-        for (let field in updatedData) {
-            //console.log(field);
-            if (typeof updatedData[field] === 'object') {
-                // Check if the property is an object (e.g., bank_details)
-                for (let subField in updatedData[field]) {
-                    if (field !== 'name' && (updatedData[field][subField] === "" || updatedData[field][subField] == null || isNaN(updatedData[field][subField]))) {
-                        delete updatedData[field][subField];
-                    }
-                }
-            } else if (field !== 'name' && field !== 'email' && field !== 'date_of_birth' && field !== 'employment_start_date' && (updatedData[field] === "" || updatedData[field] === null || isNaN(updatedData[field]))) {
-                delete updatedData[field];
-            }
-        }
-
-        // console.log("bsb check:", updatedData.bank_details.bsb);
-        console.log(updatedData);
-        // Send a fetch request to update the user's information
-        fetch(`https://my.tanda.co/api/v2/users/${formDataEmployee.Id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`,
-            },
-            body: JSON.stringify(updatedData),
-        })
-            .then((response) => {
-                if (response.ok) {
-                    setShowResult("User updated successfully!. Please reload page to see updated search results");
-                    console.log("Success Response:", response);
-                    fetchLocations();
-                    fetchTeams();
-                    fetchUsers();
-
-                } else {
-                    setShowResult("Failed to update User.");
-                }
-            })
-            .catch((error) => {
-                // Handle network or other errors
-                console.error(error);
-            });
-    };
 
     function handleOnboardNewUserSubmit(e) {
         e.preventDefault();
@@ -974,6 +871,116 @@ function EmployeeManagement() {
                 business_hours: updatedBusinessHours,
             };
         });
+    };
+
+    const handleSpecificHolidayDateChange = (e) => {
+        setInputSpecificHolidayDates(e.target.value);
+    };
+
+    const handleQualificationChange = (e, index, property) => {
+        //console.log(index);
+        //console.log(property);
+        const updatedQualifications = [...formDataEmployee.qualifications];
+        updatedQualifications[index][property] =
+            e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+
+        setFormDataEmployee({
+            ...formDataEmployee,
+            qualifications: updatedQualifications,
+        });
+        console.log(formDataEmployee.qualifications[index][property]);
+    };
+
+    const handleUpdateEmployee = (e) => {
+        e.preventDefault();
+
+        if (!formDataEmployee.Id) {
+            setShowResult("Please fill in the Team ID field.");
+            return;
+        }
+        let updatedData = {
+            name: formDataEmployee.name,
+            employee_id: formDataEmployee.employee_id,
+            passcode: formDataEmployee.passcode,
+            phone: formDataEmployee.phone,
+            date_of_birth: formDataEmployee.date_of_birth,
+            employment_start_date: formDataEmployee.employment_start_date,
+            email: formDataEmployee.email,
+
+            hourly_rate: parseFloat(formDataEmployee.hourly_rate),
+            enable_login: formDataEmployee.enable_login,
+
+
+            //bank_details: {
+            //    bsb: parseFloat(formDataEmployee.bank_details_bsb),
+            //    account_number: parseFloat(formDataEmployee.bank_details_account_number),
+            //    account_name: parseFloat(formDataEmployee.bank_details_account_name),
+            //}
+
+            //create seperate update for qualifications
+
+
+        }
+        console.log(updatedData);
+
+        if (updatedData.name === '') {
+            delete updatedData.name;
+        }
+        if (updatedData.email === '') {
+            delete updatedData.email;
+        }
+        if (updatedData.enable_login === null) {
+            delete updatedData.enable_login;
+        }
+        if (updatedData.date_of_birth === "") {
+            delete updatedData.date_of_birth;
+        }
+        if (updatedData.employment_start_date === '') {
+            delete updatedData.employment_start_date;
+        }
+
+        for (let field in updatedData) {
+            //console.log(field);
+            if (typeof updatedData[field] === 'object') {
+                // Check if the property is an object (e.g., bank_details)
+                for (let subField in updatedData[field]) {
+                    if (field !== 'name' && (updatedData[field][subField] === "" || updatedData[field][subField] == null || isNaN(updatedData[field][subField]))) {
+                        delete updatedData[field][subField];
+                    }
+                }
+            } else if (field !== 'name' && field !== 'email' && field !== 'date_of_birth' && field !== 'employment_start_date' && (updatedData[field] === "" || updatedData[field] === null || isNaN(updatedData[field]))) {
+                delete updatedData[field];
+            }
+        }
+
+        // console.log("bsb check:", updatedData.bank_details.bsb);
+        console.log(formDataEmployee.qualifications[0].license_number);
+        console.log(JSON.stringify(updatedData));
+        // Send a fetch request to update the user's information
+        fetch(`https://my.tanda.co/api/v2/users/${formDataEmployee.Id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify(updatedData),
+        })
+            .then((response) => {
+                if (response.ok) {
+                    setShowResult("User updated successfully!. Please reload page to see updated search results");
+                    console.log("Success Response:", response);
+                    fetchLocations();
+                    fetchTeams();
+                    fetchUsers();
+
+                } else {
+                    setShowResult("Failed to update User.");
+                }
+            })
+            .catch((error) => {
+                // Handle network or other errors
+                console.error(error);
+            });
     };
 
 
@@ -1419,8 +1426,9 @@ function EmployeeManagement() {
                         <div className="flex-container">
                             <form onSubmit={handleUpdateEmployee} style={{ padding: '30px' }} className="primary">
                                 <h2 className="secondary h2-EM">Update User</h2>
-                                <p>Id field is Mandatory</p>
-                                <p>Other fields are Optional</p>
+                                <p>Id field is Mandatory.</p>
+                                <p>Other fields are Optional.</p>
+                                <p>Note - Updating a field with the same value as already in the system will result in updating failing.</p>
 
                                 <div>
                                     <h3 className="secondary">User Id:</h3>
@@ -1549,6 +1557,7 @@ function EmployeeManagement() {
                                     </label>
                                 </div>
 
+
                                 {/*<div>
                                     <h3 className="secondary">Bank Details:</h3>
                                     <div>
@@ -1560,9 +1569,6 @@ function EmployeeManagement() {
                                         />
                                     </div>
                                  </div>*/}
-
-
-
 
                                 <button type="submit" style={{ margin: '10px' }} className="EM-button">Update Users Submit</button>
                                 {showResult && <p>{showResult}</p>}
@@ -1777,8 +1783,8 @@ function EmployeeManagement() {
                     }
                 </div>
 
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }
 

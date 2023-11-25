@@ -127,7 +127,7 @@ export const useEmployeeForm = () => {
                 expires: "",
                 in_training: null,
                 file_id: ""
-            }
+            },
         ],
         enable_login: null,
     });
