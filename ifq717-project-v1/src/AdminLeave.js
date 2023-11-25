@@ -1,23 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { Dropdown, Card } from 'react-bootstrap';
+import { Dropdown, Card, Button } from 'react-bootstrap';
 import { DatePicker } from 'antd';
-import LeaveSidebar from '../Components/Leave/LeaveSidebar';
-import UnavailabilitySidebar from '../Components/Leave/UnavailabilitySidebar';
-import { getCurrentUser, getLeaveList, getUnavailabilityList } from '../API/Utilities';
+import LeaveSidebar from './Components/Leave/LeaveSidebar';
+import UnavailabilitySidebar from './Components/Leave/UnavailabilitySidebar';
+import { 
+  getUsers, 
+  getLeaveList, 
+  getUnavailabilityList, 
+  updateLeaveRequest, 
+  updateUnavailabilityRequest 
+} from './API/Utilities';
 import dayjs from 'dayjs';
 import locale from 'antd/es/date-picker/locale/en_GB'
-import '../App.css';
+import './App.css';
 
 const { RangePicker } = DatePicker;
 
 const NavTabs = ({ activeTab, setActiveTab }) => {
   return (
     <div className='nav-tabs-container'>
-        <ul className="nav-tabs">
-            <li className={`pending ${activeTab === 'pending' ? 'active' : ''}`} onClick={() => setActiveTab('pending')}>Pending</li>
-            <li className={`approved ${activeTab === 'approved' ? 'active' : ''}`} onClick={() => setActiveTab('approved')}>Approved</li>
-            <li className={`rejected ${activeTab === 'rejected' ? 'active' : ''}`} onClick={() => setActiveTab('rejected')}>Rejected</li>
-        </ul>
+      <ul className="nav-tabs">
+        <li className={`pending ${activeTab === 'pending' ? 'active' : ''}`} onClick={() => setActiveTab('pending')}>Pending</li>
+        <li className={`approved ${activeTab === 'approved' ? 'active' : ''}`} onClick={() => setActiveTab('approved')}>Approved</li>
+        <li className={`rejected ${activeTab === 'rejected' ? 'active' : ''}`} onClick={() => setActiveTab('rejected')}>Rejected</li>
+      </ul>
     </div>
   );
 };
@@ -33,23 +39,19 @@ const LeaveRequestTabs = () => {
   const [approvedUnavailabilityRequests, setApprovedUnavailabilityRequests] = useState([]);
   const [rejectedUnavailabilityRequests, setRejectedUnavailabilityRequests] = useState([]);
   const [dateRange, setDateRange] = useState([
-      dayjs(),
-      dayjs().add(6, 'months')
-    ]);
-    const [currentUserName, setCurrentUserName] = useState('');
+    dayjs(),
+    dayjs().add(6, 'months')
+  ]);
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    getCurrentUser().then(userData => {
-      setCurrentUserName(userData.name);
-    })
-  }, [activeTab, dateRange]);
-
-  useEffect(() => {
-    getCurrentUser().then(userData => {
+    getUsers().then(userData => {
       console.log('Fetched user data:', userData);
+      setUsers(userData);
+      const userIds = userData.map(user => user.id);
       const from = dateRange[0].format('YYYY-MM-DD');
       const to = dateRange[1].format('YYYY-MM-DD');
-      return getLeaveList([userData.id], from, to);
+      return getLeaveList(userIds, from, to);
     })
     .then(data => {
       if (activeTab === 'pending') {
@@ -67,11 +69,12 @@ const LeaveRequestTabs = () => {
     }, [activeTab, dateRange]);
 
     useEffect(() => {
-      getCurrentUser().then(userData => {
+      getUsers().then(userData => {
+        const userIds = userData.map(user => user.id)
         const from = dateRange[0].format('YYYY-MM-DD');
         const to = dateRange[1].format('YYYY-MM-DD');
     
-        getUnavailabilityList({ user_ids: [userData.id], from, to })
+        getUnavailabilityList({ user_ids: userIds, from, to })
           .then(data => {
             if (activeTab === 'pending') {
               const pending = data.filter(request => request.status === 'pending');
@@ -90,13 +93,70 @@ const LeaveRequestTabs = () => {
       })
       .catch(error => console.error(`Error fetching user data:`, error));
     }, [activeTab, dateRange]);
-    
+  
+  const findUserNameById = (userId) => {
+    const user = users.find(u => u.id === userId);
+    return user ? user.name : 'Unknown User';
+  };
   
   const handleLeaveClick = () => {
-      setShowLeaveSidebar(true);
+    setShowLeaveSidebar(true);
   };
   const handleUnavailabilityClick = () => {
-      setShowUnavailabilitySidebar(true);
+    setShowUnavailabilitySidebar(true);
+  };
+
+  const handleApproveLeave = async (requestId) => {
+    try {
+      await updateLeaveRequest(requestId, { status: 'approved' });
+      setPendingRequests(prev => prev.filter(req => req.id !== requestId));
+      setApprovedRequests(prev => [...prev, { ...pendingRequests.find(req => req.id === requestId), status: 'approved' }]);
+    } catch (error) {
+      console.error(`Error approving leave request:`, error);
+    }
+  };
+
+  const handleDeclineLeave = async (requestId) => {
+    try {
+      await updateLeaveRequest(requestId, { status: 'rejected' });
+      setPendingRequests(prev => prev.filter(req => req.id !== requestId));
+      setRejectedRequests(prev => [...prev, { ...pendingRequests.find(req => req.id === requestId), status: 'rejected' }]);
+    } catch (error) {
+      console.error(`Error declining leave request:`, error);
+    }
+  };
+
+  const handleApproveUnavailability = async (request) => {
+    try {
+      const updateData = {
+        status: 'approved',
+        title: request.title,
+        start: request.start,
+        finish: request.finish
+
+      };
+      await updateUnavailabilityRequest(request.id, updateData);
+      setPendingUnavailabilityRequests(prev => prev.filter(req => req.id !== request.id));
+      setApprovedUnavailabilityRequests(prev => [...prev, { ...request, status: 'approved' }]);
+    } catch (error) {
+      console.error(`Error approving unavailability request:`, error);
+    }
+  };
+  
+  const handleDeclineUnavailability = async (request) => {
+    try {
+      const updateData = {
+        status: 'rejected',
+        title: request.title,
+        start: request.start,
+        finish: request.finish
+      };
+      await updateUnavailabilityRequest(request.id, updateData);
+      setPendingUnavailabilityRequests(prev => prev.filter(req => req.id !== request.id));
+      setRejectedUnavailabilityRequests(prev => [...prev, { ...request, status: 'rejected' }]);
+    } catch (error) {
+      console.error(`Error declining unavailability request:`, error);
+    }
   };
 
   const TabContent = ({
@@ -110,6 +170,7 @@ const LeaveRequestTabs = () => {
   }) => {
   
     const formatLeaveRequestCard = (request) => {
+      const userName = findUserNameById(request.user_id);
       const formattedUpdatedAt = dayjs.unix(request.updated_at).format('YYYY-MM-DD HH:mm:ss');
       const formattedStartDate = dayjs(request.start).format('DD MMM YYYY');
       const formattedFinishDate = dayjs(request.finish).format('DD MMM YYYY');
@@ -120,7 +181,7 @@ const LeaveRequestTabs = () => {
       return (
         <Card key={request.id} className="mb-3">
           <Card.Header>
-            {currentUserName} - Requested on: {formattedUpdatedAt}
+            {userName} - Requested on: {formattedUpdatedAt}
           </Card.Header>
           <Card.Body className="less-column-padding">
             <div className="row">
@@ -148,14 +209,34 @@ const LeaveRequestTabs = () => {
               <div className="col-6">{request.reason}</div>
             </div>
           </Card.Body>
-          <Card.Footer>
-            Your request hasn't been approved or declined yet. You will receive an email when it is actioned.
+            <Card.Footer className="d-flex justify-content-between">
+            {activeTab === 'pending' ? (
+              <>
+                <Button 
+                  className="approve-button "
+                  variant="success" 
+                  onClick={() => handleApproveLeave(request.id)}
+                  >
+                    Approve
+                </Button>
+                <Button 
+                className="decline-button"
+                variant="danger"
+                onClick={() => handleDeclineLeave(request.id)}
+                >
+                  Decline
+                </Button>
+              </>
+            ) : (
+              'Your request has been ' + request.status + '.'
+            )}
           </Card.Footer>
         </Card>
       );
     };
 
     const formatUnavailabilityRequestCard = (request) => {
+      const userName = findUserNameById(request.user_id);
       const formattedUpdatedAt = dayjs.unix(request.updated_at).format('YYYY-MM-DD HH:mm:ss');
       console.log('request updated_at:', request.updated_at)
       const startDate = dayjs.unix(request.start).format('DD MMM YYYY');
@@ -168,7 +249,7 @@ const LeaveRequestTabs = () => {
       return (
         <Card key={request.id} className="mb-3">
           <Card.Header>
-          {currentUserName} - Requested on: {formattedUpdatedAt}
+          {userName} - Requested on: {formattedUpdatedAt}
           </Card.Header>
           <Card.Body className="">
             <div className="row">
@@ -196,8 +277,27 @@ const LeaveRequestTabs = () => {
               <div className="col-6">{request.title}</div>
             </div>
           </Card.Body>
-          <Card.Footer>
-              Your request hasn't been approved or declined yet. You will receive an email when it is actioned.
+          <Card.Footer className="d-flex justify-content-between">
+            {activeTab === 'pending' ? (
+              <>
+                <Button 
+                  className="approve-button"
+                  variant="success" 
+                  onClick={() => handleApproveUnavailability(request)}
+                >
+                  Approve
+                </Button>
+                <Button 
+                  className="decline-button"
+                  variant="danger"
+                  onClick={() => handleDeclineUnavailability(request)}
+                >
+                  Decline
+                </Button>
+              </>
+            ) : (
+              'Your unavailability request has been ' + request.status + '.'
+            )}
           </Card.Footer>
         </Card>
       );
@@ -304,6 +404,7 @@ const LeaveRequestTabs = () => {
         rejectedRequests={rejectedRequests}
         pendingUnavailabilityRequests={pendingUnavailabilityRequests}
         approvedUnavailabilityRequests={approvedUnavailabilityRequests}
+        rejectedUnavailabilityRequests={rejectedUnavailabilityRequests}
       />
       <LeaveSidebar show={showLeaveSidebar} handleClose={() => setShowLeaveSidebar(false)} />
       <UnavailabilitySidebar show={showUnavailabilitySidebar} handleClose={() => setShowUnavailabilitySidebar(false)} />

@@ -654,16 +654,19 @@ export const createUnavailability = async (unavailabilityData) => {
 
 // Fetches a list of unavailabilities based off ids, from/to dates, user_ids & recently updated
 
-export const getUnavailabilityList = async ({ ids, from, to, user_ids, updated_after }) => {
-  const queryParams = new URLSearchParams();
-  
-  if (ids) queryParams.append('ids', ids);
-  if (from) queryParams.append('from', from);
-  if (to) queryParams.append('to', to);
-  if (user_ids) queryParams.append('user_ids', user_ids);
-  if (updated_after) queryParams.append('updated_after', updated_after);
-
+export const getUnavailabilityList = async ({ userIds, from, to, user_ids}) => {
   try {
+    let queryParams = new URLSearchParams();
+    if (userIds && userIds.length > 0) {
+      queryParams.append('user_ids', userIds.join(','));
+    }
+    if (from) {
+      queryParams.append('from', from);
+    }
+    if (to) {
+      queryParams.append('to', to);
+    }
+
     const response = await fetch(`${API_BASE_URL}/unavailability?${queryParams.toString()}`, {
       method: 'GET',
       headers: getHeaders(),
@@ -672,12 +675,11 @@ export const getUnavailabilityList = async ({ ids, from, to, user_ids, updated_a
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
     const data = await response.json();
-    console.log('Unavailability list:', data);
+    console.log('Fetched leave list:', data);
     return data;
   } catch (error) {
-    console.error('Error fetching unavailability list:', error);
+    console.error('Error fetching leave list:', error);
     throw error;
   }
 };
@@ -699,6 +701,27 @@ export const deleteUnavailability = async (unavailabilityId) => {
     return unavailabilityId;
   } catch (error) {
     console.error('Error deleting unavailability:', error);
+    throw error;
+  }
+};
+
+// Updates an unavailability request
+
+export const updateUnavailabilityRequest = async (unavailabilityId, updateData) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/unavailability/${unavailabilityId}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(updateData),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Unavailability updated:', data);
+    return data;
+  } catch (error) {
+    console.error('Error updating unavailability:', error);
     throw error;
   }
 };
