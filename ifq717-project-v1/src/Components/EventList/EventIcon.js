@@ -6,5 +6,5 @@ import { ReactComponent as AnniversaryIcon } from '../../svg/calendar-days.svg';
 export default function EventIcon({ type }) {
   const Icon = type === 'Birthday' ? BirthdayIcon : AnniversaryIcon;
 
-  return <Icon className="events-icons" />;
+  return <Icon className="events-widget-icons" />;
 }
