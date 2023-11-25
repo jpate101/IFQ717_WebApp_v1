@@ -30,6 +30,8 @@ const LeaveRequestTabs = () => {
   const [approvedRequests, setApprovedRequests] = useState([]);
   const [rejectedRequests, setRejectedRequests] = useState([]);
   const [pendingUnavailabilityRequests, setPendingUnavailabilityRequests] = useState([]);
+  const [approvedUnavailabilityRequests, setApprovedUnavailabilityRequests] = useState([]);
+  const [rejectedUnavailabilityRequests, setRejectedUnavailabilityRequests] = useState([]);
   const [dateRange, setDateRange] = useState([
       dayjs(),
       dayjs().add(6, 'months')
@@ -77,11 +79,11 @@ const LeaveRequestTabs = () => {
 
             } else if (activeTab === 'approved') {
               const approved = data.filter(request => request.status === 'approved');
-              setApprovedRequests(prev => [...prev, ...approved]);
+              setApprovedUnavailabilityRequests(prev => [...prev, ...approved]);
 
             } else if (activeTab === 'rejected') {
               const rejected = data.filter(request => request.status === 'rejected');
-              setRejectedRequests(prev => [...prev, ...rejected]);
+              setRejectedUnavailabilityRequests(prev => [...prev, ...rejected]);
             }
           })
           .catch(error => console.error(`Error fetching ${activeTab} unavailability requests:`, error));
@@ -97,54 +99,15 @@ const LeaveRequestTabs = () => {
       setShowUnavailabilitySidebar(true);
   };
 
-  const formatUnavailabilityRequestCard = (request) => {
-    const requestedOn = dayjs.unix(request.start).format('YYYY-MM-DD HH:mm:ss');
-    const startDate = dayjs.unix(request.start).format('DD MMM YYYY');
-    const finishDate = dayjs.unix(request.finish).format('DD MMM YYYY');
-    const period = `${startDate} - ${finishDate}`;
-    const times = request.all_day ? 'All day' : `${dayjs.unix(request.start).format('HH:mm')} - ${dayjs.unix(request.finish).format('HH:mm')}`;
-    const frequency = request.repeating ? (request.repeating_info?.interval === 'week' ? 'Weekly' : 'Daily') : 'Once-off';
-    const repeatsOn = request.repeating_info?.interval === 'week' ? `Every ${dayjs.unix(request.start).format('dddd')}` : 'N/A';
-  
-    return (
-      <Card key={request.id} className="mb-3">
-        <Card.Header>
-          {currentUserName} - Requested on: {requestedOn}
-        </Card.Header>
-        <Card.Body className="">
-          <div className="row">
-            <div className="col-6 font-weight-bold">Period:</div>
-            <div className="col-6">{period}</div>
-          </div>
-          <div className="row">
-            <div className="col-6 font-weight-bold">Times:</div>
-            <div className="col-6">{times}</div>
-          </div>
-          <div className="row">
-            <div className="col-6 font-weight-bold">Frequency:</div>
-            <div className="col-6">{frequency}</div>
-          </div>
-          <div className="row">
-            <div className="col-6 font-weight-bold">Repeats on:</div>
-            <div className="col-6">{repeatsOn}</div>
-          </div>
-          <div className="row">
-            <div className="col-6 font-weight-bold">Type:</div>
-            <div className="col-6">Unavailability</div>
-          </div>
-          <div className="row">
-            <div className="col-6 font-weight-bold">Reason:</div>
-            <div className="col-6">{request.title}</div>
-          </div>
-        </Card.Body>
-        <Card.Footer>
-            Your request hasn't been approved or declined yet. You will receive an email when it is actioned.
-        </Card.Footer>
-      </Card>
-    );
-  };
-
-  const TabContent = ({ activeTab, pendingRequests, approvedRequests, rejectedRequests, pendingUnavailabilityRequests }) => {
+  const TabContent = ({
+    activeTab, 
+    pendingRequests, 
+    approvedRequests, 
+    rejectedRequests, 
+    pendingUnavailabilityRequests, 
+    approvedUnavailabilityRequests, 
+    setRejectedUnavailabilityRequests 
+  }) => {
   
     const formatLeaveRequestCard = (request) => {
       const formattedUpdatedAt = dayjs.unix(request.updated_at).format('YYYY-MM-DD HH:mm:ss');
@@ -153,7 +116,6 @@ const LeaveRequestTabs = () => {
       const period = formattedStartDate === formattedFinishDate
       ? formattedStartDate
       : `${formattedStartDate} - ${formattedFinishDate}`;
-
 
       return (
         <Card key={request.id} className="mb-3">
@@ -192,6 +154,55 @@ const LeaveRequestTabs = () => {
         </Card>
       );
     };
+
+    const formatUnavailabilityRequestCard = (request) => {
+      const formattedUpdatedAt = dayjs.unix(request.updated_after).format('YYYY-MM-DD HH:mm:ss');
+      console.log('request updated_at:', request.updated_at)
+      const startDate = dayjs.unix(request.start).format('DD MMM YYYY');
+      const finishDate = dayjs.unix(request.finish).format('DD MMM YYYY');
+      const period = `${startDate} - ${finishDate}`;
+      const times = request.all_day ? 'All day' : `${dayjs.unix(request.start).format('HH:mm')} - ${dayjs.unix(request.finish).format('HH:mm')}`;
+      const frequency = request.repeating ? (request.repeating_info?.interval === 'week' ? 'Weekly' : 'Daily') : 'Once-off';
+      const repeatsOn = request.repeating_info?.interval === 'week' ? `Every ${dayjs.unix(request.start).format('dddd')}` : 'N/A';
+    
+      return (
+        <Card key={request.id} className="mb-3">
+          <Card.Header>
+          {currentUserName} - Requested on: {formattedUpdatedAt}
+          </Card.Header>
+          <Card.Body className="">
+            <div className="row">
+              <div className="col-6 font-weight-bold">Period:</div>
+              <div className="col-6">{period}</div>
+            </div>
+            <div className="row">
+              <div className="col-6 font-weight-bold">Times:</div>
+              <div className="col-6">{times}</div>
+            </div>
+            <div className="row">
+              <div className="col-6 font-weight-bold">Frequency:</div>
+              <div className="col-6">{frequency}</div>
+            </div>
+            <div className="row">
+              <div className="col-6 font-weight-bold">Repeats on:</div>
+              <div className="col-6">{repeatsOn}</div>
+            </div>
+            <div className="row">
+              <div className="col-6 font-weight-bold">Type:</div>
+              <div className="col-6">Unavailability</div>
+            </div>
+            <div className="row">
+              <div className="col-6 font-weight-bold">Reason:</div>
+              <div className="col-6">{request.title}</div>
+            </div>
+          </Card.Body>
+          <Card.Footer>
+              Your request hasn't been approved or declined yet. You will receive an email when it is actioned.
+          </Card.Footer>
+        </Card>
+      );
+    };
+
     switch (activeTab) {
       case 'pending':
         return (
@@ -217,35 +228,51 @@ const LeaveRequestTabs = () => {
           </div>
         );
       case 'approved':
-          return (
-              <div className="tab-pane">
-                <h3>Approved Requests</h3>
+        return (
+          <div className="tab-pane">
+            <div className="leave-card-container">
+              <div className="pending-leave-requests w-50 pr-2" >
+                <h3>Leave Requests</h3>
                 {approvedRequests.length > 0 ? (
-                  approvedRequests.map(request => (
-                    <div key={request.id}>
-                      {request.reason} - {request.start} to {request.finish}
-                    </div>
-                  ))
+                  approvedRequests.map(formatLeaveRequestCard)
                 ) : (
-                  <p>No approved requests.</p>
+                  <p>No approved leave requests.</p>
                 )}
               </div>
-            );
+              <div className="pending-unavailability-requests w-50 pr-2">
+                <h3>Unavailability Requests</h3>
+                {approvedUnavailabilityRequests.length > 0 ? (
+                  approvedUnavailabilityRequests.map(formatUnavailabilityRequestCard)
+                ) : (
+                  <p>No approved unavailability requests.</p>
+                )}
+              </div>
+            </div>
+          </div>
+        );
       case 'rejected':
-          return (
-              <div className="tab-pane">
-                <h3>Rejected Requests</h3>
+        return (
+          <div className="tab-pane">
+            <div className="leave-card-container">
+              <div className="pending-leave-requests w-50 pr-2" >
+                <h3>Leave Requests</h3>
                 {rejectedRequests.length > 0 ? (
-                  rejectedRequests.map(request => (
-                    <div key={request.id}>
-                      {request.reason} - {request.start} to {request.finish}
-                    </div>
-                  ))
+                  rejectedRequests.map(formatLeaveRequestCard)
                 ) : (
-                  <p>No rejected requests.</p>
+                  <p>No rejected leave requests.</p>
                 )}
               </div>
-            );
+              <div className="pending-unavailability-requests w-50 pr-2">
+                <h3>Unavailability Requests</h3>
+                {rejectedUnavailabilityRequests.length > 0 ? (
+                  rejectedUnavailabilityRequests.map(formatUnavailabilityRequestCard)
+                ) : (
+                  <p>No rejected unavailability requests.</p>
+                )}
+              </div>
+            </div>
+          </div>
+        );
       default:
         return <div className="tab-pane">Select a tab</div>;
     }
@@ -276,6 +303,7 @@ const LeaveRequestTabs = () => {
         approvedRequests={approvedRequests}
         rejectedRequests={rejectedRequests}
         pendingUnavailabilityRequests={pendingUnavailabilityRequests}
+        approvedUnavailabilityRequests={approvedUnavailabilityRequests}
       />
       <LeaveSidebar show={showLeaveSidebar} handleClose={() => setShowLeaveSidebar(false)} />
       <UnavailabilitySidebar show={showUnavailabilitySidebar} handleClose={() => setShowUnavailabilitySidebar(false)} />
