@@ -8,7 +8,8 @@ import {
   getLeaveList, 
   getUnavailabilityList, 
   updateLeaveRequest, 
-  updateUnavailabilityRequest 
+  updateUnavailabilityRequest,
+  getDefaultLeaveHours
 } from './API/Utilities';
 import dayjs from 'dayjs';
 import locale from 'antd/es/date-picker/locale/en_GB'
@@ -38,6 +39,7 @@ const LeaveRequestTabs = () => {
   const [pendingUnavailabilityRequests, setPendingUnavailabilityRequests] = useState([]);
   const [approvedUnavailabilityRequests, setApprovedUnavailabilityRequests] = useState([]);
   const [rejectedUnavailabilityRequests, setRejectedUnavailabilityRequests] = useState([]);
+  const [leaveHours, setLeaveHours] = useState({});
   const [dateRange, setDateRange] = useState([
     dayjs(),
     dayjs().add(6, 'months')
@@ -94,6 +96,17 @@ const LeaveRequestTabs = () => {
       .catch(error => console.error(`Error fetching user data:`, error));
     }, [activeTab, dateRange]);
   
+    useEffect(() => {
+      pendingRequests.forEach(async (request) => {
+        try {
+          const hours = await getDefaultLeaveHours(request.user_id, request.start, request.finish, request.leave_type);
+          setLeaveHours(prevHours => ({ ...prevHours, [request.id]: hours }));
+        } catch (error) {
+          console.error(`Error fetching leave hours for request ${request.id}:`, error);
+        }
+      });
+    }, [pendingRequests]);
+
   const findUserNameById = (userId) => {
     const user = users.find(u => u.id === userId);
     return user ? user.name : 'Unknown User';
@@ -194,6 +207,7 @@ const LeaveRequestTabs = () => {
             </div>
             <div className="row">
               <div className="col-6 font-weight-bold">Paid Hours:</div>
+              <div className="col-6">{leaveHours[request.id] || 'Loading...'}</div>
               <div className="col-6">{}</div>
             </div>
             <div className="row">
