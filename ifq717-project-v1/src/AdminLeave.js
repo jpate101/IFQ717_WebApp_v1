@@ -13,11 +13,11 @@ const { RangePicker } = DatePicker;
 const NavTabs = ({ activeTab, setActiveTab }) => {
   return (
     <div className='nav-tabs-container'>
-        <ul className="nav-tabs">
-            <li className={`pending ${activeTab === 'pending' ? 'active' : ''}`} onClick={() => setActiveTab('pending')}>Pending</li>
-            <li className={`approved ${activeTab === 'approved' ? 'active' : ''}`} onClick={() => setActiveTab('approved')}>Approved</li>
-            <li className={`rejected ${activeTab === 'rejected' ? 'active' : ''}`} onClick={() => setActiveTab('rejected')}>Rejected</li>
-        </ul>
+      <ul className="nav-tabs">
+        <li className={`pending ${activeTab === 'pending' ? 'active' : ''}`} onClick={() => setActiveTab('pending')}>Pending</li>
+        <li className={`approved ${activeTab === 'approved' ? 'active' : ''}`} onClick={() => setActiveTab('approved')}>Approved</li>
+        <li className={`rejected ${activeTab === 'rejected' ? 'active' : ''}`} onClick={() => setActiveTab('rejected')}>Rejected</li>
+      </ul>
     </div>
   );
 };
@@ -33,9 +33,9 @@ const LeaveRequestTabs = () => {
   const [approvedUnavailabilityRequests, setApprovedUnavailabilityRequests] = useState([]);
   const [rejectedUnavailabilityRequests, setRejectedUnavailabilityRequests] = useState([]);
   const [dateRange, setDateRange] = useState([
-      dayjs(),
-      dayjs().add(6, 'months')
-    ]);
+    dayjs(),
+    dayjs().add(6, 'months')
+  ]);
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -94,10 +94,10 @@ const LeaveRequestTabs = () => {
   };
   
   const handleLeaveClick = () => {
-      setShowLeaveSidebar(true);
+    setShowLeaveSidebar(true);
   };
   const handleUnavailabilityClick = () => {
-      setShowUnavailabilitySidebar(true);
+    setShowUnavailabilitySidebar(true);
   };
 
   const TabContent = ({
