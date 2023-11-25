@@ -1,5 +1,22 @@
 /* CSS specifically for the Dash Screen */
 
+
 .dash-h1 {
     color: --var(primary-color);
 }
+
+.launchpad-card {
+    background-color: var(--secondary-color);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    height: 90px;
+    font-size: 3rem; 
+    font-style: italic;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold; /* Bold font */
+    -webkit-text-stroke: 1px var(--accent) 
+    
+  }

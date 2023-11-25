@@ -5,6 +5,8 @@ import useUserDetails from '../Hooks/useUserDetails';
 import TaskList from '../Components/TaskList/TaskList';
 import EventList from '../Components/EventList/EventList';
 import '../../src/style.css';
+import './dashboard.css';
+import RocketIcon from '../Components/Icons/RocketIcon';
 
 export default function Dashboard() {
   const token = getUserToken();
@@ -12,11 +14,12 @@ export default function Dashboard() {
 
   return (
     <main className="flex-grow-1">
-      <header className="bg-background text-primary py-4">
-        <h1 className="text-center text-2xl">Launchpad</h1>
-      </header>
       {user && (
         <div className="container mx-auto px-4">
+          <div className="launchpad-card mt-4 mr-3 ml-3">
+          <RocketIcon size="75" alt="tanda launchpad icon" />
+            <span>Tanda Launchpad</span>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 mt-4 mx-1 md:mx-0 dashboard-cards-container items-start" style={{ gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, min-content)' }}>
             <div className="bg-white rounded-lg w-full md:w-auto mx-2 md:mx-0">
               <div className="p-1">
