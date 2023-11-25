@@ -106,7 +106,7 @@ const LeaveRequestTabs = () => {
     rejectedRequests, 
     pendingUnavailabilityRequests, 
     approvedUnavailabilityRequests, 
-    setRejectedUnavailabilityRequests 
+    rejectedUnavailabilityRequests 
   }) => {
   
     const formatLeaveRequestCard = (request) => {
@@ -156,7 +156,7 @@ const LeaveRequestTabs = () => {
     };
 
     const formatUnavailabilityRequestCard = (request) => {
-      const formattedUpdatedAt = dayjs.unix(request.updated_after).format('YYYY-MM-DD HH:mm:ss');
+      const formattedUpdatedAt = dayjs.unix(request.updated_at).format('YYYY-MM-DD HH:mm:ss');
       console.log('request updated_at:', request.updated_at)
       const startDate = dayjs.unix(request.start).format('DD MMM YYYY');
       const finishDate = dayjs.unix(request.finish).format('DD MMM YYYY');
