@@ -127,7 +127,7 @@ export const useEmployeeForm = () => {
                 expires: "",
                 in_training: null,
                 file_id: ""
-            }
+            },
         ],
         enable_login: null,
     });
@@ -145,3 +145,18 @@ export const useOnboardingForm = () => {
     });
     return [formDataOnboarding, setFormDataOnboarding];
 };
+
+export const useDataBusinessHours = () => {
+    const [formDataBusiness, setFormDataBusiness] = useState({
+      business_hours: [
+        { weekday: 0, start: '', finish: '' },
+        { weekday: 1, start: '', finish: '' },
+        { weekday: 2, start: '', finish: '' },
+        { weekday: 3, start: '', finish: '' },
+        { weekday: 4, start: '', finish: '' },
+        { weekday: 5, start: '', finish: '' },
+        { weekday: 6, start: '', finish: '' },
+      ],
+    });
+    return [formDataBusiness, setFormDataBusiness];
+  };

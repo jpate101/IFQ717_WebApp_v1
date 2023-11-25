@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { useLocationForm, useTeamsForm, useEmployeeForm, useOnboardingForm } from './EmployeeManagementFormData';
+import { useLocationForm, useTeamsForm, useEmployeeForm, useOnboardingForm, useDataBusinessHours } from './EmployeeManagementFormData';
 
 
 function EmployeeManagement() {
@@ -19,11 +19,19 @@ function EmployeeManagement() {
     const [formDataTeams, setFormDataTeams] = useTeamsForm();
     const [formDataEmployee, setFormDataEmployee] = useEmployeeForm();
     const [formDataOnboarding, setFormDataOnboarding] = useOnboardingForm();
+    const [formDataBusinessHours, setFormDataBusinessHours] = useDataBusinessHours();
+
+
+    const [inputSpecificHolidayDates, setInputSpecificHolidayDates] = useState('');
+
 
     //search locations stuff 
     const [locationsList, setLocationsList] = useState([]);
     const [searchLocation, setSearchLocation] = useState(''); // State for search query
     const [filteredLocations, setFilteredLocations] = useState([]); // State for filtered locations
+
+    //update Business hours 
+    const [showBusinessHoursResult, setShowBusinessHoursResult] = useState('');
 
     //key
     const apiKey = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
@@ -275,20 +283,7 @@ function EmployeeManagement() {
             longitude: parseFloat(formDataLocation.longitude),
             address: formDataLocation.address,
             public_holiday_regions: formDataLocation.public_holiday_regions,
-            specific_holiday_dates: [
-                {
-                    date: '',
-                },
-                {
-                    date: '',
-                    from: null,
-                    to: null,
-                },
-            ],
         };
-        //console.log(requestBody);
-        //console.log(apiKey);
-
         // Send a POST request to your API endpoint
         fetch('https://my.tanda.co/api/v2/locations', {
             method: 'POST',
@@ -303,6 +298,9 @@ function EmployeeManagement() {
                     // Handle success
                     console.log("Location created successfully!");
                     setShowResult("Location created successfully!");
+                    fetchLocations();
+                    fetchTeams();
+                    fetchUsers();
                 } else if (response.status === 403) {
                     // Handle 403 error (forbidden)
                     console.log("You do not have the required permissions to create a location.");
@@ -421,6 +419,8 @@ function EmployeeManagement() {
         }
         const locationId = formDataLocation.locationsId;
 
+        const specificHolidayDatesArray = inputSpecificHolidayDates ? inputSpecificHolidayDates.split(',') : [];
+
         const requestBody = {
             name: formDataLocation.name,
             short_name: formDataLocation.short_name,
@@ -428,17 +428,23 @@ function EmployeeManagement() {
             longitude: parseFloat(formDataLocation.longitude),
             address: formDataLocation.address,
             public_holiday_regions: formDataLocation.public_holiday_regions,
-            specific_holiday_dates: [
-                {
-                    date: '',
-                },
-                {
-                    date: '',
-                    from: null,
-                    to: null,
-                },
-            ],
+            specific_holiday_dates: specificHolidayDatesArray.map((date) => ({ date: date.trim() })),
         };
+
+        // Filter out properties with empty or null values
+        const requestBodyTrim = Object.fromEntries(
+            Object.entries(requestBody).filter(([key, value]) => {
+                if (value === NaN || value === '' || value === null || (Array.isArray(value) && value.length === 0)) {
+                    return false; // Exclude empty values
+                }
+                if ((key === 'latitude' || key === 'longitude') && isNaN(parseFloat(value))) {
+                    return false;
+                }
+                return true;
+            })
+        );
+
+        console.log(requestBodyTrim);
         // Send a POST request to create an employee
         fetch(`https://my.tanda.co/api/v2/locations/${locationId}`, {
             method: 'PUT', // Use PUT method for updating
@@ -446,7 +452,7 @@ function EmployeeManagement() {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${apiKey}`,
             },
-            body: JSON.stringify(requestBody),
+            body: JSON.stringify(requestBodyTrim),
         })
             .then(response => {
                 if (response.ok) {
@@ -469,9 +475,7 @@ function EmployeeManagement() {
                 setShowResult("Network error: " + error.message);
             });
     }
-    function handleUpdateTeamsSubmit(e) {
 
-    }
     function handleUpdateName(e) {
         console.log('Update Team Name button pressed');
         // Perform the Update Team Name action
@@ -608,106 +612,7 @@ function EmployeeManagement() {
             });
     }
 
-    const handleUpdateEmployee = (e) => {
-        e.preventDefault();
 
-        if (!formDataEmployee.Id) {
-            setShowResult("Please fill in the Team ID field.");
-            return;
-        }
-        let updatedData = {
-            name: formDataEmployee.name,
-            employee_id: formDataEmployee.employee_id,
-            passcode: formDataEmployee.passcode,
-            phone: formDataEmployee.phone,
-            date_of_birth: formDataEmployee.date_of_birth,
-            employment_start_date: formDataEmployee.employment_start_date,
-            email: formDataEmployee.email,
-
-            hourly_rate: parseFloat(formDataEmployee.hourly_rate),
-            enable_login: formDataEmployee.enable_login,
-
-
-            //bank_details: {
-            //    bsb: parseFloat(formDataEmployee.bank_details_bsb),
-            //    account_number: parseFloat(formDataEmployee.bank_details_account_number),
-            //    account_name: parseFloat(formDataEmployee.bank_details_account_name),
-            //}
-            /*
-            //create seperate update for qualifications
-            qualifications: [//
-                {
-                    qualification_id: parseFloat(formDataEmployee.qualifications.qualification_id),
-                    enabled: formDataEmployee.qualifications.enabled,
-                    license_number: formDataEmployee.qualifications.license_number,
-                    expires: formDataEmployee.qualifications.expires,
-                    in_training: formDataEmployee.qualifications.in_training,
-                    file_id: formDataEmployee.qualifications.file_id
-                }
-            ]
-            */
-
-        }
-        console.log(updatedData.employment_start_date);
-
-        if (updatedData.name === '') {
-            delete updatedData.name;
-        }
-        if (updatedData.email === '') {
-            delete updatedData.email;
-        }
-        if (updatedData.enable_login === null) {
-            delete updatedData.enable_login;
-        }
-        if (updatedData.date_of_birth === "") {
-            delete updatedData.date_of_birth;
-        }
-        if (updatedData.employment_start_date === '') {
-            delete updatedData.employment_start_date;
-        }
-
-        for (let field in updatedData) {
-            //console.log(field);
-            if (typeof updatedData[field] === 'object') {
-                // Check if the property is an object (e.g., bank_details)
-                for (let subField in updatedData[field]) {
-                    if (field !== 'name' && (updatedData[field][subField] === "" || updatedData[field][subField] == null || isNaN(updatedData[field][subField]))) {
-                        delete updatedData[field][subField];
-                    }
-                }
-            } else if (field !== 'name' && field !== 'email' && field !== 'date_of_birth' && field !== 'employment_start_date' && (updatedData[field] === "" || updatedData[field] === null || isNaN(updatedData[field]))) {
-                delete updatedData[field];
-            }
-        }
-
-        // console.log("bsb check:", updatedData.bank_details.bsb);
-        console.log(updatedData);
-        // Send a fetch request to update the user's information
-        fetch(`https://my.tanda.co/api/v2/users/${formDataEmployee.Id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`,
-            },
-            body: JSON.stringify(updatedData),
-        })
-            .then((response) => {
-                if (response.ok) {
-                    setShowResult("User updated successfully!. Please reload page to see updated search results");
-                    console.log("Success Response:", response);
-                    fetchLocations();
-                    fetchTeams();
-                    fetchUsers();
-
-                } else {
-                    setShowResult("Failed to update User.");
-                }
-            })
-            .catch((error) => {
-                // Handle network or other errors
-                console.error(error);
-            });
-    };
 
     function handleOnboardNewUserSubmit(e) {
         e.preventDefault();
@@ -830,11 +735,11 @@ function EmployeeManagement() {
                 },
                 body: JSON.stringify(updatedData),
             });
-    
+
             if (!response.ok) {
                 throw new Error('Failed to update user data');
             }
-    
+
             return { success: true, message: 'User updated successfully!' };
         } catch (error) {
             return { success: false, message: `Error: ${error.message}` };
@@ -850,7 +755,7 @@ function EmployeeManagement() {
                     'Authorization': `Bearer ${apiKey}`,
                 },
             });
-    
+
             if (response.status === 201) {
                 return { success: true, message: 'Onboarding invite sent successfully!' };
             } else {
@@ -872,8 +777,8 @@ function EmployeeManagement() {
                 const payload = {};
                 if (email) payload.email = email;
                 if (phone) payload.phone = phone;
-                await updateUser(Id, payload); 
-                await sendOnboardingInvite(Id); 
+                await updateUser(Id, payload);
+                await sendOnboardingInvite(Id);
                 setShowResult('Onboarding invite sent successfully');
             } else {
                 setShowResult('Error: Please provide either email or phone for updating');
@@ -882,6 +787,210 @@ function EmployeeManagement() {
             console.error('Error during onboarding invite resend:', error);
             setShowResult('Error: Unable to resend onboarding invite');
         }
+    }
+
+    const getWeekdayName = (weekday) => {
+        const weekdayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        return weekdayNames[weekday];
+    };
+
+
+    const handleUpdateBusinessHoursSubmit = async (e) => {
+        e.preventDefault();
+
+        // Validation
+        if (!formDataLocation.locationsId || formDataBusinessHours.business_hours.length === 0) {
+            setShowBusinessHoursResult("Please fill in all required fields.");
+            return;
+        }
+
+        const locationId = formDataLocation.locationsId;
+
+
+        const updatedFormDataBusinessHours = {
+            ...formDataBusinessHours,
+            business_hours: formDataBusinessHours.business_hours
+                .filter(({ start, finish }) => start !== '' && finish !== '')
+                .map((hours, index) => ({ weekday: index, ...hours })),
+        };
+
+        console.log(updatedFormDataBusinessHours)
+
+
+
+        try {
+            const response = await fetch(`https://my.tanda.co/api/v2/locations/${locationId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`, // Replace apiKey with your actual API key
+                },
+                body: JSON.stringify(updatedFormDataBusinessHours),
+            });
+
+            if (response.ok) {
+                console.log("Business hours updated successfully!");
+                setShowBusinessHoursResult("Business hours updated successfully!");
+                // You might want to refresh the entire form or update other related components here
+                fetchLocations(); // Replace with the actual function that fetches and updates location data
+                // Handle any additional actions after successful update.
+            } else if (response.status === 403) {
+                console.log("You do not have the required permissions to update business hours for this location.");
+                setShowBusinessHoursResult("You do not have the required permissions to update business hours for this location.");
+            } else {
+                console.log("Failed to update business hours");
+                setShowBusinessHoursResult("Failed to update business hours");
+            }
+        } catch (error) {
+            // Handle network errors
+            console.error("Network error:", error);
+            setShowBusinessHoursResult("Network error: " + error.message);
+        } finally {
+            /*setFormDataBusinessHours({
+                locationsId: '',
+                business_hours: Array(7).fill({ start: '', finish: '' }), // Reset to default values
+            });*/
+        }
+    };
+
+    const handleBusinessHoursChange = (weekday, field, value) => {
+        // Assuming formDataBusinessHours is a state variable that holds business hours data
+        setFormDataBusinessHours((prevData) => {
+            const updatedBusinessHours = prevData.business_hours.map((hours) => {
+                if (hours.weekday === weekday) {
+                    return {
+                        ...hours,
+                        [field]: value,
+                    };
+                }
+                return hours;
+            });
+
+            return {
+                ...prevData,
+                business_hours: updatedBusinessHours,
+            };
+        });
+    };
+
+    const handleSpecificHolidayDateChange = (e) => {
+        setInputSpecificHolidayDates(e.target.value);
+    };
+
+    const handleQualificationChange = (e, index, property) => {
+        //console.log(index);
+        //console.log(property);
+        const updatedQualifications = [...formDataEmployee.qualifications];
+        updatedQualifications[index][property] =
+            e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+
+        setFormDataEmployee({
+            ...formDataEmployee,
+            qualifications: updatedQualifications,
+        });
+        console.log(formDataEmployee.qualifications[index][property]);
+    };
+
+    const handleUpdateEmployee = (e) => {
+        e.preventDefault();
+
+        if (!formDataEmployee.Id) {
+            setShowResult("Please fill in the Team ID field.");
+            return;
+        }
+        let updatedData = {
+            name: formDataEmployee.name,
+            employee_id: formDataEmployee.employee_id,
+            passcode: formDataEmployee.passcode,
+            phone: formDataEmployee.phone,
+            date_of_birth: formDataEmployee.date_of_birth,
+            employment_start_date: formDataEmployee.employment_start_date,
+            email: formDataEmployee.email,
+
+            hourly_rate: parseFloat(formDataEmployee.hourly_rate),
+            enable_login: formDataEmployee.enable_login,
+
+
+            //bank_details: {
+            //    bsb: parseFloat(formDataEmployee.bank_details_bsb),
+            //    account_number: parseFloat(formDataEmployee.bank_details_account_number),
+            //    account_name: parseFloat(formDataEmployee.bank_details_account_name),
+            //}
+
+            //create seperate update for qualifications
+
+
+        }
+        console.log(updatedData);
+
+        if (updatedData.name === '') {
+            delete updatedData.name;
+        }
+        if (updatedData.email === '') {
+            delete updatedData.email;
+        }
+        if (updatedData.enable_login === null) {
+            delete updatedData.enable_login;
+        }
+        if (updatedData.date_of_birth === "") {
+            delete updatedData.date_of_birth;
+        }
+        if (updatedData.employment_start_date === '') {
+            delete updatedData.employment_start_date;
+        }
+
+        for (let field in updatedData) {
+            //console.log(field);
+            if (typeof updatedData[field] === 'object') {
+                // Check if the property is an object (e.g., bank_details)
+                for (let subField in updatedData[field]) {
+                    if (field !== 'name' && (updatedData[field][subField] === "" || updatedData[field][subField] == null || isNaN(updatedData[field][subField]))) {
+                        delete updatedData[field][subField];
+                    }
+                }
+            } else if (field !== 'name' && field !== 'email' && field !== 'date_of_birth' && field !== 'employment_start_date' && (updatedData[field] === "" || updatedData[field] === null || isNaN(updatedData[field]))) {
+                delete updatedData[field];
+            }
+        }
+
+        // console.log("bsb check:", updatedData.bank_details.bsb);
+        console.log(formDataEmployee.qualifications[0].license_number);
+        console.log(JSON.stringify(updatedData));
+        // Send a fetch request to update the user's information
+        fetch(`https://my.tanda.co/api/v2/users/${formDataEmployee.Id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify(updatedData),
+        })
+            .then((response) => {
+                if (response.ok) {
+                    setShowResult("User updated successfully!. Please reload page to see updated search results");
+                    console.log("Success Response:", response);
+                    fetchLocations();
+                    fetchTeams();
+                    fetchUsers();
+
+                } else {
+                    setShowResult("Failed to update User.");
+                }
+            })
+            .catch((error) => {
+                // Handle network or other errors
+                console.error(error);
+            });
+    };
+
+
+
+
+
+
+
+    function handleUpdateTeamsSubmit(e) {
+
     }
 
     return (
@@ -965,9 +1074,14 @@ function EmployeeManagement() {
                             </div>
                             <div>
                                 <h3 className="secondary">Set Location Public Holiday Regions Details:</h3>
+                                <p> To select muitiple Regions hold CTRL and click on each region </p>
+                                <p> To unselect hold CTRL and click already selected region </p>
                                 <select
-                                    value={formDataLocation.public_holiday_regions[0]}
-                                    onChange={e => setFormDataLocation({ ...formDataLocation, public_holiday_regions: [e.target.value] })}
+                                    multiple
+                                    value={formDataLocation.public_holiday_regions}
+                                    onChange={(e) =>
+                                        setFormDataLocation({ ...formDataLocation, public_holiday_regions: Array.from(e.target.selectedOptions, option => option.value) })
+                                    }
                                 >
                                     <option value="au">Australia</option>
                                     <option value="us">United States</option>
@@ -977,13 +1091,7 @@ function EmployeeManagement() {
                                     {/* Add more options for other regions if needed */}
                                 </select>
                             </div>
-                            <div>
-                                <h3 className="secondary">Optional: Set Location Public Holiday Regions Details by Individual Dates</h3>
-                                <p>todo: add forms later</p>
 
-
-
-                            </div>
                             <button type="submit" style={{ margin: '10px' }} className="EM-button" >Create Location</button>
                             {showResult && <p>{showResult}</p>}
                         </form>
@@ -1047,7 +1155,7 @@ function EmployeeManagement() {
                             {showResult && <p>{showResult}</p>}
                         </form>
                     ) : showUpdateLocations ? (
-                        <div className="flex-container">
+                        <div className="">
                             <form
                                 onSubmit={handleUpdateLocationSubmit}
                                 style={{ padding: '30px' }}
@@ -1131,10 +1239,12 @@ function EmployeeManagement() {
                                 </div>
                                 <div>
                                     <h3 className="secondary">Set Location Public Holiday Regions Details:</h3>
+                                    <p> To select muitiple Regions hold CTRL and click on each region </p>
                                     <select
-                                        value={formDataLocation.public_holiday_regions[0]}
+                                        multiple
+                                        value={formDataLocation.public_holiday_regions}
                                         onChange={(e) =>
-                                            setFormDataLocation({ ...formDataLocation, public_holiday_regions: [e.target.value] })
+                                            setFormDataLocation({ ...formDataLocation, public_holiday_regions: Array.from(e.target.selectedOptions, option => option.value) })
                                         }
                                     >
                                         <option value="au">Australia</option>
@@ -1146,13 +1256,78 @@ function EmployeeManagement() {
                                     </select>
                                 </div>
                                 <div>
-                                    <h3 className="secondary">Optional: Set Location Public Holiday Regions Details by Individual Dates</h3>
-                                    <p>todo: add forms later</p>
+                                    <h3 className="secondary">Set Specific Holiday Dates:</h3>
+                                    <p>Inputs for Specific Holiday Dates should look like this for example -  eg 2016-03-14 , 2016-03-15</p>
+                                    <p>separate using commas</p>
+                                    <input
+                                        type="text"
+                                        placeholder="Date"
+                                        value={inputSpecificHolidayDates}
+                                        onChange={handleSpecificHolidayDateChange}
+                                    />
+
                                 </div>
                                 <button type="submit" style={{ margin: '10px' }} className="EM-button">
                                     Update Location
                                 </button>
                                 {showResult && <p>{showResult}</p>}
+                            </form>
+                            <form
+                                onSubmit={handleUpdateBusinessHoursSubmit}
+                                style={{ padding: '30px' }}
+                                className="primary"
+                            >
+                                <h2 className="secondary h2-EM">Update Business Hours</h2>
+
+                                <p>ID must be provided</p>
+
+                                <input
+                                    type="text"
+                                    placeholder="Location ID"
+                                    value={formDataLocation.locationsId}
+                                    onChange={(e) =>
+                                        setFormDataLocation({ ...formDataLocation, locationsId: e.target.value })
+                                    }
+                                />
+
+                                <select
+                                    value={formDataLocation.locationsId}
+                                    onChange={(e) => setFormDataLocation({ ...formDataLocation, locationsId: e.target.value })}
+                                >
+                                    <option value="">Select Location ID</option>
+                                    {filteredLocations.map((location) => (
+                                        <option key={location.id} value={location.id}>
+                                            {location.name} - {location.short_name}
+                                        </option>
+                                    ))}
+                                </select>
+
+                                <div>
+                                    <h3 className="secondary">Set Business Hours:</h3>
+                                    <p>In the below input fields please use 24 hour time. eg 07:00 for 7am or 14:00 for 2pm</p>
+                                    {formDataBusinessHours.business_hours.map((hours) => (
+                                        <div key={hours.weekday}>
+                                            <h3>{getWeekdayName(hours.weekday)}</h3>
+                                            <input
+                                                type="text"
+                                                placeholder="Start time"
+                                                value={hours.start}
+                                                onChange={(e) => handleBusinessHoursChange(hours.weekday, 'start', e.target.value)}
+                                            />
+                                            <input
+                                                type="text"
+                                                placeholder="Finish time"
+                                                value={hours.finish}
+                                                onChange={(e) => handleBusinessHoursChange(hours.weekday, 'finish', e.target.value)}
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <button type="submit" style={{ margin: '10px' }} className="EM-button">
+                                    Update Business Hours
+                                </button>
+                                {showBusinessHoursResult && <p>{showBusinessHoursResult}</p>}
                             </form>
                         </div>
                     ) : showUpdateTeams ? (
@@ -1251,8 +1426,9 @@ function EmployeeManagement() {
                         <div className="flex-container">
                             <form onSubmit={handleUpdateEmployee} style={{ padding: '30px' }} className="primary">
                                 <h2 className="secondary h2-EM">Update User</h2>
-                                <p>Id field is Mandatory</p>
-                                <p>Other fields are Optional</p>
+                                <p>Id field is Mandatory.</p>
+                                <p>Other fields are Optional.</p>
+                                <p>Note - Updating a field with the same value as already in the system will result in updating failing.</p>
 
                                 <div>
                                     <h3 className="secondary">User Id:</h3>
@@ -1381,6 +1557,7 @@ function EmployeeManagement() {
                                     </label>
                                 </div>
 
+
                                 {/*<div>
                                     <h3 className="secondary">Bank Details:</h3>
                                     <div>
@@ -1392,9 +1569,6 @@ function EmployeeManagement() {
                                         />
                                     </div>
                                  </div>*/}
-
-
-
 
                                 <button type="submit" style={{ margin: '10px' }} className="EM-button">Update Users Submit</button>
                                 {showResult && <p>{showResult}</p>}
@@ -1591,13 +1765,26 @@ function EmployeeManagement() {
                             <p>
                                 Use the navigation on the left to get started. If you have any questions or need assistance, feel free to reach out to our support team.
                             </p>
+                            <p>
+                                Here's a brief overview of what you can do:
+                            </p>
+                            <ul>
+                                <li><strong>Create Locations:</strong> Click on "Create Locations" to add new locations to your system.</li>
+                                <li><strong>Update Locations:</strong> Use "Update Locations" to modify existing location details.</li>
+                                <li><strong>Create Users:</strong> Click on "Create Users" to add new employees to your system.</li>
+                                <li><strong>Update Users:</strong> Use "Update Users" to edit employee information or make changes.</li>
+                                <li><strong>Create Teams:</strong> Click on "Create Teams" to form new teams within your organization.</li>
+                                <li><strong>Update Teams:</strong> Use "Update Teams" to modify existing team details.</li>
+                                <li><strong>Send Onboard User Invites:</strong> Click on "Send Onboard User Invites" to initiate the onboarding process for new users.</li>
+                                <li><strong>Deactivate Employee:</strong> Use "Deactivate Employee" to deactivate or remove an employee from the system.</li>
+                            </ul>
                         </div>
                     )
                     }
                 </div>
 
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }
 
