@@ -5,6 +5,7 @@ import './event.css';
 import '../../../src/style.css';
 import useUserDetails from '../../Hooks/useUserDetails';
 import sendEmailIcon from '../../svg/send-email.svg';
+import { getEventEmailTemplate } from './eventEmailTemplates';
 
 const Event = ({ event, token }) => {
   const { type, date, name, years } = event;
@@ -15,28 +16,7 @@ const Event = ({ event, token }) => {
   const organisation = userDetails ? userDetails.organisation : '';
   const emailTo = userEmail ? userEmail : '';
   
-  // TODO: Refactor to replace email with an HTML email so that images display. Check Nodemailer. 
-  // Birthday Email - Refactor and put in its own file 
-  const birthdayImageUrl = 'https://github.com/jpate101/IFQ717_WebApp_v1/blob/main/ifq717-project-v1/src/Resources/EmployeeEventsWidget/tandaBirthday.jpg?raw=true';
-  const emailSubject = `Happy Birthday ${name}!`;
-  const emailBody = `Dear ${name},\n\nHope you have a great day for your birthday! \n\
-  From ${loggedInUserName} & all of us at ${organisation} \n\n\
-  <img src="${birthdayImageUrl}" alt="Happy Birthday ${name}" width="300">`;
-
-  // Workiversary Email - Refactor and put in its own file
-  const workiversaryImageUrl = 'https://github.com/jpate101/IFQ717_WebApp_v1/blob/main/ifq717-project-v1/src/Resources/EmployeeEventsWidget/thanksForYourWork.jpg?raw=true';
-  const workEmailSubject = `Contratulations on ${years} years, ${name}!`;
-  const workEmailBody = `Dear ${name},\n\nCongratulations on ${years} years with us at ${organisation}! \n\
-  We love having you part of the team, and we appreciate all your work over ${years} years!
-  <img src="${workiversaryImageUrl}" alt="Congratulations on ${years} years, ${name}!" width="300">
-  From ${loggedInUserName} & all of us at ${organisation} \n\n\``
-
-  // First day Email - Refactor and put in its own file
-  const welcomeImageUrl = 'https://github.com/jpate101/IFQ717_WebApp_v1/blob/main/ifq717-project-v1/src/Resources/EmployeeEventsWidget/welcomeToTheCrew.jpg?raw=true';
-  const welcomeEmailSubject = `Welcome to ${organisation}, ${name}!`;
-  const welcomeEmailBody = `Dear ${name},\n\nWe are so pleased to welcome you to the crew! \n\
-  Thanks for joining us, and we look forward to working with you! \n\
-  From ${loggedInUserName} & all of us at ${organisation} \n\n\``
+  const { emailSubject, emailBody } = getEventEmailTemplate(type, name, years, loggedInUserName, organisation);
 
   // TODO: REFACTOR FILE
   return (
@@ -75,12 +55,12 @@ const Event = ({ event, token }) => {
         </a>
         )}
         {type === 'Milestone' && years > 0 && (
-          <a href={`mailto:${emailTo}?subject=${encodeURIComponent(workEmailSubject)}&body=${encodeURIComponent(workEmailBody)}`}>
+          <a href={`mailto:${emailTo}?subject=${ emailSubject }&body=${ emailBody }`}>
             <button>Email</button>
           </a>
         )}
         {type === 'Milestone' && years === 0 && (
-          <a href={`mailto:${emailTo}?subject=${encodeURIComponent(welcomeEmailSubject)}&body=${encodeURIComponent(welcomeEmailBody)}`}>
+          <a href={`mailto:${emailTo}?subject=${ emailSubject }&body=${ emailBody }`}>
             <button>Email</button>
           </a>
         )}
