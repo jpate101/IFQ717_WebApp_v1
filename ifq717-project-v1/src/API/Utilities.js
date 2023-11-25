@@ -133,7 +133,12 @@ export const getUsers = async (employeeId = null) => {
       hourly_rate: user.hourly_rate,
       department_ids: user.department_ids,
       date_of_birth: user.date_of_birth,
-      employment_start_date: user.employment_start_date
+      employment_start_date: user.employment_start_date,
+      active: user.active,
+      email: user.email,
+      phone: user.phone,
+      passcode: user.passcode,
+      role: user.user_levels
     }));
 
   } catch (error) {
