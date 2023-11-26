@@ -582,13 +582,13 @@ img {
 }
 
 .approve-button {
-  background-color:green !important;
-  border-color: green !important;
-  color: white !important;
+  background-color:#f6ffed !important;
+  border-color: #6bcc43 !important;
+  color: #6bcc43 !important;
 }
 
 .decline-button {
-  background-color:red !important;
-  border-color: red !important;
-  color: white !important;
+  background-color:#fff2f0 !important;
+  border-color: #ff595b !important;
+  color: #ff595b !important;
 }

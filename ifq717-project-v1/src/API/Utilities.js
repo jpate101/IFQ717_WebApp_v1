@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 const API_BASE_URL = 'https://my.tanda.co/api/v2';
 const getHeaders = () => {
   const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, "$1");
-  console.log('token:', token)
+  //console.log('token:', token)
   return {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${token}`
@@ -553,7 +553,7 @@ export const getLeaveTypesForUser = async (userId) => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const leaveTypes = await response.json();
-    console.log('Leave types for user:', leaveTypes);
+    //console.log('Leave types for user:', leaveTypes);
     return leaveTypes;
   } catch (error) {
     console.error('Error fetching leave types for user:', error);
@@ -597,7 +597,7 @@ export const getCurrentUser = async () => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const userData = await response.json();
-    console.log('Current user data:', userData);
+    //console.log('Current user data:', userData);
     return userData;
   } catch (error) {
     console.error('Error fetching current user data:', error);
@@ -727,6 +727,60 @@ export const updateUnavailabilityRequest = async (unavailabilityId, updateData) 
     return data;
   } catch (error) {
     console.error('Error updating unavailability:', error);
+    throw error;
+  }
+};
+
+// Get leave balance by ID
+
+export const getLeaveBalance = async (leaveBalanceId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/leave_balances/${leaveBalanceId}`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Fetched leave balance:', data);
+    return data;
+  } catch (error) {
+    console.error('Error fetching leave balance:', error);
+    throw error;
+  }
+};
+
+// Creates a temporary file
+export const createTemporaryFile = async (file, contentTypes) => {
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    if (contentTypes) {
+      const contentTypesString = Array.isArray(contentTypes) ? contentTypes.join(',') : contentTypes;
+      formData.append('content_types', contentTypesString);
+    }
+
+    const headers = getHeaders();
+
+    const response = await fetch(`${API_BASE_URL}/temporary_files`, {
+      method: 'POST',
+      headers: {
+        'Authorization': headers.Authorization
+      },
+      body: formData
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Created temporary file:', data);
+    return data.file_id;
+  } catch (error) {
+    console.error('Error creating temporary file:', error);
     throw error;
   }
 };

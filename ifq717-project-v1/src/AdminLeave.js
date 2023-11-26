@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Dropdown, Card, Button } from 'react-bootstrap';
-import { DatePicker } from 'antd';
+import { DatePicker, Upload, message, Button as AntButton} from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
 import LeaveSidebar from './Components/Leave/LeaveSidebar';
 import UnavailabilitySidebar from './Components/Leave/UnavailabilitySidebar';
 import { 
@@ -8,7 +9,9 @@ import {
   getLeaveList, 
   getUnavailabilityList, 
   updateLeaveRequest, 
-  updateUnavailabilityRequest 
+  updateUnavailabilityRequest,
+  getDefaultLeaveHours,
+  createTemporaryFile
 } from './API/Utilities';
 import dayjs from 'dayjs';
 import locale from 'antd/es/date-picker/locale/en_GB'
@@ -38,6 +41,8 @@ const LeaveRequestTabs = () => {
   const [pendingUnavailabilityRequests, setPendingUnavailabilityRequests] = useState([]);
   const [approvedUnavailabilityRequests, setApprovedUnavailabilityRequests] = useState([]);
   const [rejectedUnavailabilityRequests, setRejectedUnavailabilityRequests] = useState([]);
+  const [leaveHours, setLeaveHours] = useState({});
+  const [fileUploads, setFileUploads] = useState({});
   const [dateRange, setDateRange] = useState([
     dayjs(),
     dayjs().add(6, 'months')
@@ -94,6 +99,17 @@ const LeaveRequestTabs = () => {
       .catch(error => console.error(`Error fetching user data:`, error));
     }, [activeTab, dateRange]);
   
+    useEffect(() => {
+      pendingRequests.forEach(async (request) => {
+        try {
+          const hours = await getDefaultLeaveHours(request.user_id, request.start, request.finish, request.leave_type);
+          setLeaveHours(prevHours => ({ ...prevHours, [request.id]: hours }));
+        } catch (error) {
+          console.error(`Error fetching leave hours for request ${request.id}:`, error);
+        }
+      });
+    }, [pendingRequests]);
+
   const findUserNameById = (userId) => {
     const user = users.find(u => u.id === userId);
     return user ? user.name : 'Unknown User';
@@ -158,7 +174,7 @@ const LeaveRequestTabs = () => {
       console.error(`Error declining unavailability request:`, error);
     }
   };
-
+  
   const TabContent = ({
     activeTab, 
     pendingRequests, 
@@ -178,6 +194,24 @@ const LeaveRequestTabs = () => {
       ? formattedStartDate
       : `${formattedStartDate} - ${formattedFinishDate}`;
 
+      const uploadProps = {
+        customRequest({ file, onSuccess, onError }) {
+          createTemporaryFile(file, "image/jpeg,image/jpg,image/png,application/pdf")
+            .then(response => {
+              const file_id = response;
+              setFileUploads(prev => ({ ...prev, [request.id]: file_id }));
+              onSuccess(response, file);
+              message.success({ content: `${file.name} file uploaded successfully`, key: 'upload' });
+            })
+            .catch(error => {
+              onError(error);
+              message.error({ content: `${file.name} file upload failed.`, key: 'upload' });
+            });
+        },
+        showUploadList: false,
+      };
+       
+
       return (
         <Card key={request.id} className="mb-3">
           <Card.Header>
@@ -194,6 +228,7 @@ const LeaveRequestTabs = () => {
             </div>
             <div className="row">
               <div className="col-6 font-weight-bold">Paid Hours:</div>
+              <div className="col-6">{leaveHours[request.id] || 'Loading...'}</div>
               <div className="col-6">{}</div>
             </div>
             <div className="row">
@@ -201,9 +236,15 @@ const LeaveRequestTabs = () => {
               <div className="col-6">{}</div>
             </div>
             <div className="row">
-              <div className="col-6 font-weight-bold">Document</div>
-              <div className="col-6">{}</div>
-            </div>
+              <div className="col-6 font-weight-bold">Document:</div>
+              <div className="col-6">
+                <Upload {...uploadProps}>
+                  <AntButton size="sm" variant="primary">
+                    <UploadOutlined /> {fileUploads[request.id] ? 'Replace file' : 'Upload'}
+                  </AntButton>
+                </Upload>
+              </div>
+              </div>
             <div className="row">
               <div className="col-6 font-weight-bold">Reason:</div>
               <div className="col-6">{request.reason}</div>
