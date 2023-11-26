@@ -130,6 +130,14 @@ input:focus {
     color:  #1e40af;
   }
 
+  /* applies to pagination and other buttons marked disabled */
+  .disabled {
+    background-color: lightgray;
+    border-color: lightgrey !important;
+    box-shadow: none !important;
+    cursor: not-allowed;
+  }
+
 
   /* FORM FIELD STYLING, APPLIED ON LOGIN FORM TO START */
 
@@ -167,7 +175,7 @@ input:focus {
 /* NAV BAR STYLING FOR HEADER */
 
 .admin-header {
-  background-color: var(--background-color)
+  background-color: var(--background-color);
 }
 
 .admin-header .navbar-brand {
