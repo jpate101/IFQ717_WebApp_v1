@@ -98,11 +98,11 @@ const LeaveSidebar = ({ show, handleClose }) => {
         </Offcanvas.Header>
         <Offcanvas.Body>
             <div>
-            <img 
-                src={`${BASE_URL}${currentUser.photo}`}
-                alt={currentUser.name} 
-                style={{ width: '100px', height: '100px' }}
-            />
+                <img 
+                    src={currentUser.photo.startsWith('http') ? currentUser.photo : `${BASE_URL}${currentUser.photo}`}
+                    alt={currentUser.name} 
+                    style={{ width: '100px', height: '100px' }}
+                />
             <h3 className="mt-3">{currentUser.name}</h3>
             </div>
             <Form>
