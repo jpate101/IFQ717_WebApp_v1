@@ -27,9 +27,9 @@ function ClockInUserGrid() {
     { headerName: "Name", field: "name", sortable: true, filter: true },
     { headerName: "Active", field: "active", sortable: true, filter: true },
     { headerName: "Start date", field: "employment_start_date", sortable: true, filter: false },
-    { headerName: "1st Shift", field: "firstShift", sortable: true, filter: true },
+    //{ headerName: "1st / Next Shift", field: "firstShift", sortable: true, filter: true },
     { headerName: "Clockin Invited", field: "invite", sortable: true, filter: true },
-    { headerName: "1st Clockin", field: "firstClockin", sortable: true, filter: true },
+    { headerName: "1st Clockin", field: "first_clockin", sortable: true, filter: true },
     { headerName: "Reminder", field: "reminder", sortable: true, filter: true }
   ];
 
@@ -42,7 +42,7 @@ function ClockInUserGrid() {
         columnDefs={columns}
         rowData={rowData}
         pagination={true}
-        paginationPageSize={20}
+        paginationPageSize={10}
       />
     </div>
     </>
