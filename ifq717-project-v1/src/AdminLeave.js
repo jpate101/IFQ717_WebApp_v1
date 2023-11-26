@@ -11,7 +11,8 @@ import {
   updateLeaveRequest, 
   updateUnavailabilityRequest,
   getDefaultLeaveHours,
-  createTemporaryFile
+  createTemporaryFile,
+  deleteUnavailability,
 } from './API/Utilities';
 import dayjs from 'dayjs';
 import locale from 'antd/es/date-picker/locale/en_GB'
@@ -175,6 +176,17 @@ const LeaveRequestTabs = () => {
     }
   };
   
+  const handleDeleteUnavailability = async (unavailabilityId) => {
+    try {
+      await deleteUnavailability(unavailabilityId);
+      setPendingUnavailabilityRequests(prev => prev.filter(req => req.id !== unavailabilityId));
+      setApprovedUnavailabilityRequests(prev => prev.filter(req => req.id !== unavailabilityId));
+      setRejectedUnavailabilityRequests(prev => prev.filter(req => req.id !== unavailabilityId));
+    } catch (error) {
+      console.error('Error deleting unavailability:', error);
+    }
+  };
+
   const TabContent = ({
     activeTab, 
     pendingRequests, 
@@ -187,7 +199,7 @@ const LeaveRequestTabs = () => {
   
     const formatLeaveRequestCard = (request) => {
       const userName = findUserNameById(request.user_id);
-      const formattedUpdatedAt = dayjs.unix(request.updated_at).format('YYYY-MM-DD HH:mm:ss');
+      const formattedUpdatedAt = dayjs.unix(request.updated_at).format('YYYY-MM-DD');
       const formattedStartDate = dayjs(request.start).format('DD MMM YYYY');
       const formattedFinishDate = dayjs(request.finish).format('DD MMM YYYY');
       const period = formattedStartDate === formattedFinishDate
@@ -215,7 +227,8 @@ const LeaveRequestTabs = () => {
       return (
         <Card key={request.id} className="mb-3">
           <Card.Header>
-            {userName} - Requested on: {formattedUpdatedAt}
+            <div>{userName}</div>
+            <div>Requested on: {formattedUpdatedAt}</div>
           </Card.Header>
           <Card.Body className="less-column-padding">
             <div className="row">
@@ -250,26 +263,40 @@ const LeaveRequestTabs = () => {
               <div className="col-6">{request.reason}</div>
             </div>
           </Card.Body>
-            <Card.Footer className="d-flex justify-content-between">
-            {activeTab === 'pending' ? (
+          <Card.Footer className="d-flex justify-content-between">
+            {activeTab === 'pending' && (
               <>
                 <Button 
-                  className="approve-button "
+                  className="approve-button"
                   variant="success" 
                   onClick={() => handleApproveLeave(request.id)}
-                  >
-                    Approve
+                >
+                  Approve
                 </Button>
                 <Button 
-                className="decline-button"
-                variant="danger"
-                onClick={() => handleDeclineLeave(request.id)}
+                  className="decline-button"
+                  variant="danger"
+                  onClick={() => handleDeclineLeave(request.id)}
                 >
                   Decline
                 </Button>
               </>
-            ) : (
-              'Your request has been ' + request.status + '.'
+            )}
+            {activeTab === 'approved' && (
+              <div className="d-flex justify-content-end w-100">
+                <Button 
+                  className="decline-button"
+                  variant="danger"
+                  onClick={() => handleDeclineLeave(request.id)}
+                >
+                  Decline
+                </Button>
+              </div>
+            )}
+            {activeTab === 'rejected' && (
+              <span>
+                Your leave request has been {request.status}.
+              </span>
             )}
           </Card.Footer>
         </Card>
@@ -278,7 +305,7 @@ const LeaveRequestTabs = () => {
 
     const formatUnavailabilityRequestCard = (request) => {
       const userName = findUserNameById(request.user_id);
-      const formattedUpdatedAt = dayjs.unix(request.updated_at).format('YYYY-MM-DD HH:mm:ss');
+      const formattedUpdatedAt = dayjs.unix(request.updated_at).format('YYYY-MM-DD');
       console.log('request updated_at:', request.updated_at)
       const startDate = dayjs.unix(request.start).format('DD MMM YYYY');
       const finishDate = dayjs.unix(request.finish).format('DD MMM YYYY');
@@ -290,7 +317,22 @@ const LeaveRequestTabs = () => {
       return (
         <Card key={request.id} className="mb-3">
           <Card.Header>
-          {userName} - Requested on: {formattedUpdatedAt}
+            <div className="d-flex justify-content-between align-items-center">
+              <div>
+                <div>{userName}</div>
+                <div>Requested on: {formattedUpdatedAt}</div>
+              </div>
+              {(activeTab === 'pending' || activeTab === 'approved') && (
+                <Button 
+                  className="decline-button"
+                  variant="danger" 
+                  size="sm"
+                  onClick={() => handleDeleteUnavailability(request.id)}
+                >
+                  Delete
+                </Button>
+              )}
+            </div>
           </Card.Header>
           <Card.Body className="">
             <div className="row">
@@ -319,7 +361,7 @@ const LeaveRequestTabs = () => {
             </div>
           </Card.Body>
           <Card.Footer className="d-flex justify-content-between">
-            {activeTab === 'pending' ? (
+            {activeTab === 'pending' && (
               <>
                 <Button 
                   className="approve-button"
@@ -336,8 +378,22 @@ const LeaveRequestTabs = () => {
                   Decline
                 </Button>
               </>
-            ) : (
-              'Your unavailability request has been ' + request.status + '.'
+            )}
+            {activeTab === 'approved' && (
+              <div className="d-flex justify-content-end w-100">
+                <Button 
+                  className="decline-button"
+                  variant="danger"
+                  onClick={() => handleDeclineLeave(request.id)}
+                >
+                  Decline
+                </Button>
+              </div>
+            )}
+            {activeTab === 'rejected' && (
+              <span>
+                Your unavailability request has been {request.status}.
+              </span>
             )}
           </Card.Footer>
         </Card>
@@ -350,7 +406,7 @@ const LeaveRequestTabs = () => {
           <div className="tab-pane">
             <div className="leave-card-container">
               <div className="pending-leave-requests w-50 pr-2" >
-                <h3>Leave Requests</h3>
+                <h3 style={{ textAlign: 'center' }}>Leave Requests</h3>
                 {pendingRequests.length > 0 ? (
                   pendingRequests.map(formatLeaveRequestCard)
                 ) : (
@@ -358,7 +414,7 @@ const LeaveRequestTabs = () => {
                 )}
               </div>
               <div className="pending-unavailability-requests w-50 pr-2">
-                <h3>Unavailability Requests</h3>
+                <h3 style={{ textAlign: 'center' }}>Unavailability Requests</h3>
                 {pendingUnavailabilityRequests.length > 0 ? (
                   pendingUnavailabilityRequests.map(formatUnavailabilityRequestCard)
                 ) : (
@@ -373,7 +429,7 @@ const LeaveRequestTabs = () => {
           <div className="tab-pane">
             <div className="leave-card-container">
               <div className="pending-leave-requests w-50 pr-2" >
-                <h3>Leave Requests</h3>
+                <h3 style={{ textAlign: 'center' }}>Leave Requests</h3>
                 {approvedRequests.length > 0 ? (
                   approvedRequests.map(formatLeaveRequestCard)
                 ) : (
@@ -381,7 +437,7 @@ const LeaveRequestTabs = () => {
                 )}
               </div>
               <div className="pending-unavailability-requests w-50 pr-2">
-                <h3>Unavailability Requests</h3>
+                <h3 style={{ textAlign: 'center' }}>Unavailability Requests</h3>
                 {approvedUnavailabilityRequests.length > 0 ? (
                   approvedUnavailabilityRequests.map(formatUnavailabilityRequestCard)
                 ) : (
@@ -396,7 +452,7 @@ const LeaveRequestTabs = () => {
           <div className="tab-pane">
             <div className="leave-card-container">
               <div className="pending-leave-requests w-50 pr-2" >
-                <h3>Leave Requests</h3>
+                <h3  style={{ textAlign: 'center' }}>Leave Requests</h3>
                 {rejectedRequests.length > 0 ? (
                   rejectedRequests.map(formatLeaveRequestCard)
                 ) : (
@@ -404,7 +460,7 @@ const LeaveRequestTabs = () => {
                 )}
               </div>
               <div className="pending-unavailability-requests w-50 pr-2">
-                <h3>Unavailability Requests</h3>
+                <h3 style={{ textAlign: 'center' }}>Unavailability Requests</h3>
                 {rejectedUnavailabilityRequests.length > 0 ? (
                   rejectedUnavailabilityRequests.map(formatUnavailabilityRequestCard)
                 ) : (
