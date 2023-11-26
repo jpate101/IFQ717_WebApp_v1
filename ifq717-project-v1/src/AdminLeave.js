@@ -263,26 +263,40 @@ const LeaveRequestTabs = () => {
               <div className="col-6">{request.reason}</div>
             </div>
           </Card.Body>
-            <Card.Footer className="d-flex justify-content-between">
-            {activeTab === 'pending' ? (
+          <Card.Footer className="d-flex justify-content-between">
+            {activeTab === 'pending' && (
               <>
                 <Button 
-                  className="approve-button "
+                  className="approve-button"
                   variant="success" 
                   onClick={() => handleApproveLeave(request.id)}
-                  >
-                    Approve
+                >
+                  Approve
                 </Button>
                 <Button 
-                className="decline-button"
-                variant="danger"
-                onClick={() => handleDeclineLeave(request.id)}
+                  className="decline-button"
+                  variant="danger"
+                  onClick={() => handleDeclineLeave(request.id)}
                 >
                   Decline
                 </Button>
               </>
-            ) : (
-              'Your leave request has been ' + request.status + '.'
+            )}
+            {activeTab === 'approved' && (
+              <div className="d-flex justify-content-end w-100">
+                <Button 
+                  className="decline-button"
+                  variant="danger"
+                  onClick={() => handleDeclineLeave(request.id)}
+                >
+                  Decline
+                </Button>
+              </div>
+            )}
+            {activeTab === 'rejected' && (
+              <span>
+                Your leave request has been {request.status}.
+              </span>
             )}
           </Card.Footer>
         </Card>
@@ -347,7 +361,7 @@ const LeaveRequestTabs = () => {
             </div>
           </Card.Body>
           <Card.Footer className="d-flex justify-content-between">
-            {activeTab === 'pending' ? (
+            {activeTab === 'pending' && (
               <>
                 <Button 
                   className="approve-button"
@@ -364,8 +378,22 @@ const LeaveRequestTabs = () => {
                   Decline
                 </Button>
               </>
-            ) : (
-              'Your unavailability request has been ' + request.status + '.'
+            )}
+            {activeTab === 'approved' && (
+              <div className="d-flex justify-content-end w-100">
+                <Button 
+                  className="decline-button"
+                  variant="danger"
+                  onClick={() => handleDeclineLeave(request.id)}
+                >
+                  Decline
+                </Button>
+              </div>
+            )}
+            {activeTab === 'rejected' && (
+              <span>
+                Your unavailability request has been {request.status}.
+              </span>
             )}
           </Card.Footer>
         </Card>
@@ -401,7 +429,7 @@ const LeaveRequestTabs = () => {
           <div className="tab-pane">
             <div className="leave-card-container">
               <div className="pending-leave-requests w-50 pr-2" >
-                <h3>Leave Requests</h3>
+                <h3 style={{ textAlign: 'center' }}>Leave Requests</h3>
                 {approvedRequests.length > 0 ? (
                   approvedRequests.map(formatLeaveRequestCard)
                 ) : (
@@ -409,7 +437,7 @@ const LeaveRequestTabs = () => {
                 )}
               </div>
               <div className="pending-unavailability-requests w-50 pr-2">
-                <h3>Unavailability Requests</h3>
+                <h3 style={{ textAlign: 'center' }}>Unavailability Requests</h3>
                 {approvedUnavailabilityRequests.length > 0 ? (
                   approvedUnavailabilityRequests.map(formatUnavailabilityRequestCard)
                 ) : (
@@ -424,7 +452,7 @@ const LeaveRequestTabs = () => {
           <div className="tab-pane">
             <div className="leave-card-container">
               <div className="pending-leave-requests w-50 pr-2" >
-                <h3>Leave Requests</h3>
+                <h3  style={{ textAlign: 'center' }}>Leave Requests</h3>
                 {rejectedRequests.length > 0 ? (
                   rejectedRequests.map(formatLeaveRequestCard)
                 ) : (
@@ -432,7 +460,7 @@ const LeaveRequestTabs = () => {
                 )}
               </div>
               <div className="pending-unavailability-requests w-50 pr-2">
-                <h3>Unavailability Requests</h3>
+                <h3 style={{ textAlign: 'center' }}>Unavailability Requests</h3>
                 {rejectedUnavailabilityRequests.length > 0 ? (
                   rejectedUnavailabilityRequests.map(formatUnavailabilityRequestCard)
                 ) : (
