@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 const API_BASE_URL = 'https://my.tanda.co/api/v2';
 const getHeaders = () => {
   const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, "$1");
-  console.log('token:', token)
+  //console.log('token:', token)
   return {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${token}`
@@ -546,7 +546,7 @@ export const getLeaveTypesForUser = async (userId) => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const leaveTypes = await response.json();
-    console.log('Leave types for user:', leaveTypes);
+    //console.log('Leave types for user:', leaveTypes);
     return leaveTypes;
   } catch (error) {
     console.error('Error fetching leave types for user:', error);
@@ -590,7 +590,7 @@ export const getCurrentUser = async () => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const userData = await response.json();
-    console.log('Current user data:', userData);
+    //console.log('Current user data:', userData);
     return userData;
   } catch (error) {
     console.error('Error fetching current user data:', error);
@@ -751,7 +751,8 @@ export const createTemporaryFile = async (file, contentTypes) => {
     formData.append('file', file);
     
     if (contentTypes) {
-      formData.append('content_types', contentTypes);
+      const contentTypesString = Array.isArray(contentTypes) ? contentTypes.join(',') : contentTypes;
+      formData.append('content_types', contentTypesString);
     }
 
     const headers = getHeaders();
