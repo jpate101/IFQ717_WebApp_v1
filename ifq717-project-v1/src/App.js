@@ -18,6 +18,8 @@ import EmployeeRoster from './Employee/EmployeeRoster';
 import EmployeeDashboard from './Employee/EmployeeDashboard';
 import AdminLeave from './AdminLeave';
 import ClockIn from './ClockIn/Clockin';
+import Compliance from './Compliance/Compliance';
+import AwardTemplateOptions from './Compliance/AwardTemplateOptions';
 
 export default function App() {
   const [cookies, setCookie, removeCookie] = useCookies(['token']);
@@ -62,6 +64,15 @@ export default function App() {
               element={<PrivateRoute element={<ClockIn />}
               authorised={isLoggedIn} />}
             />
+            <Route
+              path="/Compliance"
+              element={<PrivateRoute element={<Compliance />}
+              authorised={isLoggedIn} />}
+            />
+            <Route 
+              path="/award_templates/:id" 
+              element={<AwardTemplateOptions />} 
+              authorised={isLoggedIn} />
             <Route
               path="/root/EmployeeManagement/*" 
               element={<PrivateRoute element={<EmployeeManagement />}
