@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Dropdown, Card, Button } from 'react-bootstrap';
-import { DatePicker } from 'antd';
+import { DatePicker, Upload, message, Button as AntButton} from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
 import LeaveSidebar from './Components/Leave/LeaveSidebar';
 import UnavailabilitySidebar from './Components/Leave/UnavailabilitySidebar';
 import { 
@@ -8,7 +9,10 @@ import {
   getLeaveList, 
   getUnavailabilityList, 
   updateLeaveRequest, 
-  updateUnavailabilityRequest 
+  updateUnavailabilityRequest,
+  getDefaultLeaveHours,
+  createTemporaryFile,
+  deleteUnavailability,
 } from './API/Utilities';
 import dayjs from 'dayjs';
 import locale from 'antd/es/date-picker/locale/en_GB'
@@ -38,6 +42,8 @@ const LeaveRequestTabs = () => {
   const [pendingUnavailabilityRequests, setPendingUnavailabilityRequests] = useState([]);
   const [approvedUnavailabilityRequests, setApprovedUnavailabilityRequests] = useState([]);
   const [rejectedUnavailabilityRequests, setRejectedUnavailabilityRequests] = useState([]);
+  const [leaveHours, setLeaveHours] = useState({});
+  const [fileUploads, setFileUploads] = useState({});
   const [dateRange, setDateRange] = useState([
     dayjs(),
     dayjs().add(6, 'months')
@@ -94,6 +100,17 @@ const LeaveRequestTabs = () => {
       .catch(error => console.error(`Error fetching user data:`, error));
     }, [activeTab, dateRange]);
   
+    useEffect(() => {
+      pendingRequests.forEach(async (request) => {
+        try {
+          const hours = await getDefaultLeaveHours(request.user_id, request.start, request.finish, request.leave_type);
+          setLeaveHours(prevHours => ({ ...prevHours, [request.id]: hours }));
+        } catch (error) {
+          console.error(`Error fetching leave hours for request ${request.id}:`, error);
+        }
+      });
+    }, [pendingRequests]);
+
   const findUserNameById = (userId) => {
     const user = users.find(u => u.id === userId);
     return user ? user.name : 'Unknown User';
@@ -158,6 +175,17 @@ const LeaveRequestTabs = () => {
       console.error(`Error declining unavailability request:`, error);
     }
   };
+  
+  const handleDeleteUnavailability = async (unavailabilityId) => {
+    try {
+      await deleteUnavailability(unavailabilityId);
+      setPendingUnavailabilityRequests(prev => prev.filter(req => req.id !== unavailabilityId));
+      setApprovedUnavailabilityRequests(prev => prev.filter(req => req.id !== unavailabilityId));
+      setRejectedUnavailabilityRequests(prev => prev.filter(req => req.id !== unavailabilityId));
+    } catch (error) {
+      console.error('Error deleting unavailability:', error);
+    }
+  };
 
   const TabContent = ({
     activeTab, 
@@ -171,17 +199,36 @@ const LeaveRequestTabs = () => {
   
     const formatLeaveRequestCard = (request) => {
       const userName = findUserNameById(request.user_id);
-      const formattedUpdatedAt = dayjs.unix(request.updated_at).format('YYYY-MM-DD HH:mm:ss');
+      const formattedUpdatedAt = dayjs.unix(request.updated_at).format('YYYY-MM-DD');
       const formattedStartDate = dayjs(request.start).format('DD MMM YYYY');
       const formattedFinishDate = dayjs(request.finish).format('DD MMM YYYY');
       const period = formattedStartDate === formattedFinishDate
       ? formattedStartDate
       : `${formattedStartDate} - ${formattedFinishDate}`;
 
+      const uploadProps = {
+        customRequest({ file, onSuccess, onError }) {
+          createTemporaryFile(file, "image/jpeg,image/jpg,image/png,application/pdf")
+            .then(response => {
+              const file_id = response;
+              setFileUploads(prev => ({ ...prev, [request.id]: file_id }));
+              onSuccess(response, file);
+              message.success({ content: `${file.name} file uploaded successfully`, key: 'upload' });
+            })
+            .catch(error => {
+              onError(error);
+              message.error({ content: `${file.name} file upload failed.`, key: 'upload' });
+            });
+        },
+        showUploadList: false,
+      };
+       
+
       return (
         <Card key={request.id} className="mb-3">
           <Card.Header>
-            {userName} - Requested on: {formattedUpdatedAt}
+            <div>{userName}</div>
+            <div>Requested on: {formattedUpdatedAt}</div>
           </Card.Header>
           <Card.Body className="less-column-padding">
             <div className="row">
@@ -194,6 +241,7 @@ const LeaveRequestTabs = () => {
             </div>
             <div className="row">
               <div className="col-6 font-weight-bold">Paid Hours:</div>
+              <div className="col-6">{leaveHours[request.id] || 'Loading...'}</div>
               <div className="col-6">{}</div>
             </div>
             <div className="row">
@@ -201,34 +249,54 @@ const LeaveRequestTabs = () => {
               <div className="col-6">{}</div>
             </div>
             <div className="row">
-              <div className="col-6 font-weight-bold">Document</div>
-              <div className="col-6">{}</div>
-            </div>
+              <div className="col-6 font-weight-bold">Document:</div>
+              <div className="col-6">
+                <Upload {...uploadProps}>
+                  <AntButton size="sm" variant="primary">
+                    <UploadOutlined /> {fileUploads[request.id] ? 'Replace file' : 'Upload'}
+                  </AntButton>
+                </Upload>
+              </div>
+              </div>
             <div className="row">
               <div className="col-6 font-weight-bold">Reason:</div>
               <div className="col-6">{request.reason}</div>
             </div>
           </Card.Body>
-            <Card.Footer className="d-flex justify-content-between">
-            {activeTab === 'pending' ? (
+          <Card.Footer className="d-flex justify-content-between">
+            {activeTab === 'pending' && (
               <>
                 <Button 
-                  className="approve-button "
+                  className="approve-button"
                   variant="success" 
                   onClick={() => handleApproveLeave(request.id)}
-                  >
-                    Approve
+                >
+                  Approve
                 </Button>
                 <Button 
-                className="decline-button"
-                variant="danger"
-                onClick={() => handleDeclineLeave(request.id)}
+                  className="decline-button"
+                  variant="danger"
+                  onClick={() => handleDeclineLeave(request.id)}
                 >
                   Decline
                 </Button>
               </>
-            ) : (
-              'Your request has been ' + request.status + '.'
+            )}
+            {activeTab === 'approved' && (
+              <div className="d-flex justify-content-end w-100">
+                <Button 
+                  className="decline-button"
+                  variant="danger"
+                  onClick={() => handleDeclineLeave(request.id)}
+                >
+                  Decline
+                </Button>
+              </div>
+            )}
+            {activeTab === 'rejected' && (
+              <span>
+                Your leave request has been {request.status}.
+              </span>
             )}
           </Card.Footer>
         </Card>
@@ -237,7 +305,7 @@ const LeaveRequestTabs = () => {
 
     const formatUnavailabilityRequestCard = (request) => {
       const userName = findUserNameById(request.user_id);
-      const formattedUpdatedAt = dayjs.unix(request.updated_at).format('YYYY-MM-DD HH:mm:ss');
+      const formattedUpdatedAt = dayjs.unix(request.updated_at).format('YYYY-MM-DD');
       console.log('request updated_at:', request.updated_at)
       const startDate = dayjs.unix(request.start).format('DD MMM YYYY');
       const finishDate = dayjs.unix(request.finish).format('DD MMM YYYY');
@@ -249,7 +317,22 @@ const LeaveRequestTabs = () => {
       return (
         <Card key={request.id} className="mb-3">
           <Card.Header>
-          {userName} - Requested on: {formattedUpdatedAt}
+            <div className="d-flex justify-content-between align-items-center">
+              <div>
+                <div>{userName}</div>
+                <div>Requested on: {formattedUpdatedAt}</div>
+              </div>
+              {(activeTab === 'pending' || activeTab === 'approved') && (
+                <Button 
+                  className="decline-button"
+                  variant="danger" 
+                  size="sm"
+                  onClick={() => handleDeleteUnavailability(request.id)}
+                >
+                  Delete
+                </Button>
+              )}
+            </div>
           </Card.Header>
           <Card.Body className="">
             <div className="row">
@@ -278,7 +361,7 @@ const LeaveRequestTabs = () => {
             </div>
           </Card.Body>
           <Card.Footer className="d-flex justify-content-between">
-            {activeTab === 'pending' ? (
+            {activeTab === 'pending' && (
               <>
                 <Button 
                   className="approve-button"
@@ -295,8 +378,22 @@ const LeaveRequestTabs = () => {
                   Decline
                 </Button>
               </>
-            ) : (
-              'Your unavailability request has been ' + request.status + '.'
+            )}
+            {activeTab === 'approved' && (
+              <div className="d-flex justify-content-end w-100">
+                <Button 
+                  className="decline-button"
+                  variant="danger"
+                  onClick={() => handleDeclineLeave(request.id)}
+                >
+                  Decline
+                </Button>
+              </div>
+            )}
+            {activeTab === 'rejected' && (
+              <span>
+                Your unavailability request has been {request.status}.
+              </span>
             )}
           </Card.Footer>
         </Card>
@@ -309,7 +406,7 @@ const LeaveRequestTabs = () => {
           <div className="tab-pane">
             <div className="leave-card-container">
               <div className="pending-leave-requests w-50 pr-2" >
-                <h3>Leave Requests</h3>
+                <h3 style={{ textAlign: 'center' }}>Leave Requests</h3>
                 {pendingRequests.length > 0 ? (
                   pendingRequests.map(formatLeaveRequestCard)
                 ) : (
@@ -317,7 +414,7 @@ const LeaveRequestTabs = () => {
                 )}
               </div>
               <div className="pending-unavailability-requests w-50 pr-2">
-                <h3>Unavailability Requests</h3>
+                <h3 style={{ textAlign: 'center' }}>Unavailability Requests</h3>
                 {pendingUnavailabilityRequests.length > 0 ? (
                   pendingUnavailabilityRequests.map(formatUnavailabilityRequestCard)
                 ) : (
@@ -332,7 +429,7 @@ const LeaveRequestTabs = () => {
           <div className="tab-pane">
             <div className="leave-card-container">
               <div className="pending-leave-requests w-50 pr-2" >
-                <h3>Leave Requests</h3>
+                <h3 style={{ textAlign: 'center' }}>Leave Requests</h3>
                 {approvedRequests.length > 0 ? (
                   approvedRequests.map(formatLeaveRequestCard)
                 ) : (
@@ -340,7 +437,7 @@ const LeaveRequestTabs = () => {
                 )}
               </div>
               <div className="pending-unavailability-requests w-50 pr-2">
-                <h3>Unavailability Requests</h3>
+                <h3 style={{ textAlign: 'center' }}>Unavailability Requests</h3>
                 {approvedUnavailabilityRequests.length > 0 ? (
                   approvedUnavailabilityRequests.map(formatUnavailabilityRequestCard)
                 ) : (
@@ -355,7 +452,7 @@ const LeaveRequestTabs = () => {
           <div className="tab-pane">
             <div className="leave-card-container">
               <div className="pending-leave-requests w-50 pr-2" >
-                <h3>Leave Requests</h3>
+                <h3  style={{ textAlign: 'center' }}>Leave Requests</h3>
                 {rejectedRequests.length > 0 ? (
                   rejectedRequests.map(formatLeaveRequestCard)
                 ) : (
@@ -363,7 +460,7 @@ const LeaveRequestTabs = () => {
                 )}
               </div>
               <div className="pending-unavailability-requests w-50 pr-2">
-                <h3>Unavailability Requests</h3>
+                <h3 style={{ textAlign: 'center' }}>Unavailability Requests</h3>
                 {rejectedUnavailabilityRequests.length > 0 ? (
                   rejectedUnavailabilityRequests.map(formatUnavailabilityRequestCard)
                 ) : (
