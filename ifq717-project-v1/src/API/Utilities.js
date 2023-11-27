@@ -777,3 +777,10 @@ export const createTemporaryFile = async (file, contentTypes) => {
     throw error;
   }
 };
+
+// Gets current user role
+export const getCurrentUserRole = async () => {
+  const userData = await getCurrentUser();
+  const isManager = userData.permissions.includes('manager');
+  return isManager ? 'manager' : 'employee';
+};
