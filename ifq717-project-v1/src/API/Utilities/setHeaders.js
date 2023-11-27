@@ -1,9 +1,9 @@
 // Set headers for use on the Tanda API, requiring token. 
 
-import GetToken from './GetToken';
+import getUserToken from './getUserToken';
 
 const setHeaders = () => {
-  const token = GetToken();
+  const token = getUserToken();
   return {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${token}`

@@ -1,5 +1,49 @@
-/* CSS specifically for the Login Screen */
+/* CSS specifically for the Dash Screen */
+
 
 .dash-h1 {
     color: --var(primary-color);
 }
+
+.launchpad-card {
+    background-color: var(--secondary-color);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    height: 90px;
+    font-size: 3rem; 
+    font-style: italic;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold; /* Bold font */
+    -webkit-text-stroke: 1px var(--accent) 
+    
+  }
+
+  .task-progress-bar {
+    background-color: var(--button-green);
+    border-radius: 5px;
+    display: flex;
+    color: black;
+    height: 1.56rem;
+    font-size: 4rem; 
+    font-weight: bold; 
+    position: relative;
+  }
+
+  .progress-bar-background {
+    background-color: var(--background-color);
+    border-radius: 5px;
+    border: 1px solid lightgray;
+    height: 1.7rem;
+    position: relative;
+    }
+
+    .rocket-icon-container {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    }
+  

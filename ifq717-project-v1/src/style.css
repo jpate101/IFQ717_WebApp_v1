@@ -9,7 +9,8 @@
   --button-green: #93c732;
   --button-green-hover: #7fb329;
   --button-green-active: #6ea127;
-  --accent: rgba(50, 157, 199);
+  --accent: #3fafd7;
+  --dark-color: #104860;
   --subtle-highlight: rgba(50, 157, 199, 0.1);
 }
 
@@ -50,8 +51,8 @@ h3 {
 }
   
 input {
-    color: rgb(30, 64, 175); /* Change to blue text color */
-    border: 1px solid rgb(30, 64, 175); /* Add blue outline */
+    color: var(--secondary-color); /* Change to blue text color */
+    border: 1px solid var(--secondary-color); /* Add blue outline */
     font-size: 16px; /* Adjust font size as needed */
     padding: 10px;
     margin: 10px; 
@@ -62,7 +63,7 @@ input {
   
 input:focus {
     color: rgb(249, 250, 251);
-    background-color: rgb(30, 64, 175);
+    background-color: var(--secondary-color);
   }
   
   
@@ -85,12 +86,12 @@ input:focus {
 .navEM li {
     list-style-type: none;
     padding: 8px; /* Adjust padding as needed */
-    border: 1px solid rgb(30, 64, 175); /* Blue border when not highlighted */
+    border: 1px solid var(--primary-color); /* Blue border when not highlighted */
     border-radius: 5px; /* Rounded edges */
     margin-bottom: 5px; /* Add spacing between list items */
     text-align: center; /* Center text horizontally */
     transition: background-color 0.3s, color 0.3s; /* Smooth color transition */
-    background-color: rgb(30, 64, 175); /* Blue background when not highlighted */
+    background-color: var(--primary-color); /* Blue background when not highlighted */
     color: rgb(249, 250, 251); /* White text when not highlighted */
     font-size: 16px; /* Adjust the font size */
     font-weight: bold; /* Add font-weight for bold text */
@@ -98,7 +99,7 @@ input:focus {
 
 .navEM li:hover {
     background-color: rgb(249, 250, 251); /* White background on hover */
-    color: rgb(30, 64, 175); /* Blue text on hover */
+    color: var(--primary-color); /* Blue text on hover */
 }
 
 .left-column-nav-EM {
@@ -127,6 +128,14 @@ input:focus {
   .li-EM p {
     font-weight: bold;
     color:  #1e40af;
+  }
+
+  /* applies to pagination and other buttons marked disabled */
+  .disabled {
+    background-color: lightgray;
+    border-color: lightgrey !important;
+    box-shadow: none !important;
+    cursor: not-allowed;
   }
 
 
@@ -166,7 +175,7 @@ input:focus {
 /* NAV BAR STYLING FOR HEADER */
 
 .admin-header {
-  background-color: var(--background-color)
+  background-color: var(--background-color);
 }
 
 .admin-header .navbar-brand {
@@ -178,16 +187,22 @@ input:focus {
 .admin-header .nav-link:active,
 .admin-header .nav-link .show,
 #navbarSupportedContent > div > a.nav-link.active {
-  color: var(--secondary-color);
+  color: var(--dark-color);
 }
 
 .admin-header .nav-link:not(.active):not(:hover) {
-  color: var(--primary-color);
+  color: var(--background-color);
 }
 
 .admin-header-logo {
   height: 50px;
   padding: 10px;
+}
+
+.tanda-launchpad-header {
+  background-color: var(--accent);
+  align-items: center;
+  font-size: small;
 }
 
 
@@ -247,7 +262,5 @@ input:focus {
     padding-top: 5px;
   }
   
-
-
   }
   
