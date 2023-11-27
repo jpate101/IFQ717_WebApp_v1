@@ -17,10 +17,23 @@ import EmployeeLeave from './Employee/EmployeeLeave';
 import EmployeeRoster from './Employee/EmployeeRoster';
 import EmployeeDashboard from './Employee/EmployeeDashboard';
 import AdminLeave from './AdminLeave';
+import { getCurrentUserRole } from './API/Utilities';
+import RoleLoginRedirect from './Components/RoleLoginRedirect';
 
 export default function App() {
   const [cookies, setCookie, removeCookie] = useCookies(['token']);
   const [isLoggedIn, setIsLoggedIn] = useState(!!cookies.token);
+  const [userRole, setUserRole] = useState(null);
+
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      if (isLoggedIn) {
+        const role = await getCurrentUserRole();
+        setUserRole(role);
+      }
+    };
+    fetchUserRole();
+  }, [isLoggedIn]);
 
   useEffect(() => {
     setIsLoggedIn(!!cookies.token);
@@ -34,8 +47,14 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      <RoleLoginRedirect isLoggedIn={isLoggedIn} userRole={userRole} /> 
       <div className="d-flex flex-column bg-light" id="wrapper">
-        <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} handleLogOut={handleLogOut} />
+        <Header 
+          isLoggedIn={isLoggedIn} 
+          setIsLoggedIn={setIsLoggedIn} 
+          handleLogOut={handleLogOut} 
+          userRole={userRole}
+        />
         <Container fluid className="pt-2">
           <Routes>
             <Route
@@ -51,56 +70,84 @@ export default function App() {
             <Route path="/login"
               element={<Login setIsLoggedIn={setIsLoggedIn} />}
             />
-            <Route
-              path="/dashboard"
-              element={<PrivateRoute element={<Dashboard />}
-              authorised={isLoggedIn} />}
-            />
-            <Route
-              path="/root/EmployeeManagement/*" 
-              element={<PrivateRoute element={<EmployeeManagement />}
-              authorised={isLoggedIn} />}
-            />
-            <Route
-              path="/roster"
-              element={<PrivateRoute element={<Roster />}
-              authorised={isLoggedIn} />}
-            />
-            <Route
-              path="/Timesheets/approveTimesheets"
-              element={<PrivateRoute element={<ApproveTimesheets />}
-              authorised={isLoggedIn} />}
-            />
-            <Route
-              path="Timesheets/:userId"
-              element={<PrivateRoute element={<TimesheetForUser />}
-              authorised={isLoggedIn} />}
-            />
-            <Route
-              path="/Timesheets/exportTimesheets"
-              element={<PrivateRoute element={<ExportTimesheets />}
-              authorised={isLoggedIn} />}
-            />
-            <Route
-              path="/Leave"
-              element={<PrivateRoute element={<AdminLeave />}
-              authorised={isLoggedIn} />}
-            />
-            <Route
-              path="/EmployeeLeave"
-              element={<PrivateRoute element={<EmployeeLeave />}
-              authorised={isLoggedIn} />}
-            />
-            <Route
-              path="/EmployeeDashboard"
-              element={<PrivateRoute element={<EmployeeDashboard />}
-              authorised={isLoggedIn} />}
-            />
-            <Route
-              path="/EmployeeRoster"
-              element={<PrivateRoute element={<EmployeeRoster />}
-              authorised={isLoggedIn} />}
-            />
+            {userRole === 'manager' && (
+              <>
+                <Route
+                  path="/dashboard"
+                  element={<PrivateRoute element={<Dashboard />}
+                  authorised={isLoggedIn}
+                  userRole={userRole}
+                  requiredRole='manager'/>}
+                />
+                <Route
+                path="/root/EmployeeManagement/*" 
+                element={<PrivateRoute element={<EmployeeManagement />}
+                authorised={isLoggedIn}
+                userRole={userRole}
+                requiredRole='manager' />}
+              />
+              <Route
+                path="/roster"
+                element={<PrivateRoute element={<Roster />}
+                authorised={isLoggedIn}
+                userRole={userRole}
+                requiredRole='manager'/>}
+              />
+              <Route
+                path="/Timesheets/approveTimesheets"
+                element={<PrivateRoute element={<ApproveTimesheets />}
+                authorised={isLoggedIn}
+                userRole={userRole}
+                requiredRole='manager'/>}
+              />
+              <Route
+                path="Timesheets/:userId"
+                element={<PrivateRoute element={<TimesheetForUser />}
+                authorised={isLoggedIn} 
+                userRole={userRole}
+                requiredRole='manager'/>}
+              />
+              <Route
+                path="/Timesheets/exportTimesheets"
+                element={<PrivateRoute element={<ExportTimesheets />}
+                authorised={isLoggedIn} 
+                userRole={userRole}
+                requiredRole='manager'/>}
+              />
+              <Route
+                path="/Leave"
+                element={<PrivateRoute element={<AdminLeave />}
+                authorised={isLoggedIn} 
+                userRole={userRole}
+                requiredRole='manager'/>}
+              />
+            </>
+            )}
+            {userRole === 'employee' && (
+              <>
+                <Route
+                  path="/EmployeeLeave"
+                  element={<PrivateRoute element={<EmployeeLeave />}
+                  authorised={isLoggedIn} 
+                  userRole={userRole}
+                  requiredRole='employee'/>}
+                />
+                <Route
+                  path="/EmployeeDashboard"
+                  element={<PrivateRoute element={<EmployeeDashboard />}
+                  authorised={isLoggedIn} 
+                  userRole={userRole}
+                  requiredRole='employee'/>}
+                />
+                <Route
+                  path="/EmployeeRoster"
+                  element={<PrivateRoute element={<EmployeeRoster />}
+                  authorised={isLoggedIn} 
+                  userRole={userRole}
+                  requiredRole='employee'/>}
+                />
+              </>
+            )}
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </Container>
