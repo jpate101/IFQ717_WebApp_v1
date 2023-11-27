@@ -3,10 +3,10 @@
 import React from 'react';
 import { Navigate, Route } from 'react-router-dom';
 
-const PrivateRoute = ({ element, authorised, fallbackPath }) => {
+const PrivateRoute = ({ element, authorised, requiredRole, userRole, fallbackPath }) => {
   const defaultErrorMsg = "Please login to access the Tanda Launchpad";
   //const fallbackPath = "/login";
-  if (authorised) {
+  if (authorised && (!requiredRole || requiredRole === userRole)) {
     return element;
   } else {
     // if fallback not in app.js then default to '/login'
