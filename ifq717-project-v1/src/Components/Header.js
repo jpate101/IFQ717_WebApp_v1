@@ -1,5 +1,5 @@
 import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
-import { Link, useResolvedPath, useMatch, useLocation } from "react-router-dom";
+import { Link, useResolvedPath, useMatch, useLocation, NavLink } from "react-router-dom";
 import '../style.css';
 import './../Resources/logo-navy.svg';
 
@@ -9,7 +9,7 @@ function HighlightLink(props) {
   return <Nav.Link {...props} active={match} />;
 }
 
-export default function Header({ isLoggedIn, setIsLoggedIn }) {
+export default function Header({ isLoggedIn, setIsLoggedIn, userRole }) {
   console.log("the header isLoggedIn state is:", isLoggedIn);
   const handleLogOut = () => {
     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
@@ -34,10 +34,10 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
           <Navbar.Toggle aria-controls="navbarSupportedContent" />
           <Navbar.Collapse id="navbarSupportedContent">
             <Nav className="me-auto">
-              <HighlightLink to={isLoggedIn ? '/dashboard' : '/'} as={Link}>
-              {isLoggedIn ? 'Dashboard' : 'Home'}
+            <HighlightLink to={isLoggedIn ? (userRole === 'manager' ? '/dashboard' : '/EmployeeDashboard') : '/'} as={Link}>
+            {isLoggedIn ? (userRole === 'manager' ? 'Dashboard' : 'Employee Dashboard - WIP') : 'Home'}
               </HighlightLink>
-              {isLoggedIn ? (
+              {isLoggedIn && userRole === 'manager' && (
                 <>
                   <HighlightLink to="root/EmployeeManagement/" as={Link}>
                     Employee Management
@@ -48,28 +48,37 @@ export default function Header({ isLoggedIn, setIsLoggedIn }) {
                   <HighlightLink to="/roster" as={Link}>
                     Create schedules
                   </HighlightLink>
-                  <HighlightLink to="/EmployeeLeave" as={Link}>
-                    Leave, for employee log in
-                  </HighlightLink>
                   <HighlightLink to="/Leave" as={Link}>
-                    Leave, for admin log in
+                    Leave
                   </HighlightLink>
                     {/* Need to fix spacing issue here */}
                   <NavDropdown title="Timesheets" id="timesheets-nav-dropdown" className="timesheets-nav-dropdown">
-                    <NavDropdown.Item href="/Timesheets/approveTimesheets" className="timesheets-nav-dropdown text-primary">
+                    <NavDropdown.Item as={NavLink} to="/Timesheets/approveTimesheets" className="timesheets-nav-dropdown text-primary">
                       Approve Timesheets
                     </NavDropdown.Item>
-                    <NavDropdown.Item href="/Timesheets/exportTimesheets" className="timesheets-nav-dropdown text-primary">
+                    <NavDropdown.Item as={NavLink} to="/Timesheets/exportTimesheets" className="timesheets-nav-dropdown text-primary">
                       Export Timesheets
                     </NavDropdown.Item>
                   </NavDropdown>
-                  <HighlightLink to="/" as={Link} onClick={handleLogOut} className="ml-32">
-                    Logout - W.I.P
-                  </HighlightLink>
                 </>
+              )}
+              {isLoggedIn && userRole === 'employee' && (
+                <>
+                  <HighlightLink to="/EmployeeLeave" as={Link}>
+                    Leave
+                  </HighlightLink>
+                  <HighlightLink to="/EmployeeRoster" as={Link}>
+                    Roster - WIP
+                  </HighlightLink>    
+                </>
+              )}
+              {isLoggedIn ? (
+                <HighlightLink to="/" as={Link} onClick={handleLogOut}>
+                  Logout
+                </HighlightLink>
               ) : (
                 <HighlightLink to="/login" as={Link}>
-                  Login 
+                  Login
                 </HighlightLink>
               )}
             </Nav>
