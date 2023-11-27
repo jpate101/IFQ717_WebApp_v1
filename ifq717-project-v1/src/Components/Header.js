@@ -23,7 +23,7 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }) {
   return (
     <header className="admin-header bg-background text-primary">
       <Navbar expand="md" >
-        <Container fluid>
+        <Container fluid className="tanda-launchpad-header">
           <Navbar.Brand href="#" className="d-flex align-items-center">
             <img
               src={require("./../Resources/logo-navy.svg").default}
@@ -42,14 +42,17 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }) {
                   <HighlightLink to="root/EmployeeManagement/" as={Link}>
                     Employee Management
                   </HighlightLink>
-                  <HighlightLink to="/onboard-users" as={Link}>
-                    Onboard users
-                  </HighlightLink>
                   <HighlightLink to="/roster" as={Link}>
                     Create schedules
                   </HighlightLink>
                   <HighlightLink to="/Leave" as={Link}>
                     Leave
+                  </HighlightLink>
+                  <HighlightLink to="/ClockIn" as={Link}>
+                    Clockins
+                  </HighlightLink>
+                  <HighlightLink to="/Compliance" as={Link}>
+                    Compliance
                   </HighlightLink>
                     {/* Need to fix spacing issue here */}
                   <NavDropdown title="Timesheets" id="timesheets-nav-dropdown" className="timesheets-nav-dropdown">

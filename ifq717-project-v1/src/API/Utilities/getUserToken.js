@@ -1,8 +1,8 @@
 // Fetch the token from the cookie
 
-function GetToken() {
+function getUserToken() {
     const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=s*([^;]*).*$)|^.*$/, "$1");
     return token;
   }
   
-  export default GetToken;
+  export default getUserToken;

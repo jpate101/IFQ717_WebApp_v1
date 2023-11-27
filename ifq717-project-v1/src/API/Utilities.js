@@ -93,6 +93,24 @@ export const getSchedulesByUser = async (userIds, fromDate, toDate) => {
   }
 };
 
+export const getUserSchedule = async (user, fromDate, toDate) => {
+  const headers = getHeaders(); 
+  //const userIdsParam = userIds.join(',');
+  const url = `${API_BASE_URL}/schedules?user_ids=${user}&from=${fromDate}&to=${toDate}&show_costs=true&include_names=false`;
+
+  try {
+    const response = await fetch(url, { method: 'GET', headers });
+    console.log('schedule response', response);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching schedules:', error);
+    return []; 
+  }
+};
+
 
 // Fetches info about all visible users
 export const getUsers = async (employeeId = null) => {
@@ -131,7 +149,14 @@ export const getUsers = async (employeeId = null) => {
       id: user.id,
       name: user.name,
       hourly_rate: user.hourly_rate,
-      department_ids: user.department_ids
+      department_ids: user.department_ids,
+      date_of_birth: user.date_of_birth,
+      employment_start_date: user.employment_start_date,
+      active: user.active,
+      email: user.email,
+      phone: user.phone,
+      passcode: user.passcode,
+      role: user.user_levels
     }));
 
   } catch (error) {
@@ -397,10 +422,10 @@ export const getLocations = async () => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const locationsData = await response.json();
-    console.log('Locations data received:', locationsData);
+    const locations = await response.json();
+    console.log('Locations data received:', locations);
 
-    return locationsData;
+    return locations;
   
   } catch (error) {
     console.error('Error fetching locations:', error);
@@ -724,6 +749,73 @@ export const updateUnavailabilityRequest = async (unavailabilityId, updateData) 
   }
 };
 
+// Get clockin information for a user and given date range 
+
+export const getClockInsByUser = async (userId, fromDate, toDate) => {
+  const headers = getHeaders();
+  const url = `${API_BASE_URL}/api/v2/clockins?user_id=${userId}&from=${fromDate}&to=${toDate}`;
+
+  try {
+    const response = await fetch(url, { method: 'GET', headers });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching clock-ins:', error);
+    return [];
+  }
+};
+
+// Get Awards api/v2/award_templates/available
+
+export const getAwards = async () => {
+  const headers = getHeaders();
+  const url = `${API_BASE_URL}/award_templates/available`;
+
+  try {
+    const response = await fetch(url, { method: 'GET', headers });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching awards:', error);
+    return [];
+  }
+}
+
+// enable award (POST award template)
+
+export const enableAward = async (awardTemplateId, extractLeaveTypes, replaceLeaveTypes) => {
+  const headers = {
+    ...getHeaders(),
+    'Content-Type': 'application/json'
+  };
+  const url = `${API_BASE_URL}/api/v2/award_templates`;
+  const body = {
+    award_template_id: awardTemplateId,
+    extract_leave_types: extractLeaveTypes,
+    replace_leave_types: replaceLeaveTypes
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body)
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error enabling award:', error);
+    return null;
+  }
+}
+
+
 // Get leave balance by ID
 
 export const getLeaveBalance = async (leaveBalanceId) => {
@@ -784,3 +876,4 @@ export const getCurrentUserRole = async () => {
   const isManager = userData.permissions.includes('manager');
   return isManager ? 'manager' : 'employee';
 };
+
