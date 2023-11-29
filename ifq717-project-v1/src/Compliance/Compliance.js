@@ -6,6 +6,7 @@ import '../../src/style.css';
 import '../Dashboard/dashboard.css';
 import RocketIcon from '../Components/Icons/RocketIcon';
 import AwardList from '../Components/AwardsList/AwardsList';
+import EmployeesAwardsList from '../Components/EmployeesAwardList/EmployeeAwardList';
 
 export default function Compliance() {
   const token = getUserToken();
@@ -29,8 +30,8 @@ export default function Compliance() {
             </div>
             <div className="bg-white rounded-lg w-full md:w-auto mx-2 md:mx-0">
               <div className="p-1">
-              <h2 className="text-lg  mb-2 primary text-center">Employee Award Compliance</h2>
-                
+              <h2 className="text-lg  mb-2 primary text-center">Manage Employee's Awards</h2>
+                <EmployeesAwardsList />
               </div>
             </div>
           </div>
