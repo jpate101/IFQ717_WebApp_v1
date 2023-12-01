@@ -923,36 +923,6 @@ function EmployeeManagement() {
         }
         console.log(updatedData);
 
-        /*if (updatedData.name === '') {
-            delete updatedData.name;
-        }
-        if (updatedData.email === '') {
-            delete updatedData.email;
-        }
-        if (updatedData.enable_login === null) {
-            delete updatedData.enable_login;
-        }
-        if (updatedData.date_of_birth === "") {
-            delete updatedData.date_of_birth;
-        }
-        if (updatedData.employment_start_date === '') {
-            delete updatedData.employment_start_date;
-        }
-
-        for (let field in updatedData) {
-            //console.log(field);
-            if (typeof updatedData[field] === 'object') {
-                // Check if the property is an object (e.g., bank_details)
-                for (let subField in updatedData[field]) {
-                    if (field !== 'name' && (updatedData[field][subField] === "" || updatedData[field][subField] == null || isNaN(updatedData[field][subField]))) {
-                        delete updatedData[field][subField];
-                    }
-                }
-            } else if (field !== 'name' && field !== 'email' && field !== 'date_of_birth' && field !== 'employment_start_date' && (updatedData[field] === "" || updatedData[field] === null || isNaN(updatedData[field]))) {
-                delete updatedData[field];
-            }
-        }*/
-
         const cleanObject = (obj) => {
             for (const key in obj) {
                 if (obj[key] === null || obj[key] === '' || (typeof obj[key] === 'object' && Object.keys(obj[key]).length === 0)) {
@@ -971,7 +941,7 @@ function EmployeeManagement() {
         //console.log("bsb check:", updatedData.bank_details_account_name);
         //console.log("bsb check:", formDataEmployee.bank_details_account_name);
         //console.log(formDataEmployee.qualifications[0].license_number);
-        console.log("Hourly rate after removal:", updatedData.hourly_rate);
+        //console.log("Hourly rate after removal:", updatedData.hourly_rate);
         console.log(JSON.stringify(updatedData));
         // Send a fetch request to update the user's information
         fetch(`https://my.tanda.co/api/v2/users/${formDataEmployee.Id}`, {
