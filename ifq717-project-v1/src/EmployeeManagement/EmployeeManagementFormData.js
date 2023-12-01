@@ -59,6 +59,7 @@ export const useEmployeeForm = () => {
         bank_details_bsb: null,
         bank_details_account_number: null,
         bank_details_account_name: null,
+        bank_details_account_name_test: null,
         address: {
             street_line_one: '',
             street_line_two: '',
@@ -86,11 +87,6 @@ export const useEmployeeForm = () => {
             home_country: '',
             employment_type: '',
             senior_marital_status: '',
-        },
-        bank_details: {
-            bsb: null,
-            account_number: null,
-            account_name: '',
         },
         super_fund_membership: {
             request: {

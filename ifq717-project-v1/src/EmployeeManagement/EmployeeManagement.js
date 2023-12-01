@@ -911,11 +911,11 @@ function EmployeeManagement() {
             enable_login: formDataEmployee.enable_login,
 
 
-            //bank_details: {
-            //    bsb: parseFloat(formDataEmployee.bank_details_bsb),
-            //    account_number: parseFloat(formDataEmployee.bank_details_account_number),
-            //    account_name: parseFloat(formDataEmployee.bank_details_account_name),
-            //}
+            bank_details: {
+                bsb: formDataEmployee.bank_details_bsb,
+                account_number: formDataEmployee.bank_details_account_number,
+                account_name: formDataEmployee.bank_details_account_name,
+            }
 
             //create seperate update for qualifications
 
@@ -923,7 +923,7 @@ function EmployeeManagement() {
         }
         console.log(updatedData);
 
-        if (updatedData.name === '') {
+        /*if (updatedData.name === '') {
             delete updatedData.name;
         }
         if (updatedData.email === '') {
@@ -951,10 +951,27 @@ function EmployeeManagement() {
             } else if (field !== 'name' && field !== 'email' && field !== 'date_of_birth' && field !== 'employment_start_date' && (updatedData[field] === "" || updatedData[field] === null || isNaN(updatedData[field]))) {
                 delete updatedData[field];
             }
+        }*/
+
+        const cleanObject = (obj) => {
+            for (const key in obj) {
+                if (obj[key] === null || obj[key] === '' || (typeof obj[key] === 'object' && Object.keys(obj[key]).length === 0)) {
+                    delete obj[key];
+                } else if (typeof obj[key] === 'object') {
+                    cleanObject(obj[key]);
+                }
+            }
+        };
+        cleanObject(updatedData);
+
+        if (isNaN(updatedData.hourly_rate)) {
+            delete updatedData.hourly_rate;
         }
 
-        // console.log("bsb check:", updatedData.bank_details.bsb);
-        console.log(formDataEmployee.qualifications[0].license_number);
+        //console.log("bsb check:", updatedData.bank_details_account_name);
+        //console.log("bsb check:", formDataEmployee.bank_details_account_name);
+        //console.log(formDataEmployee.qualifications[0].license_number);
+        console.log("Hourly rate after removal:", updatedData.hourly_rate);
         console.log(JSON.stringify(updatedData));
         // Send a fetch request to update the user's information
         fetch(`https://my.tanda.co/api/v2/users/${formDataEmployee.Id}`, {
@@ -1558,8 +1575,9 @@ function EmployeeManagement() {
                                 </div>
 
 
-                                {/*<div>
+                                <div>
                                     <h3 className="secondary">Bank Details:</h3>
+                                    <p>Note - On first update of bank details user must submit all bank details or details wont be updated</p>
                                     <div>
                                         <input
                                             type="text"
@@ -1568,7 +1586,23 @@ function EmployeeManagement() {
                                             onChange={e => setFormDataEmployee({ ...formDataEmployee, bank_details_bsb: e.target.value })}
                                         />
                                     </div>
-                                 </div>*/}
+                                    <div>
+                                        <input
+                                            type="text"
+                                            placeholder="Account Number"
+                                            value={formDataEmployee.bank_details_account_number}
+                                            onChange={e => setFormDataEmployee({ ...formDataEmployee, bank_details_account_number: e.target.value })}
+                                        />
+                                    </div>
+                                    <div>
+                                        <input
+                                            type="text"
+                                            placeholder="Account Name"
+                                            value={formDataEmployee.bank_details_account_name}
+                                            onChange={e => setFormDataEmployee({ ...formDataEmployee, bank_details_account_name: e.target.value })}
+                                        />
+                                    </div>
+                                 </div>
 
                                 <button type="submit" style={{ margin: '10px' }} className="EM-button">Update Users Submit</button>
                                 {showResult && <p>{showResult}</p>}
@@ -1664,7 +1698,7 @@ function EmployeeManagement() {
                                     {showResult && <p>{showResult}</p>}
                                 </form>
                                 <form style={{ padding: '30px' }} className="primary">
-                                    <h2 className="secondary h2-EM">Resend Onbarding Invites</h2>
+                                    <h2 className="secondary h2-EM">Resend Onbording Invites</h2>
                                     <p>Must change email or phone number to resend invite</p>
                                     <p>note that this will also change employees email and phone within system</p>
 
@@ -1713,7 +1747,7 @@ function EmployeeManagement() {
 
 
                                     <button onClick={handleResendOnboardInvitesUserSubmit} type="submit" style={{ margin: '10px' }} className="EM-button">
-                                        Resend Onbarding Invites
+                                        Resend Onbording Invites
                                     </button>
 
                                     {showResult && <p>{showResult}</p>}
