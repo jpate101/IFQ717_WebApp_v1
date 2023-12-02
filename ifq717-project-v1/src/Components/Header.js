@@ -43,7 +43,7 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }) {
                     Employee Management
                   </HighlightLink>
                   <HighlightLink to="/roster" as={Link}>
-                    Create schedules
+                    Roster
                   </HighlightLink>
                   <HighlightLink to="/Leave" as={Link}>
                     Leave
