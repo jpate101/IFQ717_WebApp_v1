@@ -120,6 +120,8 @@ const Roster = () => {
     const formatRosterData = (schedules, currentUsers) => {
       const userShiftMap = {};
     
+      console.log("Formatting roster data with schedules:", schedules);
+
       schedules.forEach(scheduleByDate => {
         scheduleByDate.schedules.forEach(schedule => {
           const start = new Date(schedule.start * 1000);
@@ -154,7 +156,7 @@ const Roster = () => {
         });
       });
     
-      return Object.values(userShiftMap).map(userShifts => {
+      const formattedData = Object.values(userShiftMap).map(userShifts => {
         Object.entries(userShifts.shiftDetails).forEach(([day, shifts]) => {
           userShifts[day] = shifts.map(shift => `${shift.time}, ${shift.teamName}`).join(', ');
         });
@@ -165,15 +167,18 @@ const Roster = () => {
           ...userShifts.shiftDetails
         };
       });
+    
+      console.log("Formatted Roster Data: ", formattedData); // Log the formatted data
+      return formattedData;
     };
 
-  const getWeekDates = (selectedDate) => {
+    const getWeekDates = (selectedDate) => {
       dayjs.locale('en-gb');
       const startOfWeek = dayjs(selectedDate).startOf('week');
       return Array.from({ length: 7 }).map((_, index) =>
           startOfWeek.add(index, 'day').format('DD MMM')
       );
-  };
+    };
 
   const weekDates = getWeekDates(selectedDate);
   const dayAbbreviations = ["Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun"];
@@ -321,73 +326,80 @@ const Roster = () => {
     await fetchRoster(users);
   };
 
-const handlePublish = async (publishOption) => {
-  console.log(`Publishing option selected: ${publishOption}`);
-  setIsPublishModalOpen(false);
-
-  const startOfWeek = dayjs(selectedDate).startOf('week').unix();
-  const endOfWeek = dayjs(selectedDate).endOf('week').unix();
-
-  let shiftsToPublish = [];
-  rosterData.forEach(userShifts => {
-    Object.entries(userShifts).forEach(([dayKey, shiftData]) => {
-      if (dayKey === 'userId' || dayKey === 'name' || !shiftData.includes(',')) {
-        console.log(`Skipping non-shift data or empty shift for ${dayKey}`);
-        return;
-      }
-
-      const [shiftTime, teamId, scheduleIdString] = shiftData.split(', ');
-      const scheduleId = parseInt(scheduleIdString, 10);
-
-      if (isNaN(scheduleId)) {
-        console.log(`Skipping day ${dayKey} as there is no shift`);
-        return;
-      }
-
-      console.log(`Found shift: Day ${dayKey}, ID: ${scheduleId}`);
-
-      const shiftStartUnix = dayjs(`${selectedDate} ${shiftTime.split(' - ')[0]}`).unix();
-      if (shiftStartUnix >= startOfWeek && shiftStartUnix <= endOfWeek) {
-        shiftsToPublish.push({ id: scheduleId });
-      }
-    });
-  });
-
-  console.log(`Shifts found to publish:`, shiftsToPublish);
-
-  const filteredShiftsToPublish = await Promise.all(
-    shiftsToPublish.map(async (shift) => {
-      const scheduleDetails = await getScheduleById(shift.id);
-      const shouldPublish =
-        publishOption === 'all' || 
-        (publishOption === 'updates' && scheduleDetails && scheduleDetails.last_published_at === null);
-      return shouldPublish ? shift : null;
-    })
-  );
-
-  const shiftsToActuallyPublish = filteredShiftsToPublish.filter(shift => shift !== null);
-
-  console.log(`Filtered shifts to be published:`, shiftsToActuallyPublish);
-
-  if (shiftsToActuallyPublish.length > 0) {
-    try {
-      const publishPromises = shiftsToActuallyPublish.map(async (shift) => {
-        const updatedShift = { id: shift.id, last_published_at: Math.floor(Date.now() / 1000) };
-        return await updateSchedule(updatedShift);
+  const handlePublish = async (publishOption) => {
+    console.log(`Publishing option selected: ${publishOption}`);
+    setIsPublishModalOpen(false);
+  
+    const startOfWeek = dayjs(selectedDate).startOf('week').unix();
+    const endOfWeek = dayjs(selectedDate).endOf('week').unix();
+  
+    let shiftsToPublish = [];
+    console.log("Roster Data: ", rosterData);
+  
+    rosterData.forEach(userShifts => {
+      console.log("Processing shifts for user: ", userShifts);
+  
+      ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].forEach(dayKey => {
+        const shiftsOfDay = userShifts[dayKey];
+        console.log(`Processing shifts for ${dayKey}:`, shiftsOfDay);
+  
+        if (!shiftsOfDay || shiftsOfDay.length === 0) {
+          console.log(`Skipping empty shifts for ${dayKey}`);
+          return;
+        }
+  
+        shiftsOfDay.forEach(shiftData => {
+          const shiftTime = shiftData.time;
+          const teamName = shiftData.teamName;
+          const scheduleId = shiftData.scheduleId;
+  
+          if (!scheduleId) {
+            console.log(`Skipping shift as there is no valid schedule ID`);
+            return;
+          }
+          console.log(`Found shift: Day ${dayKey}, ID: ${scheduleId}`);
+  
+          const shiftStartUnix = dayjs(`${selectedDate} ${shiftTime.split(' - ')[0]}`).unix();
+          if (shiftStartUnix >= startOfWeek && shiftStartUnix <= endOfWeek) {
+            shiftsToPublish.push({ id: scheduleId });
+          }
+        });
       });
-      await Promise.all(publishPromises);
-      console.log('Selected shifts have been published.');
-      alert('Shifts published successfully');
-      fetchRoster(users);
-    } catch (error) {
-      console.error('Error publishing shifts:', error);
-      alert('An error occurred while publishing shifts');
+    });
+  
+    console.log(`Shifts found to publish:`, shiftsToPublish);
+  
+    const filteredShiftsToPublish = await Promise.all(
+      shiftsToPublish.map(async (shift) => {
+        const scheduleDetails = await getScheduleById(shift.id);
+        const shouldPublish =
+          publishOption === 'all' || 
+          (publishOption === 'updates' && scheduleDetails && scheduleDetails.last_published_at === null);
+        return shouldPublish ? shift : null;
+      })
+    );
+  
+    const shiftsToActuallyPublish = filteredShiftsToPublish.filter(shift => shift !== null);
+  
+    if (shiftsToActuallyPublish.length > 0) {
+      try {
+        const publishPromises = shiftsToActuallyPublish.map(async (shift) => {
+          const updatedShift = { id: shift.id, last_published_at: Math.floor(Date.now() / 1000) };
+          return await updateSchedule(updatedShift);
+        });
+        await Promise.all(publishPromises);
+        console.log('Selected shifts have been published.');
+        alert('Shifts published successfully');
+        fetchRoster(users);
+      } catch (error) {
+        console.error('Error publishing shifts:', error);
+        alert('An error occurred while publishing shifts');
+      }
+    } else {
+      console.log('No shifts to publish');
+      alert('No shifts to publish');
     }
-  } else {
-    console.log('No shifts to publish');
-    alert('No shifts to publish');
-  }
-};
+  };
 
   const getWeekRange = () => {
     const startOfWeek = dayjs(selectedDate).startOf('week').format('DD MMM');
