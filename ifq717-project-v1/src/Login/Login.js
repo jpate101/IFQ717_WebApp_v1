@@ -6,8 +6,9 @@ import './login.css';
 import '../Resources/iStock-Chefs.jpg';
 import '../Resources/logo-white.svg';
 import useTokenAuthentication from "../Hooks/useTokenAuthentication";
+import { getCurrentUserRole } from "../API/Utilities";
 
-export default function Login() {
+export default function Login({ setIsLoggedIn, setUserRole }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [usernameError, setUsernameError] = useState("");
@@ -25,8 +26,34 @@ export default function Login() {
   // handle login form submission 
   const handleLogin = async (event) => {
     event.preventDefault();
-    await handleTokenExchange();
+    console.log('Attempting login...');
+  
+    const loginSuccess = await handleTokenExchange();
+    console.log("Login success status:", loginSuccess);
+  
+    if (loginSuccess) {
+      // Fetch user role
+      const role = await getCurrentUserRole();
+      console.log('Fetched role:', role);
+  
+      // Set isLoggedIn state and user role
+      setIsLoggedIn(true);
+      setUserRole(role);
+      console.log("isLoggedIn set to true, userRole set to:", role);
+  
+      // Navigate based on role
+      if (role === 'manager') {
+        console.log("Navigating to /dashboard");
+        navigate('/dashboard');
+      } else if (role === 'employee') {
+        console.log("Navigating to /EmployeeDashboard");
+        navigate('/EmployeeDashboard');
+      }
+    } else {
+      console.log("Login failed");
+    }
   };
+  
 
   // handle username validation
   const handleUsernameValidation = (value) => {
