@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
 
 const PublishShiftModal = ({ isOpen, onClose, weekRange, onPublish }) => {
-  const [publishOption, setPublishOption] = useState('all');
-  const [showAccordion, setShowAccordion] = useState(true);
+        
+    console.log('Publish Shift Modal Rendered', {isOpen, weekRange});
+    
+    const [publishOption, setPublishOption] = useState('all');
+    const [showAccordion, setShowAccordion] = useState(true);
 
-  const handleRadioChange = (option) => {
-    setPublishOption(option);
-    setShowAccordion(true);
-  };
+    const handleRadioChange = (option) => {
+        setPublishOption(option);
+        setShowAccordion(true);
+    };
 
-  if (!isOpen) return null;
+    if (!isOpen) return null;
 
     return (
-        <div className="fixed bg-black bg-opacity-25 inset-0 flex justify-center items-center">
+        <div className="fixed bg-black bg-opacity-10 inset-0 flex justify-center items-center">
             <div className="relative bg-white p-5 rounded-lg h-auto">
                 <button 
                     onClick={onClose}
