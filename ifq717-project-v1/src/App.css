@@ -592,3 +592,7 @@ img {
   border-color: #ff595b !important;
   color: #ff595b !important;
 }
+
+.cursor-pointer:hover {
+  cursor: pointer;
+}
