@@ -50,8 +50,8 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <RoleLoginRedirect isLoggedIn={isLoggedIn} userRole={userRole} /> 
       <div className="d-flex flex-column bg-light" id="wrapper">
+      <RoleLoginRedirect isLoggedIn={isLoggedIn} userRole={userRole} />
         <Header 
           isLoggedIn={isLoggedIn} 
           setIsLoggedIn={setIsLoggedIn} 
@@ -71,7 +71,11 @@ export default function App() {
               element={Home}
             />
             <Route path="/login"
-              element={<Login setIsLoggedIn={setIsLoggedIn} />}
+              element={
+              <Login
+                setIsLoggedIn={setIsLoggedIn}
+                setUserRole={setUserRole}
+              />}
             />
             {userRole === 'manager' && (
               <>
@@ -151,11 +155,7 @@ export default function App() {
                 />
               </>
             )}
-            <Route
-              path="/dashboard"
-              element={<PrivateRoute element={<Dashboard />}
-              authorised={isLoggedIn} />}
-            />
+
             <Route
               path="/ClockIn"
               element={<PrivateRoute element={<ClockIn />}

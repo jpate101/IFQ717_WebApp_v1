@@ -1,20 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const RoleLoginRedirect = ({ isLoggedIn, userRole }) => {
   const navigate = useNavigate();
-  const [hasRedirected, setHasRedirected] = useState(false);
 
   useEffect(() => {
-    if (isLoggedIn && userRole && !hasRedirected) {
+    const justLoggedIn = localStorage.getItem('justLoggedIn');
+    if (isLoggedIn && userRole && justLoggedIn === 'true') {
       if (userRole === 'manager') {
         navigate('/dashboard');
       } else if (userRole === 'employee') {
         navigate('/EmployeeDashboard');
       }
-      setHasRedirected(true);
+      localStorage.removeItem('justLoggedIn');
     }
-  }, [isLoggedIn, userRole, navigate, hasRedirected]);
+  }, [isLoggedIn, userRole, navigate]);
 
   return null;
 };
