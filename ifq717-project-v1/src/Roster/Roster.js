@@ -474,17 +474,28 @@ const Roster = () => {
                       </div>
                     </div>
                   ))}
-                {rosterData.map((row, rowIndex) => (
-                  <React.Fragment key={rowIndex}>
-                    <div className="day bg-gray-100 border p-2 rounded m-1 overflow-hidden">{row.name}</div>
-                    {[row.monday, row.tuesday, row.wednesday, row.thursday, row.friday, row.saturday, row.sunday].map((shifts, dayIndex) => (
-                      <div key={dayIndex} className="roster-table-font day p-2 rounded m-1 overflow-hidden relative">
-                        <div className="flex flex-col items-center justify-center">
-                          <PlusCircleIcon
-                            className="cursor-pointer hover:text-primary mb-2"
-                            onClick={() => openModalToAddShift(row.userId, dayIndex)}>
-                          </PlusCircleIcon>
-                        
+                  {rosterData.map((row, rowIndex) => (
+                    <React.Fragment key={rowIndex}>
+                      <div className="day bg-gray-100 border p-2 rounded m-1 overflow-hidden">{row.name}</div>
+                      {[row.monday, row.tuesday, row.wednesday, row.thursday, row.friday, row.saturday, row.sunday].map((shifts, dayIndex) => (
+                        <div key={dayIndex} className="roster-table-font day p-2 rounded m-1 overflow-hidden relative">
+                          <div className="flex flex-col items-center justify-center">
+                            {(!shifts || shifts.length === 0) && (
+                              <PlusCircleIcon
+                                className="cursor-pointer hover:text-primary mb-2"
+                                onClick={() => openModalToAddShift(row.userId, dayIndex)}
+                              />
+                            )}
+                            {shifts && shifts.length > 0 && shifts.map((shift, shiftIndex) => (
+                              <div key={shiftIndex} className="text-center shift-container"onClick={() => openModalWithShiftDetails(row.userId, dayIndex)}>
+                                <div className="shift-container shift-details">
+                                  {shift.time}
+                                </div>
+                                <div className="shift-details shift-container">
+                                  {shift.teamName}
+                                </div>
+                              </div>
+                            ))}
                         {isModalOpen && ReactDOM.createPortal(
                           <AddScheduleModal
                             isOpen={isModalOpen}
@@ -516,19 +527,7 @@ const Roster = () => {
                             onPublish={handlePublish}
                           />,
                           document.getElementById('modal-root')
-                        )}
-                        <div onClick={() => openModalWithShiftDetails(row.userId, dayIndex)}>
-                          {Array.isArray(shifts) ? shifts.map((shift, shiftIndex) => (
-                            <div key={shiftIndex} className="text-center shift-container">
-                              <div className= "shift-container shift-details">
-                                {shift.time}
-                              </div>
-                              <div className="shift-details shift-container">
-                                {shift.teamName}
-                              </div>
-                            </div>
-                          )) : <div></div>}
-                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -556,14 +555,14 @@ const Roster = () => {
           Add Shifts
       </button>
     </div>
-        {isSelectEmployeeModalOpen && (
-          <SelectEmployeeModal
-            isOpen={isSelectEmployeeModalOpen}
-            onClose={() => setIsSelectEmployeeModalOpen(false)}
-            employees={users}
-            onEmployeeSelect={handleEmployeeSelect}
-          />
-        )}
+      {isSelectEmployeeModalOpen && (
+        <SelectEmployeeModal
+          isOpen={isSelectEmployeeModalOpen}
+          onClose={() => setIsSelectEmployeeModalOpen(false)}
+          employees={users}
+          onEmployeeSelect={handleEmployeeSelect}
+        />
+      )}
       {error && <p>Error fetching roster: {error}</p>}
     </div>
   );
