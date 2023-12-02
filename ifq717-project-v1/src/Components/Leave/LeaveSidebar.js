@@ -83,7 +83,7 @@ const LeaveSidebar = ({ show, handleClose }) => {
             const response = await createLeaveRequest(requestData);
             console.log('Leave Request Created:', response);
             handleClose();
-            alert('Leave Request Successfully Submited');
+            alert('Leave Request Successfully Submitted');
         } catch (error) {
             console.error('Error creating leave request:', error);
             console.error('Error details:', error.response || error);
