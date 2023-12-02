@@ -480,28 +480,27 @@ const Roster = () => {
                     <div className="day bg-gray-100 border p-2 rounded m-1 overflow-hidden">{row.name}</div>
                     {[row.monday, row.tuesday, row.wednesday, row.thursday, row.friday, row.saturday, row.sunday].map((shifts, dayIndex) => (
                       <div key={dayIndex} className="roster-table-font day p-2 rounded m-1 overflow-hidden relative">
-                        <div className="flex flex-col items-center justify-center">
-                        {(!shifts || shifts.length === 0) && (
-                          <PlusCircleIcon
-                            className="cursor-pointer hover:text-primary mb-2"
-                            onClick={() => openModalToAddShift(row.userId, dayIndex)}>
-                          </PlusCircleIcon>
-                        )}
-                        {shifts && shifts.length > 0 && shifts.map((shift, shiftIndex) => (
-                        <div onClick={() => openModalWithShiftDetails(row.userId, dayIndex)}>
-                          {Array.isArray(shifts) ? shifts.map((shift, shiftIndex) => (
-                            <div key={shiftIndex} className="text-center shift-container">
-                              <div className= "shift-container shift-details">
-                                {shift.time}
-                              </div>
-                              <div className="shift-details shift-container">
-                                {shift.teamName}
-                              </div>
+                        {(!shifts || shifts.length === 0) ? (
+                      <div className="flex justify-center items-center h-full w-full">
+                        <PlusCircleIcon
+                          className="cursor-pointer hover:text-primary"
+                          onClick={() => openModalToAddShift(row.userId, dayIndex)}>
+                        </PlusCircleIcon>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col justify-center h-full w-full text-center">
+                        {shifts.map((shift, shiftIndex) => (
+                          <div key={shiftIndex} onClick={() => openModalWithShiftDetails(row.userId, dayIndex)} className="cursor-pointer">
+                            <div className="shift-details">
+                              {shift.time}
                             </div>
-                          )) : <div></div>}
-                        </div>
+                            <div className="shift-details">
+                              {shift.teamName}
+                            </div>
+                          </div>
                         ))}
-                    </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </React.Fragment>
