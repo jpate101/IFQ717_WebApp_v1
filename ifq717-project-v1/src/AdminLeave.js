@@ -44,6 +44,7 @@ const LeaveRequestTabs = () => {
   const [rejectedUnavailabilityRequests, setRejectedUnavailabilityRequests] = useState([]);
   const [leaveHours, setLeaveHours] = useState({});
   const [fileUploads, setFileUploads] = useState({});
+  const [refreshUnavailTrigger, setRefreshUnavailTrigger] = useState(false);
   const [dateRange, setDateRange] = useState([
     dayjs(),
     dayjs().add(6, 'months')
@@ -98,7 +99,7 @@ const LeaveRequestTabs = () => {
           .catch(error => console.error(`Error fetching ${activeTab} unavailability requests:`, error));
       })
       .catch(error => console.error(`Error fetching user data:`, error));
-    }, [activeTab, dateRange]);
+    }, [activeTab, dateRange, refreshUnavailTrigger]);
   
     useEffect(() => {
       pendingRequests.forEach(async (request) => {
@@ -187,6 +188,11 @@ const LeaveRequestTabs = () => {
     }
   };
 
+  const handleNewUnavailabilityRequest = (newRequest) => {
+    setPendingUnavailabilityRequests(prevRequests => [...prevRequests, newRequest]);
+    setRefreshUnavailTrigger(prev => !prev);
+  };
+  
   const TabContent = ({
     activeTab, 
     pendingRequests, 
@@ -228,7 +234,7 @@ const LeaveRequestTabs = () => {
         <Card key={request.id} className="mb-3">
           <Card.Header>
             <div>{userName}</div>
-            <div>Requested on: {formattedUpdatedAt}</div>
+            {/*<div>Requested on: {formattedUpdatedAt}</div>*/}
           </Card.Header>
           <Card.Body className="less-column-padding">
             <div className="row">
@@ -320,7 +326,7 @@ const LeaveRequestTabs = () => {
             <div className="d-flex justify-content-between align-items-center">
               <div>
                 <div>{userName}</div>
-                <div>Requested on: {formattedUpdatedAt}</div>
+                {/*<div>Requested on: {formattedUpdatedAt}</div>*/}
               </div>
               {(activeTab === 'pending' || activeTab === 'approved') && (
                 <Button 
@@ -503,8 +509,15 @@ const LeaveRequestTabs = () => {
         approvedUnavailabilityRequests={approvedUnavailabilityRequests}
         rejectedUnavailabilityRequests={rejectedUnavailabilityRequests}
       />
-      <LeaveSidebar show={showLeaveSidebar} handleClose={() => setShowLeaveSidebar(false)} />
-      <UnavailabilitySidebar show={showUnavailabilitySidebar} handleClose={() => setShowUnavailabilitySidebar(false)} />
+      <LeaveSidebar
+        show={showLeaveSidebar}
+        handleClose={() => setShowLeaveSidebar(false)}
+      />
+      <UnavailabilitySidebar
+        show={showUnavailabilitySidebar}
+        handleClose={() => setShowUnavailabilitySidebar(false)}
+        onNewRequestCreated={handleNewUnavailabilityRequest}
+      />
     </div>
   );
 };

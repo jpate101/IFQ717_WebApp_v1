@@ -8,7 +8,7 @@ const { RangePicker } = DatePicker;
 
 const BASE_URL = 'https://my.tanda.co';
 
-const UnavailabilitySidebar = ({ show, handleClose }) => {
+const UnavailabilitySidebar = ({ show, handleClose, onNewRequestCreated }) => {
   const [currentUser, setCurrentUser] = useState({});
   const [isAllDay, setIsAllDay] = useState(false);
   const [frequency, setFrequency] = useState('Once-off');
@@ -109,6 +109,12 @@ const UnavailabilitySidebar = ({ show, handleClose }) => {
       try {
         const createdUnavailability = await createUnavailability(requestData);
         console.log('Unavailability created successfully:', createdUnavailability);
+  
+        alert("Unavailability Request Successfully Submitted");
+
+        if(onNewRequestCreated) {
+          onNewRequestCreated(createdUnavailability);
+        }
         handleClose();
       } catch (error) {
         console.error('Error creating unavailability:', error);

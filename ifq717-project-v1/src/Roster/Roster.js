@@ -23,6 +23,9 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 const Roster = () => {
+
+  console.log('Roster Component Mounted');
+
   const [selectedDate, setSelectedDate] = useState(dayjs().format('YYYY-MM-DD'));
   const [rosterData, setRosterData] = useState([]);
   const [users, setUsers] = useState([]);
@@ -37,8 +40,11 @@ const Roster = () => {
   const [currentScheduleDetails, setCurrentScheduleDetails] = useState(null);
   const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
   const [isSelectEmployeeModalOpen, setIsSelectEmployeeModalOpen] = useState(false);
+  const [modalData, setModalData] = useState(null);
+  const [currentShiftForModal, setCurrentShiftForModal] = useState(null);
 
   useEffect(() => {
+    console.log('useEffect for [currentShiftDetails, users]');
     if (currentShiftDetails.userId) {
       const employee = users.find(u => u.id === currentShiftDetails.userId);
       setSelectedEmployee(employee);
@@ -84,10 +90,11 @@ const Roster = () => {
   }, []);
 
   useEffect(() => {
+    console.log('useEffect triggered for [selectedDate, users, departments]')
   if (departments.length > 0 && Object.keys(users).length > 0) {
     fetchRoster(users, departments);
   }
-}, [selectedDate, users, departments]);  // Add departments as a dependency
+}, [selectedDate, users, departments]); 
 
     const fetchRoster = async (currentUsers, currentDepartments) => {
       setLoading(true);
@@ -188,9 +195,9 @@ const Roster = () => {
       setCurrentShiftDetails({ 
         userId, 
         date: dateOfShift, 
-        startTime, 
-        finishTime, 
-        shiftId: shift.id,
+        startTime: shift ? startTime : null, 
+        finishTime: shift ? finishTime : null,
+        shiftId: shift ? shift.id : null,
         teamId });
     } else {
       setCurrentShiftDetails({ userId, date: dateOfShift });
@@ -317,77 +324,83 @@ const Roster = () => {
   };
 
   const handleModalClose = async () => {
+    console.log('Closing Modal');
     setIsModalOpen(false);
     await fetchRoster(users);
   };
 
-const handlePublish = async (publishOption) => {
-  console.log(`Publishing option selected: ${publishOption}`);
-  setIsPublishModalOpen(false);
-
-  const startOfWeek = dayjs(selectedDate).startOf('week').unix();
-  const endOfWeek = dayjs(selectedDate).endOf('week').unix();
-
-  let shiftsToPublish = [];
-  rosterData.forEach(userShifts => {
-    Object.entries(userShifts).forEach(([dayKey, shiftData]) => {
-      if (dayKey === 'userId' || dayKey === 'name' || !shiftData.includes(',')) {
-        console.log(`Skipping non-shift data or empty shift for ${dayKey}`);
-        return;
-      }
-
-      const [shiftTime, teamId, scheduleIdString] = shiftData.split(', ');
-      const scheduleId = parseInt(scheduleIdString, 10);
-
-      if (isNaN(scheduleId)) {
-        console.log(`Skipping day ${dayKey} as there is no shift`);
-        return;
-      }
-
-      console.log(`Found shift: Day ${dayKey}, ID: ${scheduleId}`);
-
-      const shiftStartUnix = dayjs(`${selectedDate} ${shiftTime.split(' - ')[0]}`).unix();
-      if (shiftStartUnix >= startOfWeek && shiftStartUnix <= endOfWeek) {
-        shiftsToPublish.push({ id: scheduleId });
-      }
-    });
-  });
-
-  console.log(`Shifts found to publish:`, shiftsToPublish);
-
-  const filteredShiftsToPublish = await Promise.all(
-    shiftsToPublish.map(async (shift) => {
-      const scheduleDetails = await getScheduleById(shift.id);
-      const shouldPublish =
-        publishOption === 'all' || 
-        (publishOption === 'updates' && scheduleDetails && scheduleDetails.last_published_at === null);
-      return shouldPublish ? shift : null;
-    })
-  );
-
-  const shiftsToActuallyPublish = filteredShiftsToPublish.filter(shift => shift !== null);
-
-  console.log(`Filtered shifts to be published:`, shiftsToActuallyPublish);
-
-  if (shiftsToActuallyPublish.length > 0) {
-    try {
-      const publishPromises = shiftsToActuallyPublish.map(async (shift) => {
-        const updatedShift = { id: shift.id, last_published_at: Math.floor(Date.now() / 1000) };
-        return await updateSchedule(updatedShift);
-      });
-      await Promise.all(publishPromises);
-      console.log('Selected shifts have been published.');
-      alert('Shifts published successfully');
-      fetchRoster(users);
-    } catch (error) {
-      console.error('Error publishing shifts:', error);
-      alert('An error occurred while publishing shifts');
+  const openPublishModal = (data) => {
+    console.log('handleOpenPublishModal Called');
+    if (!isPublishModalOpen) {
+      setModalData(data);
+      console.log('Opening Publish Shift Modal');
+      setIsPublishModalOpen(true);
     }
-  } else {
-    console.log('No shifts to publish');
-    alert('No shifts to publish');
-  }
-};
+  };
+  
+
+  const handlePublish = async (publishOption) => {
+    console.log(`Publishing option selected: ${publishOption}`);
+    setIsPublishModalOpen(false);
+
+    const startOfWeek = dayjs(selectedDate).startOf('week').unix();
+    const endOfWeek = dayjs(selectedDate).endOf('week').unix();
+
+    let shiftsToPublish = [];
+
+    rosterData.forEach(userShifts => {
+      Object.entries(userShifts).forEach(([dayKey, shifts]) => {
+        if (['userId', 'name'].includes(dayKey)) {
+          return;
+        }
+
+        if (Array.isArray(shifts)) {
+          shifts.forEach(shift => {
+            if (shift && shift.scheduleId && !isNaN(shift.scheduleId)) {
+              shiftsToPublish.push({ id: shift.scheduleId });
+            }
+          });
+        } else {
+          console.error(`Unexpected shift data format for ${dayKey}:`, shifts);
+        }
+      });
+    });
+
+    console.log(`Shifts found to publish:`, shiftsToPublish);
+
+    const filteredShiftsToPublish = await Promise.all(
+      shiftsToPublish.map(async (shift) => {
+        const scheduleDetails = await getScheduleById(shift.id);
+        const shouldPublish =
+          publishOption === 'all' || 
+          (publishOption === 'updates' && scheduleDetails && scheduleDetails.last_published_at === null);
+        return shouldPublish ? shift : null;
+      })
+    );
+
+    const shiftsToActuallyPublish = filteredShiftsToPublish.filter(shift => shift !== null);
+
+    console.log(`Filtered shifts to be published:`, shiftsToActuallyPublish);
+
+    if (shiftsToActuallyPublish.length > 0) {
+      try {
+        const publishPromises = shiftsToActuallyPublish.map(async (shift) => {
+          const updatedShift = { id: shift.id, last_published_at: Math.floor(Date.now() / 1000) };
+          return await updateSchedule(updatedShift);
+        });
+        await Promise.all(publishPromises);
+        console.log('Selected shifts have been published.');
+        alert('Shifts published successfully');
+        fetchRoster(users);
+      } catch (error) {
+        console.error('Error publishing shifts:', error);
+        alert('An error occurred while publishing shifts');
+      }
+    } else {
+      console.log('No shifts to publish');
+      alert('No shifts to publish');
+    }
+  };
 
   const getWeekRange = () => {
     const startOfWeek = dayjs(selectedDate).startOf('week').format('DD MMM');
@@ -417,7 +430,6 @@ const handlePublish = async (publishOption) => {
     }
     setIsSelectEmployeeModalOpen(false);
   };
-  
 
     return (
       <div className="roster-container">
@@ -428,6 +440,7 @@ const handlePublish = async (publishOption) => {
           />
           <button 
             onClick={() => {
+              console.log('Publish Shift Button Clicked');
               if (hasShiftsInSelectedWeek()) {
                 setIsPublishModalOpen(true);
               } else {
@@ -468,43 +481,13 @@ const handlePublish = async (publishOption) => {
                     {[row.monday, row.tuesday, row.wednesday, row.thursday, row.friday, row.saturday, row.sunday].map((shifts, dayIndex) => (
                       <div key={dayIndex} className="roster-table-font day p-2 rounded m-1 overflow-hidden relative">
                         <div className="flex flex-col items-center justify-center">
+                        {(!shifts || shifts.length === 0) && (
                           <PlusCircleIcon
                             className="cursor-pointer hover:text-primary mb-2"
                             onClick={() => openModalToAddShift(row.userId, dayIndex)}>
                           </PlusCircleIcon>
-                        
-                        {isModalOpen && ReactDOM.createPortal(
-                          <AddScheduleModal
-                            isOpen={isModalOpen}
-                            onClose={handleModalClose}
-                            scheduleDetails={currentScheduleDetails}
-                            onAddShift={addNewShiftToRoster}
-                            onUpdateShift={updateSchedule}
-                            onDeleteShift={deleteSchedule}
-                            scheduleId={currentShiftDetails.shiftId}
-                            employees={usersArray}
-                            teams={employeeTeams}
-                            selectedEmployee={selectedEmployee}
-                            selectedTeam={selectedTeam}
-                            employeeId={currentShiftDetails.userId}
-                            teamId={currentShiftDetails.teamId}
-                            shiftDate={dayjs(currentShiftDetails.date).toDate()}
-                            shiftId={currentShiftDetails.shiftId}
-                            shiftStartTime={currentShiftDetails.startTime}
-                            shiftFinishTime={currentShiftDetails.finishTime}
-                            currentShiftDetails={currentShiftDetails}
-                          />,
-                          document.getElementById('modal-root')
                         )}
-                        {isPublishModalOpen && ReactDOM.createPortal(
-                          <PublishShiftModal
-                            isOpen={isPublishModalOpen}
-                            onClose={() => setIsPublishModalOpen(false)}
-                            weekRange={getWeekRange()}
-                            onPublish={handlePublish}
-                          />,
-                          document.getElementById('modal-root')
-                        )}
+                        {shifts && shifts.length > 0 && shifts.map((shift, shiftIndex) => (
                         <div onClick={() => openModalWithShiftDetails(row.userId, dayIndex)}>
                           {Array.isArray(shifts) ? shifts.map((shift, shiftIndex) => (
                             <div key={shiftIndex} className="text-center shift-container">
@@ -517,11 +500,45 @@ const handlePublish = async (publishOption) => {
                             </div>
                           )) : <div></div>}
                         </div>
+                        ))}
                     </div>
                   </div>
                 ))}
               </React.Fragment>
             ))}
+            {isModalOpen && ReactDOM.createPortal(
+              <AddScheduleModal
+                isOpen={isModalOpen}
+                onClose={handleModalClose}
+                scheduleDetails={currentScheduleDetails}
+                onAddShift={addNewShiftToRoster}
+                onUpdateShift={updateSchedule}
+                onDeleteShift={deleteSchedule}
+                scheduleId={currentShiftDetails.shiftId}
+                employees={usersArray}
+                teams={employeeTeams}
+                selectedEmployee={selectedEmployee}
+                selectedTeam={selectedTeam}
+                employeeId={currentShiftDetails.userId}
+                teamId={currentShiftDetails.teamId}
+                shiftDate={dayjs(currentShiftDetails.date).toDate()}
+                shiftId={currentShiftDetails.shiftId}
+                shiftStartTime={currentShiftDetails.startTime}
+                shiftFinishTime={currentShiftDetails.finishTime}
+                currentShiftDetails={currentShiftDetails}
+              />,
+              document.getElementById('modal-root')
+            )}
+            {isPublishModalOpen && ReactDOM.createPortal(
+              <PublishShiftModal
+                isOpen={isPublishModalOpen}
+                onClose={() => setIsPublishModalOpen(false)}
+                weekRange={getWeekRange()}
+                onPublish={handlePublish}
+                data={modalData}
+              />,
+              document.getElementById('modal-root')
+            )}
           </div>
         </div>
       )}
