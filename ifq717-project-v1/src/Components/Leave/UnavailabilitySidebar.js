@@ -41,6 +41,7 @@ const UnavailabilitySidebar = ({ show, handleClose, onNewRequestCreated }) => {
   }, []);
 
     const handleFrequencyChange = (eventKey) => {
+      console.log("Frequency changed to:", eventKey);
       let repeatingValue;
       switch (eventKey) {
         case 'Weekly':
@@ -63,9 +64,15 @@ const UnavailabilitySidebar = ({ show, handleClose, onNewRequestCreated }) => {
       setFrequency(eventKey);
     };
 
-    const handleDayToggle = (val) => setSelectedDays(val);
+    const handleDayToggle = (val) => {
+      console.log("Toggling day:", val);
+      setSelectedDays(val);
+      console.log("Current selected days after toggle:", val); 
+    };
 
     const handleCreateUnavailabilityRequest = async () => {
+      console.log("Creating unavailability request"); 
+      console.log("Selected days at the time of request creation:", selectedDays); 
       const formatDate = (date) => {
         return date ? date.format("YYYY-MM-DD") : null;
       };
@@ -73,16 +80,18 @@ const UnavailabilitySidebar = ({ show, handleClose, onNewRequestCreated }) => {
       let repeatingInfo = {};
   
       if (repeatsForever && frequency === 'Weekly') {
+        const daysOfWeekNumbers = convertDaysToNumbers(selectedDays);
         repeatingInfo = {
           interval: 'week', 
           occurrences: 156, 
-          days_of_week: selectedDays.join(','), 
+          days_of_week: daysOfWeekNumbers.join(','), 
         };
 
       } else if (frequency === 'Weekly') {
+        const daysOfWeekNumbers = convertDaysToNumbers(selectedDays);
         repeatingInfo = {
           interval: 'week',
-          days_of_week: selectedDays.join(','),
+          days_of_week: daysOfWeekNumbers.join(','),
           upto: formatDate(dateRange[1]),
         };
 
@@ -110,7 +119,7 @@ const UnavailabilitySidebar = ({ show, handleClose, onNewRequestCreated }) => {
         const createdUnavailability = await createUnavailability(requestData);
         console.log('Unavailability created successfully:', createdUnavailability);
   
-        alert("Unavailability Request Successfully Submitted");
+        alert("Unavailability Successfully Submitted");
 
         if(onNewRequestCreated) {
           onNewRequestCreated(createdUnavailability);
@@ -131,10 +140,21 @@ const UnavailabilitySidebar = ({ show, handleClose, onNewRequestCreated }) => {
       return 0;
     };
     
-    
+  const daysOfWeek = ['Su', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
 
-    const daysOfWeek = ['M', 'T', 'W', 'Th', 'F', 'Sa', 'Su'];
+  const dayStringToNumber = {
+    'Su': 0,
+    'M': 1,
+    'T': 2,
+    'W': 3,
+    'Th': 4,
+    'F': 5,
+    'Sa': 6,
+  };
 
+  const convertDaysToNumbers = (days) => {
+    return days.map(day => dayStringToNumber[day]);
+  };
 
   const handleRepeatsForeverChange = (checked) => {
     console.log("handleRepeatsForeverChange - checked:", checked);
