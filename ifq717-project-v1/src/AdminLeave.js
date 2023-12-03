@@ -309,17 +309,33 @@ const LeaveRequestTabs = () => {
       );
     };
 
+    const numberToDayString = {
+      0: 'Sunday',
+      1: 'Monday',
+      2: 'Tuesday',
+      3: 'Wednesday',
+      4: 'Thursday',
+      5: 'Friday',
+      6: 'Saturday',
+    };
+    
+    const convertNumbersToDayStrings = (numbers) => {
+      return numbers.split(',').map(num => numberToDayString[num]).join(', ');
+    };
+
     const formatUnavailabilityRequestCard = (request) => {
       const userName = findUserNameById(request.user_id);
-      const formattedUpdatedAt = dayjs.unix(request.updated_at).format('YYYY-MM-DD');
+      //const formattedUpdatedAt = dayjs.unix(request.updated_at).format('YYYY-MM-DD');
       console.log('request updated_at:', request.updated_at)
       const startDate = dayjs.unix(request.start).format('DD MMM YYYY');
       const finishDate = dayjs.unix(request.finish).format('DD MMM YYYY');
       const period = `${startDate} - ${finishDate}`;
       const times = request.all_day ? 'All day' : `${dayjs.unix(request.start).format('HH:mm')} - ${dayjs.unix(request.finish).format('HH:mm')}`;
       const frequency = request.repeating ? (request.repeating_info?.interval === 'week' ? 'Weekly' : 'Daily') : 'Once-off';
-      const repeatsOn = request.repeating_info?.interval === 'week' ? `Every ${dayjs.unix(request.start).format('dddd')}` : 'N/A';
-    
+      const repeatsOn = request.repeating_info?.interval === 'week' 
+        ? convertNumbersToDayStrings(request.repeating_info.days_of_week) 
+        : 'N/A';
+
       return (
         <Card key={request.id} className="mb-3">
           <Card.Header>
