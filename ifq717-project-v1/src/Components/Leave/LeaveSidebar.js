@@ -83,7 +83,7 @@ const LeaveSidebar = ({ show, handleClose }) => {
             const response = await createLeaveRequest(requestData);
             console.log('Leave Request Created:', response);
             handleClose();
-            alert('Leave Request Successfully Submited');
+            alert('Leave Request Successfully Submitted');
         } catch (error) {
             console.error('Error creating leave request:', error);
             console.error('Error details:', error.response || error);
@@ -98,12 +98,12 @@ const LeaveSidebar = ({ show, handleClose }) => {
         </Offcanvas.Header>
         <Offcanvas.Body>
             <div>
-            <img 
-                src={`${BASE_URL}${currentUser.photo}`}
-                alt={currentUser.name} 
-                style={{ width: '100px', height: '100px' }}
-            />
-            <h3 className="mt-3">{currentUser.name}</h3>
+                <img 
+                    src={currentUser.photo ? (currentUser.photo.startsWith('http') ? currentUser.photo : `${BASE_URL}${currentUser.photo}`) : 'default_image_path'}
+                    alt={currentUser.name || 'Default Name'} 
+                    style={{ width: '100px', height: '100px' }}
+                />
+                <h3 className="mt-3">{currentUser.name}</h3>
             </div>
             <Form>
                 <Form.Group>

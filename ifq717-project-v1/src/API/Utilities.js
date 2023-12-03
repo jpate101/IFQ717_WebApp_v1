@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 const API_BASE_URL = 'https://my.tanda.co/api/v2';
 const getHeaders = () => {
   const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, "$1");
-  console.log('token:', token)
+  //console.log('token:', token)
   return {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${token}`
@@ -93,6 +93,24 @@ export const getSchedulesByUser = async (userIds, fromDate, toDate) => {
   }
 };
 
+export const getUserSchedule = async (user, fromDate, toDate) => {
+  const headers = getHeaders(); 
+  //const userIdsParam = userIds.join(',');
+  const url = `${API_BASE_URL}/schedules?user_ids=${user}&from=${fromDate}&to=${toDate}&show_costs=true&include_names=false`;
+
+  try {
+    const response = await fetch(url, { method: 'GET', headers });
+    console.log('schedule response', response);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching schedules:', error);
+    return []; 
+  }
+};
+
 
 // Fetches info about all visible users
 export const getUsers = async (employeeId = null) => {
@@ -133,7 +151,13 @@ export const getUsers = async (employeeId = null) => {
       hourly_rate: user.hourly_rate,
       department_ids: user.department_ids,
       date_of_birth: user.date_of_birth,
-      employment_start_date: user.employment_start_date
+      employment_start_date: user.employment_start_date,
+      active: user.active,
+      email: user.email,
+      phone: user.phone,
+      passcode: user.passcode,
+      role: user.user_levels,
+      award_template_id: user.award_template_id
     }));
 
   } catch (error) {
@@ -548,7 +572,7 @@ export const getLeaveTypesForUser = async (userId) => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const leaveTypes = await response.json();
-    console.log('Leave types for user:', leaveTypes);
+    //console.log('Leave types for user:', leaveTypes);
     return leaveTypes;
   } catch (error) {
     console.error('Error fetching leave types for user:', error);
@@ -592,7 +616,7 @@ export const getCurrentUser = async () => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const userData = await response.json();
-    console.log('Current user data:', userData);
+    //console.log('Current user data:', userData);
     return userData;
   } catch (error) {
     console.error('Error fetching current user data:', error);
@@ -725,3 +749,132 @@ export const updateUnavailabilityRequest = async (unavailabilityId, updateData) 
     throw error;
   }
 };
+
+// Get clockin information for a user and given date range 
+
+export const getClockInsByUser = async (userId, fromDate, toDate) => {
+  const headers = getHeaders();
+  const url = `${API_BASE_URL}/api/v2/clockins?user_id=${userId}&from=${fromDate}&to=${toDate}`;
+
+  try {
+    const response = await fetch(url, { method: 'GET', headers });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching clock-ins:', error);
+    return [];
+  }
+};
+
+// Get Awards api/v2/award_templates/available
+
+export const getAwards = async () => {
+  const headers = getHeaders();
+  const url = `${API_BASE_URL}/award_templates/available`;
+
+  try {
+    const response = await fetch(url, { method: 'GET', headers });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching awards:', error);
+    return [];
+  }
+}
+
+// enable award (POST award template)
+
+export const enableAward = async (awardTemplateId, extractLeaveTypes, replaceLeaveTypes) => {
+  const headers = {
+    ...getHeaders(),
+    'Content-Type': 'application/json'
+  };
+  const url = `${API_BASE_URL}/api/v2/award_templates`;
+  const body = {
+    award_template_id: awardTemplateId,
+    extract_leave_types: extractLeaveTypes,
+    replace_leave_types: replaceLeaveTypes
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body)
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error enabling award:', error);
+    return null;
+  }
+}
+
+
+// Get leave balance by ID
+
+export const getLeaveBalance = async (leaveBalanceId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/leave_balances/${leaveBalanceId}`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Fetched leave balance:', data);
+    return data;
+  } catch (error) {
+    console.error('Error fetching leave balance:', error);
+    throw error;
+  }
+};
+
+// Creates a temporary file
+export const createTemporaryFile = async (file, contentTypes) => {
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    if (contentTypes) {
+      const contentTypesString = Array.isArray(contentTypes) ? contentTypes.join(',') : contentTypes;
+      formData.append('content_types', contentTypesString);
+    }
+
+    const headers = getHeaders();
+
+    const response = await fetch(`${API_BASE_URL}/temporary_files`, {
+      method: 'POST',
+      headers: {
+        'Authorization': headers.Authorization
+      },
+      body: formData
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Created temporary file:', data);
+    return data.file_id;
+  } catch (error) {
+    console.error('Error creating temporary file:', error);
+    throw error;
+  }
+};
+
+// Gets current user role
+export const getCurrentUserRole = async () => {
+  const userData = await getCurrentUser();
+  const isManager = userData.permissions.includes('manager');
+  return isManager ? 'manager' : 'employee';
+};
+

@@ -44,13 +44,15 @@ const tasks = [
       name: 'Approve a timesheet',
       //fetchFunction: getTimesheet,
       //completionCriteria: completionCriteria
-      // update sprint 2 to use state
       isComplete: true
     },
     {
       name: 'At least 1 employee has clocked in',
       isComplete: false
-      // update sprint 2 after built (use state)
+    },
+    {
+      name: 'Enable Award',
+      isComplete: false
     }
     
   ];

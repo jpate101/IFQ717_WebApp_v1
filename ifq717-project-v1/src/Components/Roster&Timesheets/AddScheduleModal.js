@@ -173,7 +173,7 @@ const handleTeamChange = (newTeamId) => {
 
   return isOpen && (
     <>
-      <div className="fixed bg-black bg-opacity-10 inset-0 flex justify-center items-center">
+      <div className="fixed  bg-black bg-opacity-10 inset-0 flex justify-center items-center">
       <div className="relative bg-white p-5 rounded-lg h-auto max-h-[80vh] overflow-y-auto">
         <button 
           onClick={onClose}

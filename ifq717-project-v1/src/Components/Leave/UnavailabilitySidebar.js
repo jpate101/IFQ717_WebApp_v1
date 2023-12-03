@@ -8,7 +8,7 @@ const { RangePicker } = DatePicker;
 
 const BASE_URL = 'https://my.tanda.co';
 
-const UnavailabilitySidebar = ({ show, handleClose }) => {
+const UnavailabilitySidebar = ({ show, handleClose, onNewRequestCreated }) => {
   const [currentUser, setCurrentUser] = useState({});
   const [isAllDay, setIsAllDay] = useState(false);
   const [frequency, setFrequency] = useState('Once-off');
@@ -109,6 +109,12 @@ const UnavailabilitySidebar = ({ show, handleClose }) => {
       try {
         const createdUnavailability = await createUnavailability(requestData);
         console.log('Unavailability created successfully:', createdUnavailability);
+  
+        alert("Unavailability Request Successfully Submitted");
+
+        if(onNewRequestCreated) {
+          onNewRequestCreated(createdUnavailability);
+        }
         handleClose();
       } catch (error) {
         console.error('Error creating unavailability:', error);
@@ -198,14 +204,14 @@ const UnavailabilitySidebar = ({ show, handleClose }) => {
           <Offcanvas.Title>Add Unavailability</Offcanvas.Title>
         </Offcanvas.Header>
             <Offcanvas.Body>
-                <div>
-                    <img 
-                        src={`${BASE_URL}${currentUser.photo}`}
-                        alt={currentUser.name} 
-                        style={{ width: '100px', height: '100px' }}
-                    />
-                    <h3 className="mt-3">{currentUser.name}</h3>
-                </div>
+              <div>
+                <img 
+                  src={currentUser.photo ? (currentUser.photo.startsWith('http') ? currentUser.photo : `${BASE_URL}${currentUser.photo}`) : 'default_image_path'}
+                  alt={currentUser.name || 'Default Name'} 
+                  style={{ width: '100px', height: '100px' }}
+                />
+                <h3 className="mt-3">{currentUser.name}</h3>
+              </div>
                 <Form>
                 <DropdownButton 
                     id="frequency-dropdown"
