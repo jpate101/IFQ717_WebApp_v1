@@ -22,6 +22,7 @@ import RoleLoginRedirect from './Components/RoleLoginRedirect';
 import ClockIn from './ClockIn/Clockin';
 import Compliance from './Compliance/Compliance';
 import AwardTemplateOptions from './Compliance/AwardTemplateOptions';
+import Qualifications from './EmployeeManagement/Qualifications';
 
 export default function App() {
   const [cookies, setCookie, removeCookie] = useCookies(['token']);
@@ -70,28 +71,36 @@ export default function App() {
               path="/home"
               element={Home}
             />
-            <Route path="/login"
+            <Route 
+              path="/login"
               element={
-              <Login
-                setIsLoggedIn={setIsLoggedIn}
-                setUserRole={setUserRole}
-              />}
-            />
-            {userRole === 'manager' && (
-              <>
-                <Route
-                  path="/dashboard"
-                  element={<PrivateRoute element={<Dashboard />}
-                  authorised={isLoggedIn}
-                  userRole={userRole}
-                  requiredRole='manager'/>}
-                />
-                <Route
+            <Login
+              setIsLoggedIn={setIsLoggedIn}
+              setUserRole={setUserRole}
+            />}
+          />
+          {userRole === 'manager' && (
+            <>
+              <Route
+                path="/dashboard"
+                element={<PrivateRoute element={<Dashboard />}
+                authorised={isLoggedIn}
+                userRole={userRole}
+                requiredRole='manager'/>}
+              />
+              <Route
                 path="/root/EmployeeManagement/*" 
                 element={<PrivateRoute element={<EmployeeManagement />}
                 authorised={isLoggedIn}
                 userRole={userRole}
-                requiredRole='manager' />}
+                requiredRole='manager'/>}
+              />
+              <Route
+                path="/Qualifications" 
+                element={<PrivateRoute element={<Qualifications />}
+                authorised={isLoggedIn}
+                userRole={userRole}
+                requiredRole='manager'/>}
               />
               <Route
                 path="/roster"
