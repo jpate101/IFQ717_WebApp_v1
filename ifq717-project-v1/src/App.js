@@ -16,7 +16,7 @@ import PrivateRoute from './Components/PrivateRoute';
 import EmployeeLeave from './Employee/EmployeeLeave';
 import EmployeeRoster from './Employee/EmployeeRoster';
 import EmployeeDashboard from './Employee/EmployeeDashboard';
-import AdminLeave from './AdminLeave';
+import AdminLeave from './Leave/AdminLeave';
 import { getCurrentUserRole } from './API/Utilities';
 import RoleLoginRedirect from './Components/RoleLoginRedirect';
 import ClockIn from './ClockIn/Clockin';
