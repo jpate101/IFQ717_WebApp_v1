@@ -427,7 +427,7 @@ const Roster = () => {
                 alert('No shifts to publish for the selected week.');
               }
             }}
-            className="border p-2 rounded background text-white h-10 -mt-2"
+            className="tanda-button border p-2 rounded background text-white h-10 -mt-2 "
             style={{backgroundColor: '#3498db'}}
             >
             Publish shifts
@@ -529,7 +529,7 @@ const Roster = () => {
       }}>
       <button 
         onClick={handleOpenSelectEmployeeModal}
-        className="border p-2 rounded background text-white h-10 -mt-2"
+        className="tanda-button border p-2 rounded background text-white h-10 -mt-2"
         style={{
           backgroundColor: '#3498db',
           padding: '10px 20px',

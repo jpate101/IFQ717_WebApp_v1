@@ -233,7 +233,7 @@ const ExportTimesheets = () => {
                     <Button 
                         onClick={exportSelectedTimesheets}
                         disabled={selectedForExport.size === 0}
-                        className= "button-pointer-enabled"
+                        className= "tanda-button button-pointer-enabled"
                         style={{ 
                             backgroundColor: '#3498db',
                             borderColor: '#3498db',
