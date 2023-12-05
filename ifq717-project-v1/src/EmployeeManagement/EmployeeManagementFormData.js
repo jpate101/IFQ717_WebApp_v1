@@ -125,6 +125,12 @@ export const useEmployeeForm = () => {
                 file_id: ""
             },
         ],
+        qualifications_qualification_id: null,
+        qualifications_enabled: null,
+        qualifications_license_number: "",
+        qualifications_expires: "",
+        qualifications_in_training: null,
+        qualifications_file_id: "",
         enable_login: null,
     });
     return [formDataEmployee, setFormDataEmployee];

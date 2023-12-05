@@ -174,6 +174,54 @@ function EmployeeManagement() {
             setFilteredTeams(filtered);
         }
     }, [searchTeams, teamsList]);
+    //
+    const [qualificationsList, setQualificationsList] = useState([]);
+    const [searchQualification, setSearchQualification] = useState('');
+    const [filteredQualifications, setFilteredQualifications] = useState([]);
+
+    // 
+    const fetchQualifications = async () => {
+        try {
+            const response = await fetch('https://my.tanda.co/api/v2/qualifications', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`,
+                },
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setFilteredQualifications(data);
+                setQualificationsList(data);
+            } else {
+                setShowResult('Failed to fetch qualifications');
+            }
+        } catch (error) {
+            setShowResult('Network error: ' + error.message);
+        }
+    };
+
+    // Fetch qualifications when the component mounts
+    useEffect(() => {
+        fetchQualifications();
+    }, []);
+
+    // Filter qualifications based on search query
+    useEffect(() => {
+        if (searchQualification.trim() === '') {
+            setFilteredQualifications(qualificationsList);
+        } else {
+            const filtered = qualificationsList.filter((qualification) => {
+                return (
+                    qualification.id.toString().includes(searchQualification) ||
+                    qualification.name.toLowerCase().includes(searchQualification.toLowerCase()) ||
+                    qualification.maximum_hours.toString().includes(searchQualification)
+                );
+            });
+            setFilteredQualifications(filtered);
+        }
+    }, [searchQualification, qualificationsList]);
+
     // display functions 
     const handleCreateLocationsClick = () => {
         setShowLocationForm(true);
@@ -877,20 +925,6 @@ function EmployeeManagement() {
         setInputSpecificHolidayDates(e.target.value);
     };
 
-    const handleQualificationChange = (e, index, property) => {
-        //console.log(index);
-        //console.log(property);
-        const updatedQualifications = [...formDataEmployee.qualifications];
-        updatedQualifications[index][property] =
-            e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-
-        setFormDataEmployee({
-            ...formDataEmployee,
-            qualifications: updatedQualifications,
-        });
-        console.log(formDataEmployee.qualifications[index][property]);
-    };
-
     const handleUpdateEmployee = (e) => {
         e.preventDefault();
 
@@ -915,12 +949,20 @@ function EmployeeManagement() {
                 bsb: formDataEmployee.bank_details_bsb,
                 account_number: formDataEmployee.bank_details_account_number,
                 account_name: formDataEmployee.bank_details_account_name,
-            }
+            },
 
-            //create seperate update for qualifications
-
-
+            qualifications: [
+                {
+                    qualification_id: formDataEmployee.qualifications_qualification_id || null,
+                    enabled: formDataEmployee.qualifications_enabled || null,
+                    license_number: formDataEmployee.qualifications_license_number || '',
+                    expires: formDataEmployee.qualifications_expires || '',
+                    in_training: formDataEmployee.qualifications_in_training || null
+                }
+            ]
         }
+
+        //create seperate update for qualifications
         console.log(updatedData);
 
         const cleanObject = (obj) => {
@@ -932,6 +974,11 @@ function EmployeeManagement() {
                 }
             }
         };
+
+        if (!updatedData.qualifications_qualification_id) {
+            delete updatedData.qualifications;
+        }
+
         cleanObject(updatedData);
 
         if (isNaN(updatedData.hourly_rate)) {
@@ -969,16 +1016,6 @@ function EmployeeManagement() {
                 console.error(error);
             });
     };
-
-
-
-
-
-
-
-    function handleUpdateTeamsSubmit(e) {
-
-    }
 
     return (
         <div className="background" >
@@ -1319,7 +1356,7 @@ function EmployeeManagement() {
                         </div>
                     ) : showUpdateTeams ? (
                         <div className="flex-container">
-                            <form onSubmit={handleUpdateTeamsSubmit} style={{ padding: '30px' }} className="primary">
+                            <form style={{ padding: '30px' }} className="primary">
                                 <h2 className="secondary h2-EM">Update Teams</h2>
                                 <p>todo - users and managers update still doesnt work </p>
 
@@ -1572,7 +1609,142 @@ function EmployeeManagement() {
                                             onChange={e => setFormDataEmployee({ ...formDataEmployee, bank_details_account_name: e.target.value })}
                                         />
                                     </div>
-                                 </div>
+                                </div>
+
+                                <div>
+                                    <h3 className="secondary">Qualification:</h3>
+                                    <p>Note - can only submit 1 Qualification at a time. To provide a different qualification re-enter fields and press submit again</p>
+
+                                    <div>
+                                        <input
+                                            type="text"
+                                            style={{ margin: '5px' }}
+                                            placeholder="Qualification ID"
+                                            value={formDataEmployee.qualifications_qualification_id}
+                                            onChange={(e) => setFormDataEmployee({ ...formDataEmployee, qualifications_qualification_id: e.target.value })}
+                                        />
+                                        <select
+                                            value={formDataEmployee.qualifications_qualification_id}
+                                            onChange={(e) => setFormDataEmployee({ ...formDataEmployee, qualifications_qualification_id: e.target.value })}
+                                        >
+                                            <option value="">Select Qualification ID</option>
+                                            {filteredQualifications.map((qualification) => (
+                                                <option key={qualification.id} value={qualification.id}>
+                                                    {qualification.name} - Max Hours: {qualification.maximum_hours}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <input
+                                            type="text"
+                                            placeholder="license_number"
+                                            value={formDataEmployee.qualifications_license_number}
+                                            onChange={e => setFormDataEmployee({ ...formDataEmployee, qualifications_license_number: e.target.value })}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label> <h3 className="secondary">Qualifications Expires:</h3></label>
+                                        <input
+                                            type="date"
+                                            value={formDataEmployee.qualifications_expires || ''}
+                                            onChange={e => setFormDataEmployee({
+                                                ...formDataEmployee,
+                                                qualifications_expires: e.target.value
+                                            })}
+                                        />
+                                    </div>
+                                    <div>
+                                        <h3 className="secondary">Qualifications Enabled:</h3>
+
+                                        <label>
+                                            <input
+                                                type="radio"
+                                                style={{ margin: '5px' }}
+                                                value="true"
+                                                checked={formDataEmployee.qualifications_enabled === true}
+                                                onChange={() => setFormDataEmployee({
+                                                    ...formDataEmployee,
+                                                    qualifications_enabled: true
+                                                })}
+                                            />
+                                            True
+                                        </label>
+
+                                        <label>
+                                            <input
+                                                type="radio"
+                                                value="false"
+                                                style={{ margin: '5px' }}
+                                                checked={formDataEmployee.qualifications_enabled === false}
+                                                onChange={() => setFormDataEmployee({
+                                                    ...formDataEmployee,
+                                                    qualifications_enabled: false
+                                                })}
+                                            />
+                                            False
+                                        </label>
+                                        <label>
+                                            <input
+                                                type="radio"
+                                                value=""
+                                                style={{ margin: '5px' }}
+                                                checked={formDataEmployee.qualifications_enabled === null}
+                                                onChange={() => setFormDataEmployee({
+                                                    ...formDataEmployee,
+                                                    qualifications_enabled: null
+                                                })}
+                                            />
+                                            Unselected
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <h3 className="secondary">In Training:</h3>
+
+                                        <label>
+                                            <input
+                                                type="radio"
+                                                style={{ margin: '5px' }}
+                                                value="true"
+                                                checked={formDataEmployee.qualifications_in_training === true}
+                                                onChange={() => setFormDataEmployee({
+                                                    ...formDataEmployee,
+                                                    qualifications_in_training: true
+                                                })}
+                                            />
+                                            True
+                                        </label>
+
+                                        <label>
+                                            <input
+                                                type="radio"
+                                                value="false"
+                                                style={{ margin: '5px' }}
+                                                checked={formDataEmployee.qualifications_in_training === false}
+                                                onChange={() => setFormDataEmployee({
+                                                    ...formDataEmployee,
+                                                    qualifications_in_training: false
+                                                })}
+                                            />
+                                            False
+                                        </label>
+                                        <label>
+                                            <input
+                                                type="radio"
+                                                value=""
+                                                style={{ margin: '5px' }}
+                                                checked={formDataEmployee.qualifications_in_training === null}
+                                                onChange={() => setFormDataEmployee({
+                                                    ...formDataEmployee,
+                                                    qualifications_in_training: null
+                                                })}
+                                            />
+                                            Unselected
+                                        </label>
+
+                                    </div>
+
+                                </div>
 
                                 <button type="submit" style={{ margin: '10px' }} className="EM-button">Update Users Submit</button>
                                 {showResult && <p>{showResult}</p>}
