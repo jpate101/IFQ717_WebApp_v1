@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Dropdown, Card, Button } from 'react-bootstrap';
 import { DatePicker, Upload, message, Button as AntButton} from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import LeaveSidebar from './Components/Leave/LeaveSidebar';
-import UnavailabilitySidebar from './Components/Leave/UnavailabilitySidebar';
+import LeaveSidebar from '../Components/Leave/LeaveSidebar';
+import UnavailabilitySidebar from '../Components/Leave/UnavailabilitySidebar';
 import { 
   getUsers, 
   getLeaveList, 
@@ -13,10 +13,10 @@ import {
   getDefaultLeaveHours,
   createTemporaryFile,
   deleteUnavailability,
-} from './API/Utilities';
+} from '../API/Utilities';
 import dayjs from 'dayjs';
 import locale from 'antd/es/date-picker/locale/en_GB'
-import './App.css';
+import '../App.css';
 
 const { RangePicker } = DatePicker;
 
@@ -120,6 +120,7 @@ const LeaveRequestTabs = () => {
   const handleLeaveClick = () => {
     setShowLeaveSidebar(true);
   };
+  
   const handleUnavailabilityClick = () => {
     setShowUnavailabilitySidebar(true);
   };

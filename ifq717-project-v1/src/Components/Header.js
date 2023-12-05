@@ -42,6 +42,9 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }) {
                   <HighlightLink to="root/EmployeeManagement/" as={Link}>
                     Employee Management
                   </HighlightLink>
+                  <HighlightLink to="/Qualifications" as={Link}>
+                    Qualifications
+                  </HighlightLink>
                   <HighlightLink to="/roster" as={Link}>
                     Roster
                   </HighlightLink>

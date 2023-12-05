@@ -878,3 +878,100 @@ export const getCurrentUserRole = async () => {
   return isManager ? 'manager' : 'employee';
 };
 
+// Gets the list of qualifications
+export const getQualificationList = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/qualifications`, {
+      method: 'GET',
+      headers: getHeaders()
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching qualifications:', error);
+    throw error;
+  }
+};
+
+// Creates a new qualification
+export const createQualification = async (qualificationData) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/qualifications`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(qualificationData)
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error creating qualification:', error);
+    throw error;
+  }
+};
+
+// Gets a qualification by ID
+export const getQualificationById = async (qualificationId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/qualifications/${qualificationId}`, {
+      method: 'GET',
+      headers: getHeaders()
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(`Error fetching qualification with ID ${qualificationId}:`, error);
+    throw error;
+  }
+};
+
+// Updates a qualification
+export const updateQualification = async (qualificationId, updateData) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/qualifications/${qualificationId}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(updateData)
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(`Error updating qualification with ID ${qualificationId}:`, error);
+    throw error;
+  }
+};
+
+// Deletes a qualification
+export const deleteQualification = async (qualificationId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/qualifications/${qualificationId}`, {
+      method: 'DELETE',
+      headers: getHeaders()
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(`Error deleting qualification with ID ${qualificationId}:`, error);
+    throw error;
+  }
+};
+
