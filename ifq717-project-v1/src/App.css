@@ -374,11 +374,11 @@ textarea:focus {
   background-color: #3498db;
 }
 
-.save-button:hover {
-  color: white;
-  font-weight: bold;
-  border-color: #1e40af;
-  background-color:#1e40af;
+.save-button:active {
+  background-color: #3498db;
+  border-color: #3498db;
+  box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.2);
+  transform: translateY(0.5px);
 }
 
 .shift-container {
@@ -521,7 +521,7 @@ textarea:focus {
   margin-top: 20px;
 }
 
-img {
+img.profile-pic {
   max-width: 100%;
   width: auto\9;
   height: auto;
@@ -587,12 +587,71 @@ img {
   color: #6bcc43 !important;
 }
 
+.approve-button:active {
+  background-color:#f6ffed !important;
+  border-color: #6bcc43 !important;
+  color: #6bcc43 !important;
+  box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.2);
+  transform: translateY(0.5px);
+}
 .decline-button {
   background-color:#fff2f0 !important;
   border-color: #ff595b !important;
   color: #ff595b !important;
 }
 
+.decline-button:active {
+  background-color:#fff2f0 !important;
+  border-color: #ff595b !important;
+  color: #ff595b !important;
+  box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.2);
+  transform: translateY(0.5px);
+}
+
 .cursor-pointer:hover {
   cursor: pointer;
 }
+
+.edit-button {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  border: 1px solid #3498db;
+  background-color: transparent;
+  color: #3498db; 
+}
+
+.edit-button:hover, .edit-button:focus {
+  background-color: transparent;
+  color: #3498db;
+  border-color: #3498db;
+  box-shadow: none;
+}
+
+.edit-button > img {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 0;
+  fill: #3498db;
+}
+
+.edit-button:active {
+  color: #3498db !important;
+  background-color: transparent !important;
+  border-color: #3498db !important; 
+  box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.2) !important;
+  transform: translateY(0.5px) !important;
+}
+
+.tanda-button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+}
+
+.tanda-button:active {
+  background-color: #3498db;
+  box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.2);
+  transform: translateY(0.5px);
+}
+
