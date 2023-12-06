@@ -5,7 +5,8 @@ import {
     createQualification, 
     getUsers, 
     getAllDepartments,
-    updateQualification 
+    updateQualification,
+    deleteQualification
 } from '../API/Utilities';
 import EditButton from '../Components/Buttons/EditButton';
 import NewQualificationModal from '../Components/Qualifications/CreateQualificationModal';
@@ -113,6 +114,17 @@ const Qualifications = () => {
         setIsModalOpen(true);
     };
 
+    const handleDeleteQualification = async (qualificationId) => {
+        try {
+            await deleteQualification(qualificationId);
+            alert('Qualification deleted successfully');
+            setIsModalOpen(false);
+            await fetchData();
+        } catch (error) {
+            console.error('Error deleting qualification:', error);
+        }
+    };
+    
     return (
         <div>
             <div className="d-flex justify-content-between align-items-center mb-3">
@@ -134,6 +146,7 @@ const Qualifications = () => {
                 }}
                 createOrUpdateQualification={handleCreateOrUpdateQualification}
                 editQualification={editQualification}
+                onDeleteQualification={handleDeleteQualification}
             />
             <Table striped bordered hover className="timesheet-table">
                 <thead>
