@@ -157,8 +157,8 @@ export const getUsers = async (employeeId = null) => {
       phone: user.phone,
       passcode: user.passcode,
       role: user.user_levels,
-      qualifications: user.qualifications
-  
+      qualifications: user.qualifications,
+      award_template_id: user.award_template_id
     }));
 
   } catch (error) {
