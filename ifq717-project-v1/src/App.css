@@ -643,10 +643,10 @@ img.profile-pic {
 }
 
 .tanda-button {
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 0.25rem;
+  background-color: #3498db !important;
+  color: white!important;
+  border: none!important;
+  border-radius: 0.25rem!important;
 }
 
 .tanda-button:active {
@@ -655,3 +655,8 @@ img.profile-pic {
   transform: translateY(0.5px);
 }
 
+input:focus {
+  background-color: transparent !important; 
+  border: solid  #3498db !important;
+  box-shadow: none !important;
+}

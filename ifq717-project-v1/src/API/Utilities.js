@@ -117,7 +117,7 @@ export const getUsers = async (employeeId = null) => {
   try {
     const headers = getHeaders(); 
 
-    let url = `${API_BASE_URL}/users?show_wages=true`;
+    let url = `${API_BASE_URL}/users?show_wages=true&show_qualifications=true`;
     if (employeeId) {
       url = `${API_BASE_URL}/users/${employeeId}?show_wages=true`;
       console.log(`Fetching data for user with ID: ${employeeId}`);
@@ -157,6 +157,7 @@ export const getUsers = async (employeeId = null) => {
       phone: user.phone,
       passcode: user.passcode,
       role: user.user_levels,
+      qualifications: user.qualifications,
       award_template_id: user.award_template_id
     }));
 
