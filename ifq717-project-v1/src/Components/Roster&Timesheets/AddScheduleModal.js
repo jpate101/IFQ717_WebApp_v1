@@ -6,7 +6,9 @@ import TimePickerComponent from './TimePicker';
 import { getUsers, getAllDepartments } from '../../API/Utilities';
 import { ReactComponent as BinIcon } from '../../svg/trash3.svg';
 import { ReactComponent as DotDotDot } from '../../svg/three-dots.svg';
-
+import { ReactComponent as Repeat } from '../../svg/arrow-repeat.svg';
+import { ReactComponent as Person } from '../../svg/person-circle.svg';
+import { Tooltip } from 'antd';
 import dayjs from 'dayjs';
 
 const RosterModal = ({ 
@@ -216,11 +218,12 @@ const isUpdatingShift = currentShiftDetails && currentShiftDetails.shiftId;
           <div className="flex items-center"
             style={{ marginTop: '10px' }}
             >
-            <DotDotDot
-              //onClick={() => setIsDotDotDotModalOpen(true)}
-              className="w-6 h-6 mr-3 cursor-pointer roster-icon"
-            >
-            </DotDotDot>
+            <Tooltip title="Repeat shift" placement="bottom" color="#3498db">
+              <Repeat className="tanda-icon cursor-pointer"/>
+            </Tooltip>
+            <Tooltip title="View staff profile" placement="bottom" color="#3498db">
+              <Person className="tanda-icon cursor-pointer"/>
+            </Tooltip>
             {isUpdatingShift && (
             <BinIcon
               onClick={handleDeleteShift}
