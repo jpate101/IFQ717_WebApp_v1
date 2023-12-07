@@ -658,6 +658,18 @@ img.profile-pic {
 
 input:focus {
   background-color: transparent !important; 
-  border: solid  #3498db !important;
+  border: solid !important;
   box-shadow: none !important;
+}
+
+.nav-tabs li.active.create {
+  color: #3498db;
+  border-bottom: 3px solid  #3498db ;
+  font-weight: bold;
+}
+
+.nav-tabs li.active.view {
+  color: #3498db;
+  border-bottom: 3px solid  #3498db ;
+  font-weight: bold;
 }
