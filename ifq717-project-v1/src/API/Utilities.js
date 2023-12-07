@@ -286,7 +286,7 @@ export function GetShifts(props) {
               console.log("Data:", data);
 
               const processedShifts = data.reduce((acc, shift) => {
-                  const shiftDate = dayjs(shift.start * 1000).format('YYYY-MM-DD'); // Assuming shift.start is already in milliseconds. If it's in seconds, use shift.start * 1000
+                  const shiftDate = dayjs(shift.start * 1000).format('YYYY-MM-DD'); 
                   if (!acc[shiftDate]) {
                       acc[shiftDate] = [];
                   }
@@ -459,12 +459,16 @@ export const getCurrentRosters = async () => {
 
 export const createShiftReminder = async (minutesBeforeShiftStart) => {
   try {
+    console.log('Creating shift reminder with:', minutesBeforeShiftStart); 
+
     const response = await fetch(`${API_BASE_URL}/shift_reminders`, { 
       method: 'POST', 
       headers: getHeaders(), 
+      body: JSON.stringify({ minutes_before_shift_start: minutesBeforeShiftStart }),
     });
 
     if (!response.ok) {
+      console.error('Response not ok, status:', response.status);
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
@@ -975,4 +979,78 @@ export const deleteQualification = async (qualificationId) => {
     throw error;
   }
 };
+
+// Gets a list of shift reminders
+export const getShiftReminderList = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/shift_reminders`, {
+      method: 'GET',
+      headers: getHeaders()
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok.');
+    }
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching shift reminder list:', error);
+    throw error;
+  }
+};
+
+
+// Gets a shift reminder by ID
+export const getShiftReminder = async (reminderId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/shift_reminders/${reminderId}`, {
+      method: 'GET',
+      headers: getHeaders()
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok.');
+    }
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching shift reminder:', error);
+    throw error;
+  }
+};
+
+export const updateShiftReminder = async (reminderId, minutesBeforeShiftStart) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/shift_reminders/${reminderId}`, {
+      method: 'PUT',
+      headers: {
+        ...getHeaders(),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ minutes_before_shift_start: minutesBeforeShiftStart }),
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok.');
+    }
+    return response.json();
+  } catch (error) {
+    console.error('Error updating shift reminder:', error);
+    throw error;
+  }
+};
+
+// Deletes a shift reminder
+export const deleteShiftReminder = async (reminderId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/shift_reminders/${reminderId}`, {
+      method: 'DELETE',
+      headers: getHeaders()
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok.');
+    }
+    return response.json();
+  } catch (error) {
+    console.error('Error deleting shift reminder:', error);
+    throw error;
+  }
+};
+
+
 
