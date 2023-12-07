@@ -6,7 +6,7 @@ import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import {
   getRosterForDate,
-  getUsers, 
+  getUsers,
   getAllDepartments, 
   createSchedule, 
   deleteSchedule, 
@@ -18,6 +18,8 @@ import AddScheduleModal from '../Components/Roster&Timesheets/AddScheduleModal';
 import { PlusCircleIcon } from '../Components/Roster&Timesheets/RosterIcons';
 import PublishShiftModal from '../Components/Roster&Timesheets/PublishShiftModal'
 import SelectEmployeeModal from '../Components/Roster&Timesheets/SelectEmployeeModal';
+import CreateShiftReminderModal from '../Components/Roster&Timesheets/CreateShiftReminder';
+
 dayjs.extend(utc);
 
 dayjs.extend(timezone);
@@ -41,7 +43,7 @@ const Roster = () => {
   const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
   const [isSelectEmployeeModalOpen, setIsSelectEmployeeModalOpen] = useState(false);
   const [modalData, setModalData] = useState(null);
-
+  const [isShiftReminderModalOpen, setIsShiftReminderModalOpen] = useState(false);
   useEffect(() => {
     console.log('useEffect for [currentShiftDetails, users]');
     if (currentShiftDetails.userId) {
@@ -411,6 +413,14 @@ const Roster = () => {
     setIsSelectEmployeeModalOpen(false);
   };
 
+  const openShiftReminderModal = () => {
+    setIsShiftReminderModalOpen(true);
+  };  
+
+  const closeShiftReminderModal = () => {
+    setIsShiftReminderModalOpen(false);
+  };
+  
     return (
       <div className="roster-container">
         <div className="flex items-center justify-between">
@@ -418,6 +428,13 @@ const Roster = () => {
             selectedDate={selectedDate}
             onDateChange={handleDateChange}
           />
+        <div>
+          <button
+            onClick={openShiftReminderModal}
+            className="tanda-button p-2 rounded background text-white h-10 -mt-2 mr-2"
+            style={{backgroundColor: '#3498db'}}>
+            Shift Reminders
+          </button>
           <button 
             onClick={() => {
               console.log('Publish Shift Button Clicked');
@@ -427,12 +444,13 @@ const Roster = () => {
                 alert('No shifts to publish for the selected week.');
               }
             }}
-            className="tanda-button border p-2 rounded background text-white h-10 -mt-2 "
+            className="tanda-button p-2 rounded background text-white h-10 -mt-2"
             style={{backgroundColor: '#3498db'}}
             >
             Publish shifts
           </button>
         </div>
+      </div>
         <div className="overflow-x-auto">
           {loading ? (
             <p>Loading...</p>
@@ -515,6 +533,13 @@ const Roster = () => {
                 weekRange={getWeekRange()}
                 onPublish={handlePublish}
                 data={modalData}
+              />,
+              document.getElementById('modal-root')
+            )}
+            {isShiftReminderModalOpen && ReactDOM.createPortal(
+              <CreateShiftReminderModal
+                showModal={isShiftReminderModalOpen}
+                handleClose={closeShiftReminderModal}
               />,
               document.getElementById('modal-root')
             )}
