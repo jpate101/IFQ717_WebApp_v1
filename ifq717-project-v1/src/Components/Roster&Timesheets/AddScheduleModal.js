@@ -3,7 +3,6 @@ import EmployeesDropdown from './EmployeesDropdown';
 import TeamsDropdown from './TeamsDropdown';
 import DateFormItem from './DateFormItem';
 import TimePickerComponent from './TimePicker';
-import CreateShiftReminder from './CreateShiftReminder';
 import { getUsers, getAllDepartments } from '../../API/Utilities';
 import { ReactComponent as BinIcon } from '../../svg/trash3.svg';
 import { ReactComponent as DotDotDot } from '../../svg/three-dots.svg';
@@ -211,11 +210,6 @@ const isUpdatingShift = currentShiftDetails && currentShiftDetails.shiftId;
             selectedTeamId={selectedTeam ? selectedTeam.id : null}
           >
           </TeamsDropdown>
-        </div>
-        <div className="my-2">
-          <CreateShiftReminder
-            onReminderCreated={handleReminderCreated}
-          />
         </div>
         <div className="flex justify-between my-2">
           <div>{}</div>
