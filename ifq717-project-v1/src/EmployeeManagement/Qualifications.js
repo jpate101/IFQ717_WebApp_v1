@@ -155,8 +155,6 @@ const Qualifications = () => {
                         <th>Maximum Hours</th>
                         <th>Staff</th>
                         <th>Teams</th>
-                        <th>Automatically Assign Team</th>
-                        <th>Block Roster Publishing</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -171,8 +169,6 @@ const Qualifications = () => {
                                 <td>{qualification.maximum_hours ? qualification.maximum_hours : 'N/A'}</td>
                                 <td>{countStaffWithQualification(qualification.id)}</td>
                                 <td>{countTeamsWithQualification(qualification.id)}</td>
-                                <td>{/* Automatically Assign Team logic */}</td>
-                                <td>{/* Block Roster Publishing logic */}</td>
                                 <td>
                                 <EditButton onClick={() => handleEditClick(qualification.id)} />
                                 </td>
