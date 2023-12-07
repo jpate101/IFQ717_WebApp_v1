@@ -1,3 +1,9 @@
+:root {
+  --button-green: #93c732;
+  --primary-color: #3b82f6;
+  --secondary-color: #1e40af;
+}
+
 .App {
   text-align: center;
 }
@@ -446,6 +452,12 @@ textarea:focus {
   font-weight: bold;
 }
 
+.nav-tabs li.emp-awards:hover,
+.nav-tabs li.org-awards:hover {
+  color: var(--secondary-color);
+  font-weight: bold;
+}
+
 .nav-tabs li.active.pending {
   color: orange;
   border-bottom: 3px solid orange;
@@ -461,6 +473,13 @@ textarea:focus {
 .nav-tabs li.active.rejected {
   color: red;
   border-bottom: 3px solid red;
+  font-weight: bold;
+}
+
+.nav-tabs li.active.emp-awards,
+.nav-tabs li.active.org-awards {
+  color: var(--primary-color);
+  border-bottom: 3px solid var(--button-green);
   font-weight: bold;
 }
 
@@ -489,6 +508,22 @@ textarea:focus {
 .dropdown-menu .dropdown-item {
   color: #3498db !important; 
   background-color: white !important;
+}
+
+.compliance-custom-dropdown-height .dropdown-menu {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.compliance-custom-dropdown-button-height {
+  height: 25px;  
+  line-height: 10px;
+  
+}
+
+.compliance-custom-button-color {
+  background-color: white !important;
+  color: #3498db !important;
 }
 
 .dropdown-menu .dropdown-item:hover, .dropdown-menu .dropdown-item:focus {
