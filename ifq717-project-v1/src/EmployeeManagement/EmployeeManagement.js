@@ -959,7 +959,14 @@ function EmployeeManagement() {
                     expires: formDataEmployee.qualifications_expires || '',
                     in_training: formDataEmployee.qualifications_in_training || null
                 }
-            ]
+            ],
+            super_fund: {
+                id: parseFloat(formDataEmployee.super_fund_id),
+                fund_name: formDataEmployee.super_fund_fund_name,
+                product_name: formDataEmployee.super_fund_product_name,
+                smsf: formDataEmployee.super_fund_smsf,
+                abn: parseFloat(formDataEmployee.super_fund_abn)
+            }
         }
 
         //create seperate update for qualifications
@@ -979,10 +986,17 @@ function EmployeeManagement() {
             delete updatedData.qualifications;
         }
 
+
         cleanObject(updatedData);
 
         if (isNaN(updatedData.hourly_rate)) {
             delete updatedData.hourly_rate;
+        }
+        if (isNaN(updatedData.super_fund.id)) {
+            delete updatedData.super_fund.id;
+        }
+        if (isNaN(updatedData.super_fund.abn)) {
+            delete updatedData.super_fund.abn;
         }
 
         //console.log("bsb check:", updatedData.bank_details_account_name);
@@ -1742,6 +1756,80 @@ function EmployeeManagement() {
                                             Unselected
                                         </label>
 
+                                    </div>
+
+                                    <div>
+                                        <h3 className="secondary">Super Fund Details:</h3>
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="Super Fund ID"
+                                                value={formDataEmployee.super_fund_id}
+                                                onChange={e => setFormDataEmployee({ ...formDataEmployee, super_fund_id: e.target.value })}
+                                            />
+                                        </div>
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="Fund Name"
+                                                value={formDataEmployee.super_fund_fund_name}
+                                                onChange={e => setFormDataEmployee({ ...formDataEmployee, super_fund_fund_name: e.target.value })}
+                                            />
+                                        </div>
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="Product Name"
+                                                value={formDataEmployee.super_fund_product_name}
+                                                onChange={e => setFormDataEmployee({ ...formDataEmployee, super_fund_product_name: e.target.value })}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label>
+                                                <h3 className="secondary">SMSF:</h3>
+                                            </label>
+
+                                            <label>
+                                                <input
+                                                    type="radio"
+                                                    style={{ margin: '5px' }}
+                                                    value="true"
+                                                    checked={formDataEmployee.super_fund_smsf === true}
+                                                    onChange={() => setFormDataEmployee({ ...formDataEmployee, super_fund_smsf: true })}
+                                                />
+                                                True
+                                            </label>
+
+                                            <label>
+                                                <input
+                                                    type="radio"
+                                                    value="false"
+                                                    style={{ margin: '5px' }}
+                                                    checked={formDataEmployee.super_fund_smsf === false}
+                                                    onChange={() => setFormDataEmployee({ ...formDataEmployee, super_fund_smsf: false })}
+                                                />
+                                                False
+                                            </label>
+
+                                            <label>
+                                                <input
+                                                    type="radio"
+                                                    value=""
+                                                    style={{ margin: '5px' }}
+                                                    checked={formDataEmployee.super_fund_smsf === null}
+                                                    onChange={() => setFormDataEmployee({ ...formDataEmployee, super_fund_smsf: null })}
+                                                />
+                                                Unselected
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="ABN (Australian Business Number)"
+                                                value={formDataEmployee.super_fund_abn}
+                                                onChange={e => setFormDataEmployee({ ...formDataEmployee, super_fund_abn: e.target.value })}
+                                            />
+                                        </div>
                                     </div>
 
                                 </div>

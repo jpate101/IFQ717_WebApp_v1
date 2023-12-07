@@ -132,6 +132,11 @@ export const useEmployeeForm = () => {
         qualifications_in_training: null,
         qualifications_file_id: "",
         enable_login: null,
+        super_fund_fund_name: "",
+        super_fund_product_name: "",
+        super_fund_smsf: null,
+        super_fund_abn: null,
+        super_fund_id: null,
     });
     return [formDataEmployee, setFormDataEmployee];
 };
