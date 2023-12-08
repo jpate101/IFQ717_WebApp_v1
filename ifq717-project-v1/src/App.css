@@ -526,6 +526,12 @@ textarea:focus {
   color: #3498db !important;
 }
 
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .dropdown-menu .dropdown-item:hover, .dropdown-menu .dropdown-item:focus {
   color: white !important;
   background-color: #3498db !important;
