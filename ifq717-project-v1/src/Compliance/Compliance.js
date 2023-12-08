@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import getUserToken from '../API/Utilities/getUserToken';
 import useUserDetails from '../Hooks/useUserDetails';
 import '../../src/style.css';
@@ -11,8 +11,12 @@ import '../../src/App.css';
 export default function Compliance() {
   const token = getUserToken();
   const user = useUserDetails(token);
-  const [activeTab, setActiveTab] = useState('organisation');
+  const [activeTab, setActiveTab] = useState(localStorage.getItem('activeTab') || 'organisation');
 
+  useEffect(() => {
+    localStorage.setItem('activeTab', activeTab);
+  }, [activeTab]);
+  
   return (
     <main className="flex-grow-1">
       {user && (

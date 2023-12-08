@@ -788,16 +788,14 @@ export const getAwards = async () => {
 
 // enable award (POST award template)
 
-export const enableAward = async (awardTemplateId, extractLeaveTypes, replaceLeaveTypes) => {
+export const enableAward = async (awardTemplateId) => {
   const headers = {
     ...getHeaders(),
     'Content-Type': 'application/json'
   };
-  const url = `${API_BASE_URL}/api/v2/award_templates`;
+  const url = `${API_BASE_URL}/award_templates`;
   const body = {
-    award_template_id: awardTemplateId,
-    extract_leave_types: extractLeaveTypes,
-    replace_leave_types: replaceLeaveTypes
+    award_template_id: awardTemplateId
   };
 
   try {
