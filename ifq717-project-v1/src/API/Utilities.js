@@ -158,7 +158,8 @@ export const getUsers = async (employeeId = null) => {
       passcode: user.passcode,
       role: user.user_levels,
       qualifications: user.qualifications,
-      award_template_id: user.award_template_id
+      award_template_id: user.award_template_id,
+      last_synced_mobile_app: user.last_synced_mobile_app
     }));
 
   } catch (error) {
