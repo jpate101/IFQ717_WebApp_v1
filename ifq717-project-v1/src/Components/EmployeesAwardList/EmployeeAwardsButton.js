@@ -4,6 +4,7 @@ import React from 'react';
 import LabelledButton from '../Buttons/LabelledButton';
 import addAwardToEmployee  from '../../API/Utilities/addAwardToEmployee'; 
 import { useState, useEffect } from 'react';
+import '../../Compliance/compliance.css';
 
 export default function EmployeeAwardsButton({ employee, setIsAwardAdded, setAwardAddError, isEditable, originalAwardId, isDisabled }) {
     const [isLoading, setIsLoading] = useState(false);
@@ -54,6 +55,7 @@ export default function EmployeeAwardsButton({ employee, setIsAwardAdded, setAwa
 
   return (
     <LabelledButton 
+      className="employee-award-button"
       buttonText={isLoading ? "Loading..." : buttonText} 
       onClick={handleClick} 
       disabled={isDisabled || isLoading} 

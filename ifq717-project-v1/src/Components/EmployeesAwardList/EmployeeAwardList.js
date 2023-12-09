@@ -9,7 +9,7 @@ import Pagination from '../Pagination.js';
 import Unlock from '../Icons/Unlock.js';
 import EmployeeAwardsButton from './EmployeeAwardsButton.js';
 import '../../style.css';
-import '../../App.css'
+import '../../App.css';
 
 const EmployeeAwardsList = () => {
   const [employees, setEmployees] = useState([]);
@@ -89,7 +89,7 @@ const EmployeeAwardsList = () => {
     <Dropdown.Toggle 
   className="custom-dropdown compliance-custom-dropdown-button-height compliance-custom-button-color truncate" 
   style={{ textAlignLast: 'right', width: '145%' }}
-  disabled={isAwardAdded} // Disable the dropdown toggle when the Assign button sayz "Assigned" 
+  disabled={employee.award_template_id != null && !isUnlocked[employee.id]} // Disable the dropdown toggle when an award is assigned and it's not unlocked
 >
   {
     (() => {
@@ -113,20 +113,20 @@ const EmployeeAwardsList = () => {
                  </Dropdown>
                 </div>
                 <div style={{ flex: '0.15', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
-                {(!isUnlocked[employee.id] || isAwardAdded) && (
+                {employee.award_template_id != null && !isUnlocked[employee.id] && (
   <a href="#" onClick={(event) => handleUnlock(event, employee.id)}>
     <Unlock size="20" alt="unlock icon" />
   </a>
 )}
                 <EmployeeAwardsButton 
-                employee={employee} 
-                setIsAwardAdded={setIsAwardAdded} 
-                setAwardAddError={setAwardAddError} 
-                isEditable={isEditable[employee.id]}
-                originalAwardId={employee.original_award_template_id}
-                isDisabled={employee.award_template_id && employee.award_template_id === employee.original_award_template_id}
-                isAwardAdded={isAwardAdded} 
-                />
+                    employee={employee} 
+                    setIsAwardAdded={setIsAwardAdded} 
+                    setAwardAddError={setAwardAddError} 
+                    isEditable={isEditable[employee.id]}
+                    originalAwardId={employee.original_award_template_id}
+                    isDisabled={employee.award_template_id && employee.award_template_id === employee.original_award_template_id && !isUnlocked[employee.id]}
+                    isAwardAdded={isAwardAdded} 
+                    />
                 </div>
               </div>
             </div>
