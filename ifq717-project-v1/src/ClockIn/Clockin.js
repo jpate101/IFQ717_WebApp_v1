@@ -4,7 +4,7 @@ import ClockInUserGrid from './ClockInUserGrid';
 
 function ClockIn() {
   return (
-    <Container>
+    <Container className="clockin-container">
       <ClockInUserGrid /> 
     </Container>
   );
