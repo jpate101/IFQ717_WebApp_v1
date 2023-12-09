@@ -1,12 +1,17 @@
 import React from 'react';
-import { Container } from 'react-bootstrap';
 import ClockInUserGrid from './ClockInUserGrid';
+import DynamicBanner from '../Components/DynamicBanner';
+import RocketIcon from '../Components/Icons/RocketIcon';
+import '../style.css';
 
 function ClockIn() {
   return (
-    <Container className="clockin-container">
+    <>
+    <DynamicBanner text="Manage employee clockins" Icon={RocketIcon} />
+     <div className="clockin-container mx-auto px-4">
       <ClockInUserGrid /> 
-    </Container>
+    </div>
+    </>
   );
 }
 

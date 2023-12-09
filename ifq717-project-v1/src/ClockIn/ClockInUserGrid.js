@@ -25,7 +25,7 @@ function ClockInUserGrid() {
   
       const activeUsers = await Promise.all(users.filter(user => user.active).map(async user => {
         const isInvited = user.last_synced_mobile_app !== null;
-        const isAppActive = user.last_synced_mobile_app !== 0;
+        const isAppActive = isInvited ? user.last_synced_mobile_app !== 0 : false;
         const invited = isInvited ? "Invited" : "Invite";
         const mobileApp = isAppActive ? unixTimeToEmployeeTime(user.last_synced_mobile_app, user.timezone) : (user.last_synced_mobile_app === 0 ? "Never" : null);
         
@@ -57,9 +57,9 @@ function ClockInUserGrid() {
   }, []);
 
   const columns = [
-    { headerName: "Name", field: "name", sortable: true, filter: true },
-    { headerName: "Start date", field: "employment_start_date", sortable: true, filter: false },
-    { headerName: "Invited", field: "invited", sortable: true, filter: true },
+    { headerName: "Name", field: "name", sortable: true, filter: true, floatingFilter: true },
+    { headerName: "Start date", field: "employment_start_date", sortable: true, filter: true, floatingFilter: true },
+    { headerName: "Invited", field: "invited", sortable: true, filter: true, floatingFilter: true },
     { headerName: "MobileApp", field: "mobileApp", sortable: true, filter: true },
     { headerName: "1st Clockin", field: "first_clockin", sortable: true, filter: true },
     { headerName: "Next shift", field: "nextShift", sortable: true, filter: true }, // new column
@@ -69,7 +69,7 @@ function ClockInUserGrid() {
   return (
     <>
     <h1>Invite users to Clock In - the skeleton. times are converted to employee timezone.</h1>
-    <div className="ag-theme-alpine" style={{ height: '500px', width: '100%' }}>
+    <div className="ag-theme-alpine grid-container" style={{ height: '500px', width: '100%' }}>
       <AgGridReact
         onGridReady={onGridReady}
         columnDefs={columns}
