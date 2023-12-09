@@ -4,6 +4,7 @@ import useUserDetails from '../Hooks/useUserDetails';
 import '../../src/style.css';
 import '../Dashboard/dashboard.css';
 import RocketIcon from '../Components/Icons/RocketIcon';
+import DynamicBanner from '../Components/DynamicBanner';
 import AwardList from '../Components/AwardsList/AwardsList';
 import EmployeesAwardsList from '../Components/EmployeesAwardList/EmployeeAwardList';
 import '../../src/App.css';
@@ -21,10 +22,7 @@ export default function Compliance() {
     <main className="flex-grow-1">
       {user && (
         <div className="compliance-container mx-auto px-4">
-          <div className="launchpad-card mt-4 mr-3 ml-3">
-            <RocketIcon size="75" alt="tanda launchpad icon" />
-            <span>Tanda Compliance</span>
-          </div>
+          <DynamicBanner text="Tanda Compliance" Icon={RocketIcon} />
           <div className="nav-tabs-container mt-4">
           <ul className="nav-tabs">
             <li className={`org-awards ${activeTab === 'organisation' ? 'active' : ''}`} onClick={() => setActiveTab('organisation')}>Organisation Awards</li>
