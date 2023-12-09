@@ -55,6 +55,7 @@
     "ag-grid-react": "^30.2.1",
     "html-webpack-plugin": "^5.5.3",
     "moment": "^2.29.4",
+    "moment-timezone": "^0.5.43",
     "tailwindcss": "^3.3.5"
   },
   "babel": {

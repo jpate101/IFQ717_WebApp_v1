@@ -159,7 +159,8 @@ export const getUsers = async (employeeId = null) => {
       role: user.user_levels,
       qualifications: user.qualifications,
       award_template_id: user.award_template_id,
-      last_synced_mobile_app: user.last_synced_mobile_app
+      last_synced_mobile_app: user.last_synced_mobile_app,
+      timezone: user.time_zone
     }));
 
   } catch (error) {
@@ -1047,6 +1048,28 @@ export const deleteShiftReminder = async (reminderId) => {
     return response.json();
   } catch (error) {
     console.error('Error deleting shift reminder:', error);
+    throw error;
+  }
+};
+
+// Gets shifts for a specific employee and optional date range
+export const getShiftsByUserAndDate = async (employee, from, to) => {
+  try {
+    let url = `${API_BASE_URL}/shifts?`;
+    if (employee) url += `&user_ids=${employee}`;
+    if (from) url += `&from=${from}`;
+    if (to) url += `&to=${to}`;
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: getHeaders()
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok.');
+    }
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching shifts:', error);
     throw error;
   }
 };
