@@ -26,28 +26,28 @@ const Pagination = ({ itemsPerPage, totalItems, paginate, currentPage }) => {
 
   return (
     <nav className="flex justify-center pb-2">
-      <ul className='pagination'>
-        <li className='page-item mr-1'>
-          <a onClick={prevPage} href='!#' className={`px-2 py-2 border border-primary text-sm leading-none rounded ${currentPage === 1 ? 'disabled' : ''} hover:shadow-lg`}>
+      <ul className='flex'>
+        <li className='mr-1'>
+          <a onClick={prevPage} href='!#' className={`px-2 py-1 ${currentPage === 1 ? 'text-accent' : 'underline text-primary'}`}>
             Prev
           </a>
         </li>
         {pageNumbers.map(number => (
-          <li key={number} className='page-item mr-1'>
+          <li key={number} className='mr-1'>
             <a 
               onClick={(event) => {
                 event.preventDefault();
                 paginate(number);
               }} 
               href='!#' 
-              className={`px-2.5 py-2 border border-primary text-sm text-primary leading-none rounded ${currentPage === number ? 'bg-white' : 'bg-gray-50'} hover:shadow-lg`}
+              className={`px-2 py-1 ${currentPage === number ? 'text-accent' : 'underline text-primary'}`}
             >
               {number}
             </a>
           </li>
         ))}
-        <li className='page-item mr-1'>
-          <a onClick={nextPage} href='!#' className={`px-2 py-2 border border-primary text-sm leading-none rounded ${currentPage === pageNumbers.length ? 'disabled' : ''} hover:shadow-lg`}>
+        <li className='mr-1'>
+          <a onClick={nextPage} href='!#' className={`px-2 py-1 ${currentPage === pageNumbers.length ? 'text-accent' : 'underline text-primary'}`}>
             Next
           </a>
         </li>
