@@ -233,6 +233,7 @@ function EmployeeManagement() {
         setShowOnboardNewUser(false);
         setShowInactivateEmployee(false);
         setShowResult('');
+        formDataEmployee.Id = '';
     };
     const handleCreateTeamsClick = () => {
         setShowEmployeeForm(false);
@@ -244,6 +245,7 @@ function EmployeeManagement() {
         setShowOnboardNewUser(false);
         setShowInactivateEmployee(false);
         setShowResult('');
+        formDataEmployee.Id = '';
     };
     const handleCreateUsersClick = () => {
         setShowLocationForm(false);
@@ -255,6 +257,7 @@ function EmployeeManagement() {
         setShowOnboardNewUser(false);
         setShowInactivateEmployee(false);
         setShowResult('');
+        formDataEmployee.Id = '';
     };
     const handleUpdateUsersClick = () => {
         setShowUpdateUsers(true);
@@ -266,6 +269,7 @@ function EmployeeManagement() {
         setShowOnboardNewUser(false);
         setShowInactivateEmployee(false);
         setShowResult('');
+        formDataEmployee.Id = '';
     }
     const handleUpdateLocationsClick = () => {
         setShowUpdateUsers(false);
@@ -277,6 +281,7 @@ function EmployeeManagement() {
         setShowOnboardNewUser(false);
         setShowInactivateEmployee(false);
         setShowResult('');
+        formDataEmployee.Id = '';
     }
     const handleUpdateTeamsClick = () => {
         setShowUpdateUsers(false);
@@ -288,6 +293,7 @@ function EmployeeManagement() {
         setShowOnboardNewUser(false);
         setShowInactivateEmployee(false);
         setShowResult('');
+        formDataEmployee.Id = '';
     }
     const handleOnboardNewUserClick = () => {
         setShowUpdateUsers(false);
@@ -299,6 +305,7 @@ function EmployeeManagement() {
         setShowOnboardNewUser(true);
         setShowInactivateEmployee(false);
         setShowResult('');
+        formDataEmployee.Id = '';
     }
 
     const handleInactivateEmployeeClick = () => {
@@ -311,6 +318,7 @@ function EmployeeManagement() {
         setShowOnboardNewUser(false);
         setShowInactivateEmployee(true);
         setShowResult('');
+        formDataEmployee.Id = '';
     }
 
     //button functions 
@@ -1372,7 +1380,6 @@ function EmployeeManagement() {
                         <div className="flex-container">
                             <form style={{ padding: '30px' }} className="primary">
                                 <h2 className="secondary h2-EM">Update Teams</h2>
-                                <p>todo - users and managers update still doesnt work </p>
 
                                 <div>
                                     <h3 className="secondary">Team Id:</h3>
@@ -1426,7 +1433,6 @@ function EmployeeManagement() {
                                         value={formDataTeams.user_ids.join(',')} // Join the array for display
                                         onChange={(e) => setFormDataTeams({ ...formDataTeams, user_ids: e.target.value.split(',') })}
                                     />
-                                    <p>user IDs current dont work</p>
                                 </div>
                                 <div>
                                     <input
