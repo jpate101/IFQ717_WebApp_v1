@@ -8,7 +8,7 @@ export default function useTokenAuthentication({ username, password }) {
 
   // call the /token end point with provided username and password and scopes me, user & department
   const tokenUrl = process.env.REACT_APP_TANDA_TOKEN_URL;
-  const scopes = 'me user department cost financial roster timesheet leave unavailability qualifications settings sms platform';
+  const scopes = 'me user department cost financial roster timesheet leave unavailability qualifications settings sms platform device';
   const grantType = 'password';
 
   const handleTokenExchange = async () => {

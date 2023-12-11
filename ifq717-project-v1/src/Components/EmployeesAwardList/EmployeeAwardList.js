@@ -122,11 +122,12 @@ const EmployeeAwardsList = () => {
                     employee={employee} 
                     setIsAwardAdded={setIsAwardAdded} 
                     setAwardAddError={setAwardAddError} 
+                    setAwardButtonError={setAwardButtonError}
                     isEditable={isEditable[employee.id]}
                     originalAwardId={employee.original_award_template_id}
                     isDisabled={employee.award_template_id && employee.award_template_id === employee.original_award_template_id && !isUnlocked[employee.id]}
                     isAwardAdded={isAwardAdded} 
-                    />
+              />
                 </div>
               </div>
             </div>

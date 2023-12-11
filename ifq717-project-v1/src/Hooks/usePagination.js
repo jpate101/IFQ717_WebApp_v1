@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-const usePagination = (items, itemsPerPage, setAwardButtonError) => {
+const usePagination = (items, itemsPerPage) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [currentItems, setCurrentItems] = useState([]);
 
@@ -15,7 +15,7 @@ const usePagination = (items, itemsPerPage, setAwardButtonError) => {
   const totalItems = items.length;
 
   const setCurrentPageNo = (pageNumber) => {
-    setAwardButtonError(null); // update to handle clearing error message on the compliance pg after changing page
+    //setAwardButtonError(null); // used for clearing erros on compliance list when changing pagination but causes error. 
     setCurrentPage(pageNumber);
   };
 

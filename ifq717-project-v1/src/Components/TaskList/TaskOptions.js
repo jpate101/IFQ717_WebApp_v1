@@ -29,7 +29,7 @@ const tasks = [
       completionCriteria: completionCriteria
     },
     {
-      name: 'Create shifts on a roster',
+      name: 'Create shifts on a roster', // DO PROPERLY 
       /*fetchFunction: async () => {
         const user = await useUserDetails();
         const userId = user.map((user) => user.id);
@@ -41,7 +41,7 @@ const tasks = [
       isComplete: true
     },
     {
-      name: 'Approve a timesheet',
+      name: 'Approve a timesheet', // DO PROPERLY
       //fetchFunction: getTimesheet,
       //completionCriteria: completionCriteria
       isComplete: true

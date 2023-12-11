@@ -1074,5 +1074,94 @@ export const getShiftsByUserAndDate = async (employee, from, to) => {
   }
 };
 
+export const getClockIns = async (userId, from, to) => {
+  try {
+    const headers = getHeaders(); 
+
+    let url = `${API_BASE_URL}/clockins?user_id=${userId}&from=${from}&to=${to}`;
+    console.log(`Calling TimeClock info for user with ID: ${userId} from ${from} to ${to}`);
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: getHeaders()
+    });
+
+    console.log('Response received', response);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    let clockinData = await response.json();
+    console.log('TimeClock data received:', clockinData);
+
+    if (!Array.isArray(clockinData)) {
+      clockinData = [clockinData]; 
+    }
+
+    let formattedClockins = clockinData.map(clockin => ({
+      id: clockin.id,
+      type: clockin.type,
+      user_id: clockin.user_id,
+      time: clockin.time
+    }));
+    
+    if (formattedClockins.length > 0) {
+      console.log('First clock-in:', formattedClockins[0]);
+    }
+    
+    return formattedClockins;
+
+  } catch (error) {
+    console.error('Error fetching TimeClock info:', error);
+    throw error;
+  }
+};
+
+// get the app reminder email (currently looks same as onboard invite. will check.)
+
+export async function sendAppReminder(userId) {
+  try {
+      const response = await fetch(`${API_BASE_URL}/users/${userId}/onboard`, {
+          method: 'POST',
+          headers: getHeaders()
+      });
+
+      if (response.status === 201) {
+          return { success: true, message: 'App download reminder sent successfully!' };
+      } else {
+          const errorData = await response.json();
+          const errorMessage = errorData.error || 'Failed to send app download reminder email.';
+          throw new Error(errorMessage);
+      }
+  } catch (error) {
+      return { success: false, message: `Error: ${error.message}` };
+  }
+}
+
+// Get Devices
+export const getDevices = async () => {
+  const headers = getHeaders(); 
+  try {
+    const response = await fetch(`${API_BASE_URL}/devices`, {   
+      method: 'GET',
+      headers: headers,
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const devices = await response.json();
+    console.log('Devices data received:', devices);
+
+    return devices;
+  
+  } catch (error) {
+    console.error('Error fetching devices:', error);
+    throw error;
+  }
+}
+
+
 
 
