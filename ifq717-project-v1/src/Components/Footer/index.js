@@ -5,16 +5,16 @@ import "./footer.css";
 
 const Footer = () => {
     return (
-    <footer className="footer bg-background text-primary">
+    <footer className="footer text-primary">
         <div className="footer-grid">
             <div className="footer-column">
-                <div>
+                <div className="ml-2">
                     <p>&copy; 2023, Tanda Launchpad </p>
                     <p>2 George St, < br/>
                     Brisbane QLD 4000</p>
                 </div>
             </div>
-        <div className="footer-column">
+            <div className="footer-column flex flex-col items-center justify-center">
             <div>
                 <p>IFQ717 Students:</p>
                 <ul>
@@ -26,9 +26,11 @@ const Footer = () => {
         </div>
         <div className="footer-column">
           <div>
-            <div className="chat-icon-container">
-            <p>Work in progress< br/>
-            <img src="/Chat.svg" alt="Chat Icon" className="chat-icon" />
+            <div className="text-right mr-2">
+            <p>< br/>
+            Student project < br/>
+            QUT Web Development Bootcamp < br/>
+            Built with React, Node.js upon Tanda APIs
             </p>
             </div>
           </div>

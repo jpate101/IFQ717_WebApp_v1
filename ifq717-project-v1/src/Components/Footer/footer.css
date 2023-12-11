@@ -4,6 +4,8 @@
     --primary-color: #3b82f6;
     --secondary-color: #1e40af;
     --background-color: #f9fafb;
+    --accent: #3fafd7;
+    --dark-color: #104860;
   }
 
 .footer-grid {
@@ -12,11 +14,12 @@
     justify-content: space-between; 
     padding: 10px; 
     margin-top: 2rem;
+    background-color: var(--accent);
   }
   
   .footer-column {
     width: 30%;
-    color: var(--primary-color); 
+    color: var(--background-color); 
   }
   
   
@@ -27,7 +30,7 @@
  
   .footer-column ul a {
     text-decoration: none;
-    color: var(--primary-color);
+    color: var(--background-color);
   }
 
   .footer-column ul a:hover {
