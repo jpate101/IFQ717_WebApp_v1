@@ -1139,4 +1139,29 @@ export async function sendAppReminder(userId) {
   }
 }
 
+// Get Devices
+export const getDevices = async () => {
+  const headers = getHeaders(); 
+  try {
+    const response = await fetch(`${API_BASE_URL}/devices`, {   
+      method: 'GET',
+      headers: headers,
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const devices = await response.json();
+    console.log('Devices data received:', devices);
+
+    return devices;
+  
+  } catch (error) {
+    console.error('Error fetching devices:', error);
+    throw error;
+  }
+}
+
+
+
 
