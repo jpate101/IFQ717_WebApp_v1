@@ -3,7 +3,6 @@ import TextField from "../Components/TextField";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import './login.css';
-import '../Resources/iStock-Chefs.jpg';
 import '../Resources/logo-white.svg';
 import useTokenAuthentication from "../Hooks/useTokenAuthentication";
 import { getCurrentUserRole } from "../API/Utilities";
@@ -124,13 +123,13 @@ export default function Login({ setIsLoggedIn, setUserRole }) {
           <div className="d-flex flex-column justify-content-center h-100">
             <div className="background-image-container">
               <Image src={require('../Resources/logo-white.svg').default} alt="Logo" className="login-enticer-logo" />
-              <Card className ="mb-4 login-enticer-card">
+              <Card className ="mt-12 login-enticer-card">
               <Card.Body>
                 <Card.Title className="login-enticer-heading">Tanda Launchpad</Card.Title>
                 <div>
                   <div className="flex items-top">
                     <img src="/Summary.svg" alt="Summary Icon" className="mr-2 h-5 w-5 login-enticer-fill-primary" />
-                    <span>Organisation onboarding overview</span>
+                    <span>Organisation setup & onboarding</span>
                   </div>
                   <div className="flex items-center">
                     <img src="/Worker.svg" alt="Worker Icon" className="mr-2 h-5 w-5 login-enticer-fill-primary" />
