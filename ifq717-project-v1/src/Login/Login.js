@@ -131,6 +131,9 @@ export default function Login({ setIsLoggedIn, setUserRole }) {
                     <img src="/Summary.svg" alt="Summary Icon" className="mr-2 h-5 w-5 login-enticer-fill-primary" />
                     <span>Organisation setup & onboarding</span>
                   </div>
+                  <div className="ml-7 lighter-font">
+                    <div>incl. Qualifications, Compliance, Clockin management</div>
+                  </div>
                   <div className="flex items-center">
                     <img src="/Worker.svg" alt="Worker Icon" className="mr-2 h-5 w-5 login-enticer-fill-primary" />
                     <div className="d-flex align-items-top">
@@ -147,7 +150,7 @@ export default function Login({ setIsLoggedIn, setUserRole }) {
                     </div>
                   </div>
                   <div className="ml-7 lighter-font">
-                    <div>Create, edit, approve & export timesheets</div>
+                    <div>Create, edit, approve & export rosters</div>
                   </div>
                 </div>
               </Card.Body>
