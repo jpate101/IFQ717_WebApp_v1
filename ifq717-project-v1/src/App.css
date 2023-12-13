@@ -650,6 +650,12 @@ img.profile-pic {
   transform: translateY(0.5px);
 }
 
+.disabled-button {
+  background-color: #f0f0f0 !important;
+  border-color: #cccccc !important;
+  color: #888888 !important;
+}
+
 .cursor-pointer:hover {
   cursor: pointer;
 }

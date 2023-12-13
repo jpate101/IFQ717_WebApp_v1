@@ -29,7 +29,11 @@ const tasks = [
       completionCriteria: completionCriteria
     },
     {
+<<<<<<< Updated upstream
       name: 'Create shifts on a roster', // DO PROPERLY 
+=======
+      name: 'Create shifts on a roster', // TODO do this properly 
+>>>>>>> Stashed changes
       /*fetchFunction: async () => {
         const user = await useUserDetails();
         const userId = user.map((user) => user.id);
@@ -41,7 +45,11 @@ const tasks = [
       isComplete: true
     },
     {
+<<<<<<< Updated upstream
       name: 'Approve a timesheet', // DO PROPERLY
+=======
+      name: 'Approve a timesheet', // TODO do this properly 
+>>>>>>> Stashed changes
       //fetchFunction: getTimesheet,
       //completionCriteria: completionCriteria
       isComplete: true
