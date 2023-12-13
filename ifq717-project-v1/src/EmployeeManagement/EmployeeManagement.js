@@ -233,6 +233,7 @@ function EmployeeManagement() {
         setShowOnboardNewUser(false);
         setShowInactivateEmployee(false);
         setShowResult('');
+        formDataEmployee.Id = '';
     };
     const handleCreateTeamsClick = () => {
         setShowEmployeeForm(false);
@@ -244,6 +245,7 @@ function EmployeeManagement() {
         setShowOnboardNewUser(false);
         setShowInactivateEmployee(false);
         setShowResult('');
+        formDataEmployee.Id = '';
     };
     const handleCreateUsersClick = () => {
         setShowLocationForm(false);
@@ -255,6 +257,7 @@ function EmployeeManagement() {
         setShowOnboardNewUser(false);
         setShowInactivateEmployee(false);
         setShowResult('');
+        formDataEmployee.Id = '';
     };
     const handleUpdateUsersClick = () => {
         setShowUpdateUsers(true);
@@ -266,6 +269,7 @@ function EmployeeManagement() {
         setShowOnboardNewUser(false);
         setShowInactivateEmployee(false);
         setShowResult('');
+        formDataEmployee.Id = '';
     }
     const handleUpdateLocationsClick = () => {
         setShowUpdateUsers(false);
@@ -277,6 +281,7 @@ function EmployeeManagement() {
         setShowOnboardNewUser(false);
         setShowInactivateEmployee(false);
         setShowResult('');
+        formDataEmployee.Id = '';
     }
     const handleUpdateTeamsClick = () => {
         setShowUpdateUsers(false);
@@ -288,6 +293,7 @@ function EmployeeManagement() {
         setShowOnboardNewUser(false);
         setShowInactivateEmployee(false);
         setShowResult('');
+        formDataEmployee.Id = '';
     }
     const handleOnboardNewUserClick = () => {
         setShowUpdateUsers(false);
@@ -299,6 +305,7 @@ function EmployeeManagement() {
         setShowOnboardNewUser(true);
         setShowInactivateEmployee(false);
         setShowResult('');
+        formDataEmployee.Id = '';
     }
 
     const handleInactivateEmployeeClick = () => {
@@ -311,6 +318,7 @@ function EmployeeManagement() {
         setShowOnboardNewUser(false);
         setShowInactivateEmployee(true);
         setShowResult('');
+        formDataEmployee.Id = '';
     }
 
     //button functions 
@@ -785,10 +793,10 @@ function EmployeeManagement() {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to update user data');
+                throw new Error('Failed to update Employee data');
             }
 
-            return { success: true, message: 'User updated successfully!' };
+            return { success: true, message: 'Employee updated successfully!' };
         } catch (error) {
             return { success: false, message: `Error: ${error.message}` };
         }
@@ -1015,14 +1023,14 @@ function EmployeeManagement() {
         })
             .then((response) => {
                 if (response.ok) {
-                    setShowResult("User updated successfully!. Please reload page to see updated search results");
+                    setShowResult("User updated successfully!. ");
                     console.log("Success Response:", response);
                     fetchLocations();
                     fetchTeams();
                     fetchUsers();
 
                 } else {
-                    setShowResult("Failed to update User.");
+                    setShowResult("Failed to update Employee.");
                 }
             })
             .catch((error) => {
@@ -1044,10 +1052,10 @@ function EmployeeManagement() {
                             <a onClick={handleUpdateLocationsClick}>Update Locations</a>
                         </li>
                         <li>
-                            <a onClick={handleCreateUsersClick}>Create Users</a>
+                            <a onClick={handleCreateUsersClick}>Create Employee</a>
                         </li>
                         <li>
-                            <a onClick={handleUpdateUsersClick}>Update Users</a>
+                            <a onClick={handleUpdateUsersClick}>Update Employee</a>
                         </li>
                         <li>
                             <a onClick={handleCreateTeamsClick}>Create Teams</a>
@@ -1342,7 +1350,7 @@ function EmployeeManagement() {
 
                                 <div>
                                     <h3 className="secondary">Set Business Hours:</h3>
-                                    <p>In the below input fields please use 24 hour time. eg 07:00 for 7am or 14:00 for 2pm</p>
+                                    <p>In the below input fields please input desired times. eg 07:00,7am</p>
                                     {formDataBusinessHours.business_hours.map((hours) => (
                                         <div key={hours.weekday}>
                                             <h3>{getWeekdayName(hours.weekday)}</h3>
@@ -1372,7 +1380,6 @@ function EmployeeManagement() {
                         <div className="flex-container">
                             <form style={{ padding: '30px' }} className="primary">
                                 <h2 className="secondary h2-EM">Update Teams</h2>
-                                <p>todo - users and managers update still doesnt work </p>
 
                                 <div>
                                     <h3 className="secondary">Team Id:</h3>
@@ -1426,7 +1433,6 @@ function EmployeeManagement() {
                                         value={formDataTeams.user_ids.join(',')} // Join the array for display
                                         onChange={(e) => setFormDataTeams({ ...formDataTeams, user_ids: e.target.value.split(',') })}
                                     />
-                                    <p>user IDs current dont work</p>
                                 </div>
                                 <div>
                                     <input
@@ -1463,7 +1469,7 @@ function EmployeeManagement() {
                     ) : showUpdateUsers ? (
                         <div className="flex-container">
                             <form onSubmit={handleUpdateEmployee} style={{ padding: '30px' }} className="primary">
-                                <h2 className="secondary h2-EM">Update User</h2>
+                                <h2 className="secondary h2-EM">Update Employee</h2>
                                 <p>Id field is Mandatory.</p>
                                 <p>Other fields are Optional.</p>
                                 <p>Note - Updating a field with the same value as already in the system will result in updating failing.</p>
@@ -1834,7 +1840,7 @@ function EmployeeManagement() {
 
                                 </div>
 
-                                <button type="submit" style={{ margin: '10px' }} className="EM-button">Update Users Submit</button>
+                                <button type="submit" style={{ margin: '10px' }} className="EM-button">Update Employee Submit</button>
                                 {showResult && <p>{showResult}</p>}
                             </form>
                         </div>
@@ -2035,8 +2041,8 @@ function EmployeeManagement() {
                             <ul>
                                 <li><strong>Create Locations:</strong> Click on "Create Locations" to add new locations to your system.</li>
                                 <li><strong>Update Locations:</strong> Use "Update Locations" to modify existing location details.</li>
-                                <li><strong>Create Users:</strong> Click on "Create Users" to add new employees to your system.</li>
-                                <li><strong>Update Users:</strong> Use "Update Users" to edit employee information or make changes.</li>
+                                <li><strong>Create Employee:</strong> Click on "Create Employee" to add new employees to your system.</li>
+                                <li><strong>Update Employee:</strong> Use "Update Employee" to edit employee information or make changes.</li>
                                 <li><strong>Create Teams:</strong> Click on "Create Teams" to form new teams within your organization.</li>
                                 <li><strong>Update Teams:</strong> Use "Update Teams" to modify existing team details.</li>
                                 <li><strong>Send Onboard User Invites:</strong> Click on "Send Onboard User Invites" to initiate the onboarding process for new users.</li>
