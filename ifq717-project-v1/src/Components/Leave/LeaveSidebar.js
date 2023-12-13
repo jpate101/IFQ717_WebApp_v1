@@ -102,6 +102,7 @@ const LeaveSidebar = ({ show, handleClose }) => {
                     src={currentUser.photo ? (currentUser.photo.startsWith('http') ? currentUser.photo : `${BASE_URL}${currentUser.photo}`) : 'default_image_path'}
                     alt={currentUser.name || 'Default Name'} 
                     style={{ width: '100px', height: '100px' }}
+                    className="profile-pic"
                 />
                 <h3 className="mt-3">{currentUser.name}</h3>
             </div>
@@ -153,7 +154,7 @@ const LeaveSidebar = ({ show, handleClose }) => {
                 <Button
                     variant="primary"
                     onClick={handleCreateLeaveRequest}
-                    className="create-button"
+                    className="tanda-button create-button"
                 >
                     Create
                 </Button>

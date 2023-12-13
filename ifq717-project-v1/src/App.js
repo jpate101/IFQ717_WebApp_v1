@@ -4,7 +4,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import Header from './Components/Header';
 import Footer from './Components/Footer';
-import Home from './Home';
 import Login from './Login/Login';
 import Dashboard from './Dashboard/Dashboard';
 import EmployeeManagement from './EmployeeManagement/EmployeeManagement';
@@ -16,12 +15,13 @@ import PrivateRoute from './Components/PrivateRoute';
 import EmployeeLeave from './Employee/EmployeeLeave';
 import EmployeeRoster from './Employee/EmployeeRoster';
 import EmployeeDashboard from './Employee/EmployeeDashboard';
-import AdminLeave from './AdminLeave';
+import AdminLeave from './Leave/AdminLeave';
 import { getCurrentUserRole } from './API/Utilities';
 import RoleLoginRedirect from './Components/RoleLoginRedirect';
 import ClockIn from './ClockIn/Clockin';
 import Compliance from './Compliance/Compliance';
 import AwardTemplateOptions from './Compliance/AwardTemplateOptions';
+import Qualifications from './EmployeeManagement/Qualifications';
 
 export default function App() {
   const [cookies, setCookie, removeCookie] = useCookies(['token']);
@@ -63,35 +63,49 @@ export default function App() {
             <Route
               path="/"
               element={
-                <Home />
+                <Login
+                  setIsLoggedIn={setIsLoggedIn}
+                  setUserRole={setUserRole}
+                />
               }
             />
             <Route
               path="/home"
-              element={Home}
-            />
-            <Route path="/login"
-              element={
-              <Login
+              element={<Login
                 setIsLoggedIn={setIsLoggedIn}
                 setUserRole={setUserRole}
               />}
             />
-            {userRole === 'manager' && (
-              <>
-                <Route
-                  path="/dashboard"
-                  element={<PrivateRoute element={<Dashboard />}
-                  authorised={isLoggedIn}
-                  userRole={userRole}
-                  requiredRole='manager'/>}
-                />
-                <Route
+            <Route 
+              path="/login"
+              element={
+            <Login
+              setIsLoggedIn={setIsLoggedIn}
+              setUserRole={setUserRole}
+            />}
+          />
+          {userRole === 'manager' && (
+            <>
+              <Route
+                path="/dashboard"
+                element={<PrivateRoute element={<Dashboard />}
+                authorised={isLoggedIn}
+                userRole={userRole}
+                requiredRole='manager'/>}
+              />
+              <Route
                 path="/root/EmployeeManagement/*" 
                 element={<PrivateRoute element={<EmployeeManagement />}
                 authorised={isLoggedIn}
                 userRole={userRole}
-                requiredRole='manager' />}
+                requiredRole='manager'/>}
+              />
+              <Route
+                path="/Qualifications" 
+                element={<PrivateRoute element={<Qualifications />}
+                authorised={isLoggedIn}
+                userRole={userRole}
+                requiredRole='manager'/>}
               />
               <Route
                 path="/roster"

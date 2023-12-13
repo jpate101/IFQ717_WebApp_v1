@@ -26,7 +26,7 @@ function WeekPickerComponent({ selectedDate, onDateChange }) {
               size="small"
           />
           <Button onClick={handleTodayButtonClick}
-          className="border p-2 rounded background text-white h-10"
+          className="tanda-button border p-2 rounded background text-white h-10"
           style={{backgroundColor: '#3498db'}}>
               Today
           </Button>

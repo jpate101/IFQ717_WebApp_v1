@@ -3,7 +3,6 @@ import EmployeesDropdown from './EmployeesDropdown';
 import TeamsDropdown from './TeamsDropdown';
 import DateFormItem from './DateFormItem';
 import TimePickerComponent from './TimePicker';
-import CreateShiftReminder from './CreateShiftReminder';
 import { getUsers, getAllDepartments } from '../../API/Utilities';
 import { ReactComponent as BinIcon } from '../../svg/trash3.svg';
 import { ReactComponent as DotDotDot } from '../../svg/three-dots.svg';
@@ -143,7 +142,6 @@ const RosterModal = ({
 
   
 };
-  
 
 const handleDeleteShift = async () => {
   console.log("Deleting schedule with ID:", scheduleId);
@@ -170,6 +168,7 @@ const handleTeamChange = (newTeamId) => {
   setSelectedTeam(newSelectedTeam);
 };
 
+const isUpdatingShift = currentShiftDetails && currentShiftDetails.shiftId;
 
   return isOpen && (
     <>
@@ -197,12 +196,12 @@ const handleTeamChange = (newTeamId) => {
           </TimePickerComponent>
         </div>
         <div className="my-2">
-        <EmployeesDropdown
-          onSelectChange={() => {}}
-          selectedEmployeeId={selectedEmployeeName}
-          employees={users}
-        >
-        </EmployeesDropdown>
+          <EmployeesDropdown
+            onSelectChange={() => {}}
+            selectedEmployeeId={selectedEmployeeName}
+            employees={users}
+          >
+          </EmployeesDropdown>
         </div>
         <div className="my-2">
           <TeamsDropdown
@@ -211,11 +210,6 @@ const handleTeamChange = (newTeamId) => {
             selectedTeamId={selectedTeam ? selectedTeam.id : null}
           >
           </TeamsDropdown>
-        </div>
-        <div className="my-2">
-          <CreateShiftReminder
-            onReminderCreated={handleReminderCreated}
-          />
         </div>
         <div className="flex justify-between my-2">
           <div>{}</div>
@@ -227,15 +221,20 @@ const handleTeamChange = (newTeamId) => {
               className="w-6 h-6 mr-3 cursor-pointer roster-icon"
             >
             </DotDotDot>
+            {isUpdatingShift && (
             <BinIcon
               onClick={handleDeleteShift}
               className="w-6 h-6 mr-3 cursor-pointer roster-icon"
-            >
-            </BinIcon>
+            />
+          )}
           <button
             onClick={handleSaveShift}
-            className="save-button px-4 py-2 rounded border-2 ">
-              Save
+            className="tanda-button px-3 py-2"
+            style={{
+              fontSize: '0.875rem'
+          }}
+          >
+            {isUpdatingShift ? 'Update' : 'Create'}
           </button>
         </div>
       </div>

@@ -1,3 +1,9 @@
+:root {
+  --button-green: #93c732;
+  --primary-color: #3b82f6;
+  --secondary-color: #1e40af;
+}
+
 .App {
   text-align: center;
 }
@@ -363,9 +369,10 @@ textarea:focus {
 .roster-icon {
   color: #3498db !important;
 }
-.roster-icon:hover {
+
+{/*}.roster-icon:hover {
   color: #1e40af !important;
-}
+}*/}
 
 .save-button {
   color: white;
@@ -374,11 +381,11 @@ textarea:focus {
   background-color: #3498db;
 }
 
-.save-button:hover {
-  color: white;
-  font-weight: bold;
-  border-color: #1e40af;
-  background-color:#1e40af;
+.save-button:active {
+  background-color: #3498db;
+  border-color: #3498db;
+  box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.2);
+  transform: translateY(0.5px);
 }
 
 .shift-container {
@@ -446,6 +453,12 @@ textarea:focus {
   font-weight: bold;
 }
 
+.nav-tabs li.emp-awards:hover,
+.nav-tabs li.org-awards:hover {
+  color: var(--secondary-color);
+  font-weight: bold;
+}
+
 .nav-tabs li.active.pending {
   color: orange;
   border-bottom: 3px solid orange;
@@ -461,6 +474,13 @@ textarea:focus {
 .nav-tabs li.active.rejected {
   color: red;
   border-bottom: 3px solid red;
+  font-weight: bold;
+}
+
+.nav-tabs li.active.emp-awards,
+.nav-tabs li.active.org-awards {
+  color: var(--primary-color);
+  border-bottom: 3px solid var(--button-green);
   font-weight: bold;
 }
 
@@ -489,6 +509,28 @@ textarea:focus {
 .dropdown-menu .dropdown-item {
   color: #3498db !important; 
   background-color: white !important;
+}
+
+.compliance-custom-dropdown-height .dropdown-menu {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.compliance-custom-dropdown-button-height {
+  height: 25px;  
+  line-height: 10px;
+  
+}
+
+.compliance-custom-button-color {
+  background-color: white !important;
+  color: #3498db !important;
+}
+
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .dropdown-menu .dropdown-item:hover, .dropdown-menu .dropdown-item:focus {
@@ -521,7 +563,7 @@ textarea:focus {
   margin-top: 20px;
 }
 
-img {
+img.profile-pic {
   max-width: 100%;
   width: auto\9;
   height: auto;
@@ -587,12 +629,94 @@ img {
   color: #6bcc43 !important;
 }
 
+.approve-button:active {
+  background-color:#f6ffed !important;
+  border-color: #6bcc43 !important;
+  color: #6bcc43 !important;
+  box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.2);
+  transform: translateY(0.5px);
+}
 .decline-button {
   background-color:#fff2f0 !important;
   border-color: #ff595b !important;
   color: #ff595b !important;
 }
 
+.decline-button:active {
+  background-color:#fff2f0 !important;
+  border-color: #ff595b !important;
+  color: #ff595b !important;
+  box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.2);
+  transform: translateY(0.5px);
+}
+
+.disabled-button {
+  background-color: #f0f0f0 !important;
+  border-color: #cccccc !important;
+  color: #888888 !important;
+}
+
 .cursor-pointer:hover {
   cursor: pointer;
+}
+
+.edit-button {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  border: 1px solid #3498db;
+  background-color: transparent;
+  color: #3498db; 
+}
+
+.edit-button:hover, .edit-button:focus {
+  background-color: transparent;
+  color: #3498db;
+  border-color: #3498db;
+  box-shadow: none;
+}
+
+.edit-button > img {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 0;
+  fill: #3498db;
+}
+
+.edit-button:active {
+  color: #3498db !important;
+  background-color: transparent !important;
+  border-color: #3498db !important; 
+  box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.2) !important;
+  transform: translateY(0.5px) !important;
+}
+
+.tanda-button {
+  background-color: #3498db !important;
+  color: white!important;
+  border: none!important;
+  border-radius: 0.25rem!important;
+}
+
+.tanda-button:active {
+  background-color: #3498db;
+  box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.2);
+  transform: translateY(0.5px);
+}
+
+input:focus {
+  background-color: transparent !important; 
+  border: solid !important;
+  box-shadow: none !important;
+}
+
+.nav-tabs li.active.create {
+  color: #3498db;
+  border-bottom: 3px solid  #3498db ;
+  font-weight: bold;
+}
+
+.nav-tabs li.active.view {
+  color: #3498db;
+  border-bottom: 3px solid  #3498db ;
+  font-weight: bold;
 }

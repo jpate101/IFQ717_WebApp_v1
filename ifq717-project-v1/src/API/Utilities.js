@@ -117,7 +117,7 @@ export const getUsers = async (employeeId = null) => {
   try {
     const headers = getHeaders(); 
 
-    let url = `${API_BASE_URL}/users?show_wages=true`;
+    let url = `${API_BASE_URL}/users?show_wages=true&show_qualifications=true`;
     if (employeeId) {
       url = `${API_BASE_URL}/users/${employeeId}?show_wages=true`;
       console.log(`Fetching data for user with ID: ${employeeId}`);
@@ -157,7 +157,10 @@ export const getUsers = async (employeeId = null) => {
       phone: user.phone,
       passcode: user.passcode,
       role: user.user_levels,
-      award_template_id: user.award_template_id
+      qualifications: user.qualifications,
+      award_template_id: user.award_template_id,
+      last_synced_mobile_app: user.last_synced_mobile_app,
+      timezone: user.time_zone
     }));
 
   } catch (error) {
@@ -285,7 +288,7 @@ export function GetShifts(props) {
               console.log("Data:", data);
 
               const processedShifts = data.reduce((acc, shift) => {
-                  const shiftDate = dayjs(shift.start * 1000).format('YYYY-MM-DD'); // Assuming shift.start is already in milliseconds. If it's in seconds, use shift.start * 1000
+                  const shiftDate = dayjs(shift.start * 1000).format('YYYY-MM-DD'); 
                   if (!acc[shiftDate]) {
                       acc[shiftDate] = [];
                   }
@@ -458,12 +461,16 @@ export const getCurrentRosters = async () => {
 
 export const createShiftReminder = async (minutesBeforeShiftStart) => {
   try {
+    console.log('Creating shift reminder with:', minutesBeforeShiftStart); 
+
     const response = await fetch(`${API_BASE_URL}/shift_reminders`, { 
       method: 'POST', 
       headers: getHeaders(), 
+      body: JSON.stringify({ minutes_before_shift_start: minutesBeforeShiftStart }),
     });
 
     if (!response.ok) {
+      console.error('Response not ok, status:', response.status);
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
@@ -788,16 +795,14 @@ export const getAwards = async () => {
 
 // enable award (POST award template)
 
-export const enableAward = async (awardTemplateId, extractLeaveTypes, replaceLeaveTypes) => {
+export const enableAward = async (awardTemplateId) => {
   const headers = {
     ...getHeaders(),
     'Content-Type': 'application/json'
   };
-  const url = `${API_BASE_URL}/api/v2/award_templates`;
+  const url = `${API_BASE_URL}/award_templates`;
   const body = {
-    award_template_id: awardTemplateId,
-    extract_leave_types: extractLeaveTypes,
-    replace_leave_types: replaceLeaveTypes
+    award_template_id: awardTemplateId
   };
 
   try {
@@ -877,4 +882,286 @@ export const getCurrentUserRole = async () => {
   const isManager = userData.permissions.includes('manager');
   return isManager ? 'manager' : 'employee';
 };
+
+// Gets the list of qualifications
+export const getQualificationList = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/qualifications`, {
+      method: 'GET',
+      headers: getHeaders()
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching qualifications:', error);
+    throw error;
+  }
+};
+
+// Creates a new qualification
+export const createQualification = async (qualificationData) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/qualifications`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(qualificationData)
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error creating qualification:', error);
+    throw error;
+  }
+};
+
+// Gets a qualification by ID
+export const getQualificationById = async (qualificationId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/qualifications/${qualificationId}`, {
+      method: 'GET',
+      headers: getHeaders()
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(`Error fetching qualification with ID ${qualificationId}:`, error);
+    throw error;
+  }
+};
+
+// Updates a qualification
+export const updateQualification = async (qualificationId, updateData) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/qualifications/${qualificationId}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(updateData)
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(`Error updating qualification with ID ${qualificationId}:`, error);
+    throw error;
+  }
+};
+
+// Deletes a qualification
+export const deleteQualification = async (qualificationId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/qualifications/${qualificationId}`, {
+      method: 'DELETE',
+      headers: getHeaders()
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(`Error deleting qualification with ID ${qualificationId}:`, error);
+    throw error;
+  }
+};
+
+// Gets a list of shift reminders
+export const getShiftReminderList = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/shift_reminders`, {
+      method: 'GET',
+      headers: getHeaders()
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok.');
+    }
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching shift reminder list:', error);
+    throw error;
+  }
+};
+
+
+// Gets a shift reminder by ID
+export const getShiftReminder = async (reminderId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/shift_reminders/${reminderId}`, {
+      method: 'GET',
+      headers: getHeaders()
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok.');
+    }
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching shift reminder:', error);
+    throw error;
+  }
+};
+
+export const updateShiftReminder = async (reminderId, minutesBeforeShiftStart) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/shift_reminders/${reminderId}`, {
+      method: 'PUT',
+      headers: {
+        ...getHeaders(),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ minutes_before_shift_start: minutesBeforeShiftStart }),
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok.');
+    }
+    return response.json();
+  } catch (error) {
+    console.error('Error updating shift reminder:', error);
+    throw error;
+  }
+};
+
+// Deletes a shift reminder
+export const deleteShiftReminder = async (reminderId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/shift_reminders/${reminderId}`, {
+      method: 'DELETE',
+      headers: getHeaders()
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok.');
+    }
+    return response.json();
+  } catch (error) {
+    console.error('Error deleting shift reminder:', error);
+    throw error;
+  }
+};
+
+// Gets shifts for a specific employee and optional date range
+export const getShiftsByUserAndDate = async (employee, from, to) => {
+  try {
+    let url = `${API_BASE_URL}/shifts?`;
+    if (employee) url += `&user_ids=${employee}`;
+    if (from) url += `&from=${from}`;
+    if (to) url += `&to=${to}`;
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: getHeaders()
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok.');
+    }
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching shifts:', error);
+    throw error;
+  }
+};
+
+export const getClockIns = async (userId, from, to) => {
+  try {
+    const headers = getHeaders(); 
+
+    let url = `${API_BASE_URL}/clockins?user_id=${userId}&from=${from}&to=${to}`;
+    console.log(`Calling TimeClock info for user with ID: ${userId} from ${from} to ${to}`);
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: getHeaders()
+    });
+
+    console.log('Response received', response);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    let clockinData = await response.json();
+    console.log('TimeClock data received:', clockinData);
+
+    if (!Array.isArray(clockinData)) {
+      clockinData = [clockinData]; 
+    }
+
+    let formattedClockins = clockinData.map(clockin => ({
+      id: clockin.id,
+      type: clockin.type,
+      user_id: clockin.user_id,
+      time: clockin.time
+    }));
+    
+    if (formattedClockins.length > 0) {
+      console.log('First clock-in:', formattedClockins[0]);
+    }
+    
+    return formattedClockins;
+
+  } catch (error) {
+    console.error('Error fetching TimeClock info:', error);
+    throw error;
+  }
+};
+
+// get the app reminder email (currently looks same as onboard invite. will check.)
+
+export async function sendAppReminder(userId) {
+  try {
+      const response = await fetch(`${API_BASE_URL}/users/${userId}/onboard`, {
+          method: 'POST',
+          headers: getHeaders()
+      });
+
+      if (response.status === 201) {
+          return { success: true, message: 'App download reminder sent successfully!' };
+      } else {
+          const errorData = await response.json();
+          const errorMessage = errorData.error || 'Failed to send app download reminder email.';
+          throw new Error(errorMessage);
+      }
+  } catch (error) {
+      return { success: false, message: `Error: ${error.message}` };
+  }
+}
+
+// Get Devices
+export const getDevices = async () => {
+  const headers = getHeaders(); 
+  try {
+    const response = await fetch(`${API_BASE_URL}/devices`, {   
+      method: 'GET',
+      headers: headers,
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const devices = await response.json();
+    console.log('Devices data received:', devices);
+
+    return devices;
+  
+  } catch (error) {
+    console.error('Error fetching devices:', error);
+    throw error;
+  }
+}
+
+
+
 

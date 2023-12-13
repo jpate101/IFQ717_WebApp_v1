@@ -17,6 +17,7 @@ const SelectEmployeeModal = ({ isOpen, onClose, employees, onEmployeeSelect }) =
       <Button 
         onClick={handleSave}
         type="primary"
+        className="tanda-button"
         style={{
             color: 'white',
             borderColor: '#3498db',

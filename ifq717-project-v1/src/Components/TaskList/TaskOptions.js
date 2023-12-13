@@ -1,6 +1,6 @@
 // Modelling tasks
 
-import { getLocations, getUsers, getSchedules } from '../../API/Utilities';
+import { getLocations, getUsers, getSchedules, getAwards } from '../../API/Utilities';
 import getTeams from '../../API/Utilities/getTeams';
 import useUserDetails from '../../Hooks/useUserDetails';
 
@@ -15,10 +15,10 @@ const tasks = [
       completionCriteria: completionCriteria,
     },
     {
-      name: 'Add employees (100+)',
+      name: 'Add employees (5+)',
       fetchFunction: getUsers,
-      completionCriteria: (data) => data.length > 99 // updated to 100 for testing and demonstration purposes
-      //completionCriteria: (data) => data.length > 4 // real value to finally commit
+      //completionCriteria: (data) => data.length > 99 // updated to 100 for testing and demonstration purposes
+      completionCriteria: (data) => data.length > 4 // real value to finally commit
     },
     {
       name: 'Add teams',
@@ -29,7 +29,7 @@ const tasks = [
       completionCriteria: completionCriteria
     },
     {
-      name: 'Create shifts on a roster',
+      name: 'Create shifts on a roster', // DO PROPERLY 
       /*fetchFunction: async () => {
         const user = await useUserDetails();
         const userId = user.map((user) => user.id);
@@ -41,7 +41,7 @@ const tasks = [
       isComplete: true
     },
     {
-      name: 'Approve a timesheet',
+      name: 'Approve a timesheet', // DO PROPERLY
       //fetchFunction: getTimesheet,
       //completionCriteria: completionCriteria
       isComplete: true
@@ -52,7 +52,8 @@ const tasks = [
     },
     {
       name: 'Enable Award',
-      isComplete: false
+      fetchFunction: getAwards,
+      completionCriteria: (data) => data.some((award) => award.award_template_organisation_id !== null)
     }
     
   ];

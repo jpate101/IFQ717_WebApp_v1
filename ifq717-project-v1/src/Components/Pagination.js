@@ -12,44 +12,32 @@ const Pagination = ({ itemsPerPage, totalItems, paginate, currentPage }) => {
 
   const nextPage = (event) => {
     event.preventDefault();
-    if (currentPage < pageNumbers.length) {
-      paginate(currentPage + 1);
-    }
+    if (currentPage >= pageNumbers.length) return;
+    paginate(currentPage + 1);
   };
 
   const prevPage = (event) => {
     event.preventDefault();
-    if (currentPage > 1) {
-      paginate(currentPage - 1);
-    }
+    if (currentPage <= 1) return;
+    paginate(currentPage - 1);
   };
 
   return (
     <nav className="flex justify-center pb-2">
-      <ul className='pagination'>
-        <li className='page-item mr-1'>
-          <a onClick={prevPage} href='!#' className={`px-2 py-2 border border-primary text-sm leading-none rounded ${currentPage === 1 ? 'disabled' : ''} hover:shadow-lg`}>
-            Prev
-          </a>
+      <ul className='flex'>
+        <li className='mr-1'>
+          {currentPage > 1 && <a onClick={prevPage} href='!#' className='px-2 py-1 underline text-primary text-sm font-medium'>Prev</a>}
+          {currentPage === 1 && <span className='px-2 py-1 text-accent text-sm font-medium'>Prev</span>}
         </li>
         {pageNumbers.map(number => (
-          <li key={number} className='page-item mr-1'>
-            <a 
-              onClick={(event) => {
-                event.preventDefault();
-                paginate(number);
-              }} 
-              href='!#' 
-              className={`px-2.5 py-2 border border-primary text-sm text-primary leading-none rounded ${currentPage === number ? 'bg-white' : 'bg-gray-50'} hover:shadow-lg`}
-            >
-              {number}
-            </a>
+          <li key={number} className='mr-1'>
+            {currentPage !== number && <a onClick={(event) => {event.preventDefault(); paginate(number);}} href='!#' className='px-2 py-1 underline text-primary text-sm font-medium'>{number}</a>}
+            {currentPage === number && <span className='px-2 py-1 text-accent text-sm font-medium'>{number}</span>}
           </li>
         ))}
-        <li className='page-item mr-1'>
-          <a onClick={nextPage} href='!#' className={`px-2 py-2 border border-primary text-sm leading-none rounded ${currentPage === pageNumbers.length ? 'disabled' : ''} hover:shadow-lg`}>
-            Next
-          </a>
+        <li className='mr-1'>
+          {currentPage < pageNumbers.length && <a onClick={nextPage} href='!#' className='px-2 py-1 underline text-primary text-sm font-medium'>Next</a>}
+          {currentPage === pageNumbers.length && <span className='px-2 py-1 text-accent text-sm font-medium'>Next</span>}
         </li>
       </ul>
     </nav>

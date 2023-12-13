@@ -33,7 +33,7 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }) {
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="navbarSupportedContent" />
           <Navbar.Collapse id="navbarSupportedContent">
-            <Nav className="me-auto">
+          <Nav className="me-auto">
             <HighlightLink to={isLoggedIn ? (userRole === 'manager' ? '/dashboard' : '/EmployeeDashboard') : '/'} as={Link}>
             {isLoggedIn ? (userRole === 'manager' ? 'Dashboard' : 'Employee Dashboard - WIP') : 'Home'}
               </HighlightLink>
@@ -41,6 +41,9 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }) {
                 <>
                   <HighlightLink to="root/EmployeeManagement/" as={Link}>
                     Employee Management
+                  </HighlightLink>
+                  <HighlightLink to="/Qualifications" as={Link}>
+                    Qualifications
                   </HighlightLink>
                   <HighlightLink to="/roster" as={Link}>
                     Roster
@@ -75,17 +78,19 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }) {
                   </HighlightLink>    
                 </>
               )}
-              {isLoggedIn ? (
-                <HighlightLink to="/" as={Link} onClick={handleLogOut}>
-                  Logout
-                </HighlightLink>
-              ) : (
-                <HighlightLink to="/login" as={Link}>
-                  Login
-                </HighlightLink>
-              )}
-            </Nav>
-          </Navbar.Collapse>
+              </Nav>
+              <div className="ml-auto mr-2">
+                {isLoggedIn ? (
+                  <HighlightLink to="/" as={Link} onClick={handleLogOut}>
+                    Logout
+                  </HighlightLink>
+                ) : (
+                  <HighlightLink to="/login" as={Link}>
+                    Login
+                  </HighlightLink>
+                )}
+              </div>
+            </Navbar.Collapse>
         </Container>
       </Navbar>
     </header>

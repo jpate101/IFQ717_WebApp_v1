@@ -114,13 +114,13 @@ const ExportTimesheets = () => {
     };
 
     const filteredTimesheets = timesheets.flatMap((timesheet) =>
-  timesheet.shifts.map((shift) => {
-    const user = getUserById(timesheet.user_id);
-    const shiftDate = dayjs(shift.date).format('DD/MM/YYYY');
-    const statusCapitalized = shift.status === 'APPROVED' ? 'Approved' : shift.status;
-    return { ...shift, user_name: user ? user.name : 'N/A', shiftDate, status: statusCapitalized };
-  })
-).filter(shift => shift.user_name.toLowerCase().includes(searchTerm.toLowerCase()));
+        timesheet.shifts.map((shift) => {
+            const user = getUserById(timesheet.user_id);
+            const shiftDate = dayjs(shift.date).format('DD/MM/YYYY');
+            const statusCapitalized = shift.status === 'APPROVED' ? 'Approved' : shift.status;
+            return { ...shift, user_name: user ? user.name : 'N/A', shiftDate, status: statusCapitalized };
+        })
+    ).filter(shift => shift.user_name.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const toggleTimesheetSelection = (timesheetId) => {
         console.log(`Toggling selection for timesheet ID: ${timesheetId}`);
@@ -146,7 +146,8 @@ const ExportTimesheets = () => {
         } else {
             setSelectedForExport(new Set());
         }
-        };
+    };
+
     const exportSelectedTimesheets = async () => {
         console.log('Exporting selected timesheets:', Array.from(selectedForExport));
         if (selectedForExport.size === 0) {
@@ -159,7 +160,7 @@ const ExportTimesheets = () => {
         try {
             const response = await fetch(exportUrl, {
                 method: 'GET',
-                headers: getHeaders()
+                headers: getHeaders()``
             });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -177,11 +178,6 @@ const ExportTimesheets = () => {
         } catch (error) {
             console.error('Error exporting timesheets:', error);
         }
-    };
-
-    const selectAllTimesheets = () => {
-        const allIds = new Set(filteredTimesheets.map(ts => ts.id));
-        setSelectedForExport(allIds);
     };
 
     return (
@@ -237,7 +233,7 @@ const ExportTimesheets = () => {
                     <Button 
                         onClick={exportSelectedTimesheets}
                         disabled={selectedForExport.size === 0}
-                        className= "button-pointer-enabled"
+                        className= "tanda-button button-pointer-enabled"
                         style={{ 
                             backgroundColor: '#3498db',
                             borderColor: '#3498db',

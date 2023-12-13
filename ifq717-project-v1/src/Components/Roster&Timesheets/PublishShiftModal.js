@@ -52,7 +52,7 @@ const PublishShiftModal = ({ isOpen, onClose, weekRange, onPublish }) => {
                         </p>
                     }
                     <button
-                    className="bg-blue-500 text-white px-4 py-2 rounded"
+                    className="bg-blue-500 text-white px-4 py-2 rounded tanda-button"
                     onClick={() => onPublish(publishOption)}
                     style={{backgroundColor: '#3498db'}}>
                         Publish

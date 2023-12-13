@@ -6,7 +6,7 @@ import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import {
   getRosterForDate,
-  getUsers, 
+  getUsers,
   getAllDepartments, 
   createSchedule, 
   deleteSchedule, 
@@ -18,6 +18,8 @@ import AddScheduleModal from '../Components/Roster&Timesheets/AddScheduleModal';
 import { PlusCircleIcon } from '../Components/Roster&Timesheets/RosterIcons';
 import PublishShiftModal from '../Components/Roster&Timesheets/PublishShiftModal'
 import SelectEmployeeModal from '../Components/Roster&Timesheets/SelectEmployeeModal';
+import CreateShiftReminderModal from '../Components/Roster&Timesheets/CreateShiftReminder';
+
 dayjs.extend(utc);
 
 dayjs.extend(timezone);
@@ -41,8 +43,7 @@ const Roster = () => {
   const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
   const [isSelectEmployeeModalOpen, setIsSelectEmployeeModalOpen] = useState(false);
   const [modalData, setModalData] = useState(null);
-  const [currentShiftForModal, setCurrentShiftForModal] = useState(null);
-
+  const [isShiftReminderModalOpen, setIsShiftReminderModalOpen] = useState(false);
   useEffect(() => {
     console.log('useEffect for [currentShiftDetails, users]');
     if (currentShiftDetails.userId) {
@@ -51,128 +52,140 @@ const Roster = () => {
     }
   }, [currentShiftDetails, users]);
 
-    useEffect(() => {
-      let isMounted = true;
-      const fetchUsers = async () => {
-        setLoading(true);
-        try {
-          const usersData = await getUsers();
-          if (isMounted) {
-            setUsers(usersData);
-          }
-        } catch (error) {
-          if (isMounted) {
-            setError(error.message);
-          }
-        } finally {
-          if (isMounted) {
-            setLoading(false);
-          }
+  useEffect(() => {
+    let isMounted = true;
+    const fetchUsers = async () => {
+      setLoading(true);
+      try {
+        const usersData = await getUsers();
+        if (isMounted) {
+          setUsers(usersData);
         }
-      };
-  
-      fetchUsers();
-      return () => { isMounted = false };
-    }, []);
+      } catch (error) {
+        if (isMounted) {
+          setError(error.message);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
 
-    useEffect(() => {
-      const fetchDepartments = async () => {
-          try {
-              const departmentsData = await getAllDepartments();
-              console.log('Departments fetched:', departmentsData);
-              setDepartments(departmentsData);
-          } catch (error) {
-              console.error('Failed to fetch departments:', error);
-          }
-      };
-  
-      fetchDepartments();
+    fetchUsers();
+    return () => { isMounted = false };
+  }, []);
+
+  useEffect(() => {
+    const fetchDepartments = async () => {
+        try {
+            const departmentsData = await getAllDepartments();
+            console.log('Departments fetched:', departmentsData);
+            setDepartments(departmentsData);
+        } catch (error) {
+            console.error('Failed to fetch departments:', error);
+        }
+    };
+    fetchDepartments();
   }, []);
 
   useEffect(() => {
     console.log('useEffect triggered for [selectedDate, users, departments]')
-  if (departments.length > 0 && Object.keys(users).length > 0) {
-    fetchRoster(users, departments);
-  }
-}, [selectedDate, users, departments]); 
+    if (departments.length > 0 && Object.keys(users).length > 0) {
+      fetchRoster(users, departments);
+    }
+  }, [selectedDate, users, departments]); 
 
-    const fetchRoster = async (currentUsers, currentDepartments) => {
-      setLoading(true);
-      try {
-        const roster = await getRosterForDate(selectedDate);
-        setRosterData(formatRosterData(roster.schedules, currentUsers, currentDepartments));
-        setError(null);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  useEffect(() => {
+    if (Object.keys(users).length > 0) {
+      fetchRoster(users);
+    }
+  }, [selectedDate, users]);
 
-    useEffect(() => {
-      if (Object.keys(users).length > 0) {
+  useEffect(() => {
+    fetchRoster();
+  }, [selectedDate]);
+
+
+  useEffect(() => {
+    console.log("isModalOpen:",isModalOpen);
+  }, [isModalOpen]);
+
+  const usersArray = Object.values(users);
+
+  useEffect(() => {
+    if (users.length > 0) {
         fetchRoster(users);
-      }
-    }, [selectedDate, users]);
-    
-    const handleDateChange = (date) => {
-      const formattedDate = dayjs(date).format('YYYY-MM-DD');
-      setSelectedDate(formattedDate);
-    };
-    
-    useEffect(() => {
-      fetchRoster();
-    }, [selectedDate]);
-    
-    const formatRosterData = (schedules, currentUsers) => {
-      const userShiftMap = {};
-    
-      schedules.forEach(scheduleByDate => {
-        scheduleByDate.schedules.forEach(schedule => {
-          const start = new Date(schedule.start * 1000);
-          const finish = new Date(schedule.finish * 1000);
-          const dayOfWeek = dayjs(start).format('dddd').toLowerCase();
-          const teamId = schedule.department_id;
-          const scheduleId = schedule.id;
-          const team = departments.find(dept => dept.id === teamId);
-          const teamName = team ? team.name : 'Unknown Team';
-    
-          if (!userShiftMap[schedule.user_id]) {
-            const user = currentUsers.find(u => u.id === schedule.user_id);
-            userShiftMap[schedule.user_id] = {
-              userId: schedule.user_id,
-              name: user ? user.name : 'Unknown',
-              shiftDetails: {},
-              monday: [], tuesday: [], wednesday: [], thursday: [], friday: [], saturday: [], sunday: [],
-            };
-          }
-    
-          const shiftTime = `${formatShiftTime(start)} - ${formatShiftTime(finish)}`;
-    
-          if (!userShiftMap[schedule.user_id].shiftDetails[dayOfWeek]) {
-            userShiftMap[schedule.user_id].shiftDetails[dayOfWeek] = [];
-          }
-    
-          userShiftMap[schedule.user_id].shiftDetails[dayOfWeek].push({
-            time: shiftTime,
-            teamName,
-            scheduleId
-          });
+    }
+  }, [selectedDate, users]);
+
+  const fetchRoster = async (currentUsers, currentDepartments) => {
+    setLoading(true);
+    try {
+      const roster = await getRosterForDate(selectedDate);
+      setRosterData(formatRosterData(roster.schedules, currentUsers, currentDepartments));
+      setError(null);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const handleDateChange = (date) => {
+    const formattedDate = dayjs(date).format('YYYY-MM-DD');
+    setSelectedDate(formattedDate);
+  };
+  
+  const formatRosterData = (schedules, currentUsers) => {
+    const userShiftMap = {};
+  
+    schedules.forEach(scheduleByDate => {
+      scheduleByDate.schedules.forEach(schedule => {
+        const start = new Date(schedule.start * 1000);
+        const finish = new Date(schedule.finish * 1000);
+        const dayOfWeek = dayjs(start).format('dddd').toLowerCase();
+        const teamId = schedule.department_id;
+        const scheduleId = schedule.id;
+        const team = departments.find(dept => dept.id === teamId);
+        const teamName = team ? team.name : 'Unknown Team';
+  
+        if (!userShiftMap[schedule.user_id]) {
+          const user = currentUsers.find(u => u.id === schedule.user_id);
+          userShiftMap[schedule.user_id] = {
+            userId: schedule.user_id,
+            name: user ? user.name : 'Unknown',
+            shiftDetails: {},
+            monday: [], tuesday: [], wednesday: [], thursday: [], friday: [], saturday: [], sunday: [],
+          };
+        }
+  
+        const shiftTime = `${formatShiftTime(start)} - ${formatShiftTime(finish)}`;
+  
+        if (!userShiftMap[schedule.user_id].shiftDetails[dayOfWeek]) {
+          userShiftMap[schedule.user_id].shiftDetails[dayOfWeek] = [];
+        }
+  
+        userShiftMap[schedule.user_id].shiftDetails[dayOfWeek].push({
+          time: shiftTime,
+          teamName,
+          scheduleId
         });
       });
-    
-      return Object.values(userShiftMap).map(userShifts => {
-        Object.entries(userShifts.shiftDetails).forEach(([day, shifts]) => {
-          userShifts[day] = shifts.map(shift => `${shift.time}, ${shift.teamName}`).join(', ');
-        });
-    
-        return {
-          userId: userShifts.userId,
-          name: userShifts.name,
-          ...userShifts.shiftDetails
-        };
+    });
+  
+    return Object.values(userShiftMap).map(userShifts => {
+      Object.entries(userShifts.shiftDetails).forEach(([day, shifts]) => {
+        userShifts[day] = shifts.map(shift => `${shift.time}, ${shift.teamName}`).join(', ');
       });
-    };
+  
+      return {
+        userId: userShifts.userId,
+        name: userShifts.name,
+        ...userShifts.shiftDetails
+      };
+    });
+  };
 
   const getWeekDates = (selectedDate) => {
       dayjs.locale('en-gb');
@@ -183,8 +196,8 @@ const Roster = () => {
   };
 
   const weekDates = getWeekDates(selectedDate);
-  const dayAbbreviations = ["Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun"];
 
+  const dayAbbreviations = ["Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun"];
 
   const openModalToAddShift = (userId, dayIndex, teamId) => {
     const dateOfShift = dayjs(selectedDate).startOf('week').add(dayIndex, 'day').format('YYYY-MM-DD');
@@ -209,19 +222,6 @@ const Roster = () => {
   
     setIsModalOpen(true);
   };
-  
-
-  useEffect(() => {
-    console.log("isModalOpen:",isModalOpen);
-  }, [isModalOpen]);
-
-  const usersArray = Object.values(users);
-
-  useEffect(() => {
-    if (users.length > 0) {
-        fetchRoster(users);
-    }
-  }, [selectedDate, users]);
 
   const addNewShiftToRoster = async (shiftDetails) => {
     console.log('Preparing to add/update shift with details:', shiftDetails);
@@ -264,7 +264,6 @@ const Roster = () => {
       console.error('Error creating shift:', error);
     }
   };
-  
   
   const openModalWithShiftDetails = async (userId, dayIndex) => {
     console.log("Opening modal with shift details");
@@ -329,22 +328,9 @@ const Roster = () => {
     await fetchRoster(users);
   };
 
-  const openPublishModal = (data) => {
-    console.log('handleOpenPublishModal Called');
-    if (!isPublishModalOpen) {
-      setModalData(data);
-      console.log('Opening Publish Shift Modal');
-      setIsPublishModalOpen(true);
-    }
-  };
-  
-
   const handlePublish = async (publishOption) => {
     console.log(`Publishing option selected: ${publishOption}`);
     setIsPublishModalOpen(false);
-
-    const startOfWeek = dayjs(selectedDate).startOf('week').unix();
-    const endOfWeek = dayjs(selectedDate).endOf('week').unix();
 
     let shiftsToPublish = [];
 
@@ -353,7 +339,6 @@ const Roster = () => {
         if (['userId', 'name'].includes(dayKey)) {
           return;
         }
-
         if (Array.isArray(shifts)) {
           shifts.forEach(shift => {
             if (shift && shift.scheduleId && !isNaN(shift.scheduleId)) {
@@ -365,7 +350,6 @@ const Roster = () => {
         }
       });
     });
-
     console.log(`Shifts found to publish:`, shiftsToPublish);
 
     const filteredShiftsToPublish = await Promise.all(
@@ -377,9 +361,7 @@ const Roster = () => {
         return shouldPublish ? shift : null;
       })
     );
-
     const shiftsToActuallyPublish = filteredShiftsToPublish.filter(shift => shift !== null);
-
     console.log(`Filtered shifts to be published:`, shiftsToActuallyPublish);
 
     if (shiftsToActuallyPublish.length > 0) {
@@ -431,6 +413,14 @@ const Roster = () => {
     setIsSelectEmployeeModalOpen(false);
   };
 
+  const openShiftReminderModal = () => {
+    setIsShiftReminderModalOpen(true);
+  };  
+
+  const closeShiftReminderModal = () => {
+    setIsShiftReminderModalOpen(false);
+  };
+  
     return (
       <div className="roster-container">
         <div className="flex items-center justify-between">
@@ -438,6 +428,13 @@ const Roster = () => {
             selectedDate={selectedDate}
             onDateChange={handleDateChange}
           />
+        <div>
+          <button
+            onClick={openShiftReminderModal}
+            className="tanda-button p-2 rounded background text-white h-10 -mt-2 mr-2"
+            style={{backgroundColor: '#3498db'}}>
+            Shift Reminders
+          </button>
           <button 
             onClick={() => {
               console.log('Publish Shift Button Clicked');
@@ -447,12 +444,13 @@ const Roster = () => {
                 alert('No shifts to publish for the selected week.');
               }
             }}
-            className="border p-2 rounded background text-white h-10 -mt-2"
+            className="tanda-button p-2 rounded background text-white h-10 -mt-2"
             style={{backgroundColor: '#3498db'}}
             >
             Publish shifts
           </button>
         </div>
+      </div>
         <div className="overflow-x-auto">
           {loading ? (
             <p>Loading...</p>
@@ -538,6 +536,13 @@ const Roster = () => {
               />,
               document.getElementById('modal-root')
             )}
+            {isShiftReminderModalOpen && ReactDOM.createPortal(
+              <CreateShiftReminderModal
+                showModal={isShiftReminderModalOpen}
+                handleClose={closeShiftReminderModal}
+              />,
+              document.getElementById('modal-root')
+            )}
           </div>
         </div>
       )}
@@ -549,7 +554,7 @@ const Roster = () => {
       }}>
       <button 
         onClick={handleOpenSelectEmployeeModal}
-        className="border p-2 rounded background text-white h-10 -mt-2"
+        className="tanda-button border p-2 rounded background text-white h-10 -mt-2"
         style={{
           backgroundColor: '#3498db',
           padding: '10px 20px',

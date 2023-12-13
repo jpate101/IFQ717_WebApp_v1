@@ -14,7 +14,12 @@ const usePagination = (items, itemsPerPage) => {
 
   const totalItems = items.length;
 
-  return [currentItems, totalItems, setCurrentPage, currentPage]; 
+  const setCurrentPageNo = (pageNumber) => {
+    //setAwardButtonError(null); // used for clearing erros on compliance list when changing pagination but causes error. 
+    setCurrentPage(pageNumber);
+  };
+
+  return [currentItems, totalItems, setCurrentPageNo, currentPage]; 
 };
 
 export default usePagination;

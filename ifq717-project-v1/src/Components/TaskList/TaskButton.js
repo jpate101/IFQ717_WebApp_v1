@@ -7,7 +7,7 @@ import '../../index.css';
 
 const taskURLs = {
   'Add locations': '/root/EmployeeManagement',
-  'Add employees (100+)': '/root/EmployeeManagement', // set to 100 for test/demo of incomplete task (temporary)
+  'Add employees (5+)': '/root/EmployeeManagement', // set back to 5 now; // 100 for test/demo of incomplete task (temporary)
   'Add teams': '/root/EmployeeManagement',
   'Create shifts on a roster': '/roster',
   'Approve a timesheet': '/timesheets/approveTimesheets',

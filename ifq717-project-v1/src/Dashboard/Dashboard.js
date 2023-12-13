@@ -7,6 +7,7 @@ import EventList from '../Components/EventList/EventList';
 import '../../src/style.css';
 import './dashboard.css';
 import RocketIcon from '../Components/Icons/RocketIcon';
+import DynamicBanner from '../Components/DynamicBanner';
 
 export default function Dashboard() {
   const token = getUserToken();
@@ -16,10 +17,7 @@ export default function Dashboard() {
     <main className="flex-grow-1">
       {user && (
         <div className="container mx-auto px-4">
-          <div className="launchpad-card mt-4 mr-3 ml-3">
-          <RocketIcon size="75" alt="tanda launchpad icon" />
-            <span>Tanda Launchpad</span>
-          </div>
+          <DynamicBanner text="Tanda Launchpad" Icon={RocketIcon} />
           <div className="grid grid-cols-1 md:grid-cols-2 mt-4 mx-1 md:mx-0 dashboard-cards-container items-start" style={{ gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, min-content)' }}>
             <div className="bg-white rounded-lg w-full md:w-auto mx-2 md:mx-0">
               <div className="p-1">

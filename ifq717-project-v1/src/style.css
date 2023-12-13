@@ -263,4 +263,18 @@ input:focus {
   }
   
   }
+
+  /* CSS for the Clockin grid and page*/
+
+  .ag-theme-alpine {
+    border-radius: 10px !important;
+  }
+  
+  .ag-root-wrapper {
+    border-radius: 10px !important;
+  }
+  
+  .ag-root-wrapper-body {
+    border-radius: 10px !important;
+  }
   
