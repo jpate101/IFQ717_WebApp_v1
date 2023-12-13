@@ -4,7 +4,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import Header from './Components/Header';
 import Footer from './Components/Footer';
-import Home from './Home';
 import Login from './Login/Login';
 import Dashboard from './Dashboard/Dashboard';
 import EmployeeManagement from './EmployeeManagement/EmployeeManagement';
@@ -64,12 +63,18 @@ export default function App() {
             <Route
               path="/"
               element={
-                <Home />
+                <Login
+                  setIsLoggedIn={setIsLoggedIn}
+                  setUserRole={setUserRole}
+                />
               }
             />
             <Route
               path="/home"
-              element={Home}
+              element={<Login
+                setIsLoggedIn={setIsLoggedIn}
+                setUserRole={setUserRole}
+              />}
             />
             <Route 
               path="/login"
