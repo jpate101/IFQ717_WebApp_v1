@@ -56,7 +56,7 @@
 /* column 2 Styles - Column 2 displays only on large devices */
 
 .background-image-container {
-    background-image: url('../Resources/iStock-Chefs.jpg');
+    background-image: url('../Resources/iStock-tandalaunchpad.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -74,12 +74,12 @@
 
   
   .login-enticer-card {
-    background-color: var(--background-color);
+    background-color: rgba(249, 250, 251, 0.8);
     width: 75%;
     padding: 1rem;
     border-radius: 5px;
     margin: 2rem auto;
-    margin-top: 15%;
+    margin-top: 25%;
   }
 
   @media (min-width: 992px) {

@@ -82,3 +82,5 @@ clockin users grid created using AgGrid https://www.ag-grid.com
 
 rocket icons sourced via: https://www.iconfinder.com
 
+login rocket image sourced via: https://www.istockphoto.com/portfolio/PaperFox?mediatype=illustration 
+
