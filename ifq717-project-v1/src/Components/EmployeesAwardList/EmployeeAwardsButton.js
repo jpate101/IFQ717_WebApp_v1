@@ -21,7 +21,7 @@ export default function EmployeeAwardsButton({ employee, setIsAwardAdded, setAwa
       }, [awardId, originalAwardId]);
 
     useEffect(() => {
-        setButtonText(' Assign ');
+        setButtonText('Assign');
       }, [awardId]);
     
 
@@ -55,7 +55,7 @@ export default function EmployeeAwardsButton({ employee, setIsAwardAdded, setAwa
 
   return (
     <LabelledButton 
-      className="employee-award-button"
+    className={isError ? "employee-award-button decline-button" : isDisabled || isLoading ? "employee-award-button disabled-button" : "employee-award-button approve-button"}
       buttonText={isLoading ? "Loading..." : buttonText} 
       onClick={handleClick} 
       disabled={isDisabled || isLoading} 
