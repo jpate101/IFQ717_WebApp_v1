@@ -812,9 +812,9 @@ export const enableAward = async (awardTemplateId) => {
       body: JSON.stringify(body)
     });
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`HTTP error! status: ${response}`);
     }
-    return await response.json();
+    return await response;
   } catch (error) {
     console.error('Error enabling award:', error);
     return null;
