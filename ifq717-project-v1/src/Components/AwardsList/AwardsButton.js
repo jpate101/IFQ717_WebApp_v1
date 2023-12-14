@@ -12,6 +12,7 @@ import '../../style.css';
 export default function AwardsButton({ award, setIsAwardEnabled, setAwardButtonError }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [isEnabled, setIsEnabled] = useState(false);
   const awardTemplateId = award.award_template_id;
 
   const handleClick = async () => {
@@ -19,9 +20,10 @@ export default function AwardsButton({ award, setIsAwardEnabled, setAwardButtonE
     setIsError(false);
     try {
       const response = await enableAward(awardTemplateId);
-      console.log('clicked');
-      if (response.status === 201) {
+      if (response.ok) {
         setIsAwardEnabled(true);
+        setIsEnabled(true);
+        console.log('hey this is the enabled button status', isEnabled);
       }
     } catch (error) {
       console.error(error);
@@ -40,7 +42,7 @@ export default function AwardsButton({ award, setIsAwardEnabled, setAwardButtonE
   return (
     <LabelledButton
       className={isError ? "award-button decline-button" : "award-button approve-button"}
-      buttonText={isLoading ? "Loading..." : isError ? "Retry" : "Enable"}
+      buttonText={isLoading ? "Loading..." : isError ? "Retry" : isEnabled ? "Enabled" : "Enable"}
       onClick={handleClick}
       isError={isError} 
     />

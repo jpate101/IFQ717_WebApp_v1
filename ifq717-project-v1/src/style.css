@@ -277,4 +277,21 @@ input:focus {
   .ag-root-wrapper-body {
     border-radius: 10px !important;
   }
+
+  /* CSS for the Dashboard Tasklist*/ 
+
+  .task-button {
+    padding: 0.2rem;
+    font-size: small;
+  }
+
+  .award-button {
+    padding: 0.2rem;
+    font-size: small;
+  }
+
+  .remind-button {
+    padding: 0.2rem;
+    font-size: medium;
+  }
   

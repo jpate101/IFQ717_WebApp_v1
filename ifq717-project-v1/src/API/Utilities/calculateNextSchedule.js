@@ -1,8 +1,6 @@
 import moment from 'moment';
 import setHeaders from './setHeaders';
 
-const API_BASE_URL = 'https://my.tanda.co/api/v2';
-
 const calculateNextSchedule = async (userIds) => {
   const now = moment();
   const from = now.add(1, 'days').format('YYYY-MM-DD');
@@ -11,7 +9,7 @@ const calculateNextSchedule = async (userIds) => {
 
   try {
     const headers = setHeaders();
-    const url = `${API_BASE_URL}/schedules?user_ids=${userIds.join(',')}&from=${from}&to=${to}`;
+    const url = `${process.env.REACT_APP_API_BASE_URL}/schedules?user_ids=${userIds.join(',')}&from=${from}&to=${to}`;
 
     const response = await fetch(url, { method: 'GET', headers });
     if (!response.ok) {

@@ -68,7 +68,7 @@ function TaskList() {
                   {task.name}
                 </div>
                 <div className="ml-2">
-                  <TaskButton taskName={task.name} isComplete={task.isComplete} />
+                <TaskButton taskName={task.name} taskLabel={task.label} isComplete={task.isComplete} /> {/* Changed taskList={task.list} to taskLabel={task.label} */}
                 </div>
               </div>
             </div>

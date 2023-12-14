@@ -13,7 +13,7 @@ import React from 'react';
 
 const DynamicBanner = ({ text, Icon }) => {
   return (
-    <div className="launchpad-card mt-4 mr-3 ml-3">
+    <div className="launchpad-card mt-4 mr-3 ml-3 d-flex align-items-center justify-content-center flex-wrap p-3">
       <Icon size="75" alt={`${text} icon`} />
       <span>{text}</span>
     </div>

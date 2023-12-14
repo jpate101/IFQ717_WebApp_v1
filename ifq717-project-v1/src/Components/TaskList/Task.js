@@ -4,7 +4,7 @@ import React from 'react';
 import TaskIcon from './TaskIcon';
 import TaskButton from './TaskButton';
 
-export default function Task({ taskName, isComplete }) {
+export default function Task({ taskName, taskLabel, isComplete }) {
   return (
     <div className="grid grid-cols-3 gap-4">
       <div>
@@ -12,7 +12,7 @@ export default function Task({ taskName, isComplete }) {
       </div>
       <div>{taskName}</div>
       <div>
-        <TaskButton taskName={taskName} isComplete={isComplete} />
+      <TaskButton taskLabel={taskLabel} isComplete={isComplete} />
       </div>
     </div>
   );

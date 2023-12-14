@@ -26,12 +26,13 @@ import Qualifications from './EmployeeManagement/Qualifications';
 export default function App() {
   const [cookies, setCookie, removeCookie] = useCookies(['token']);
   const [isLoggedIn, setIsLoggedIn] = useState(!!cookies.token);
-  const [userRole, setUserRole] = useState(null);
+  const [userRole, setUserRole] = useState(localStorage.getItem('userRole') || null);
 
   useEffect(() => {
     const fetchUserRole = async () => {
       if (isLoggedIn) {
         const role = await getCurrentUserRole();
+        localStorage.setItem('userRole', role);
         setUserRole(role);
       }
     };
@@ -40,10 +41,14 @@ export default function App() {
 
   useEffect(() => {
     setIsLoggedIn(!!cookies.token);
+    if (localStorage.getItem('userRole')) {
+      setUserRole(localStorage.getItem('userRole'));
+    }
   }, [cookies.token]);
 
   const handleLogOut = () => {
     removeCookie('token');
+    localStorage.removeItem('userRole');
     setIsLoggedIn(false);
     window.location.href = '/';
   };

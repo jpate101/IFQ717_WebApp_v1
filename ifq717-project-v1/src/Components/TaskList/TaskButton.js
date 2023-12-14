@@ -11,16 +11,17 @@ const taskURLs = {
   'Add teams': '/root/EmployeeManagement',
   'Create shifts on a roster': '/roster',
   'Approve a timesheet': '/timesheets/approveTimesheets',
-  'Enable Award': '/Compliance'
+  'Enable Award': '/Compliance',
+  'At least 1 employee has clocked in': '/Compliance'
 };
 
-export default function TaskButton({ taskName, isComplete }) {
-  if (taskName === 'At least 1 employee has clocked in') {
-    return <span>Coming Soon</span>;
-  }
+export default function TaskButton({ taskName, taskLabel, isComplete }) {
   if (isComplete) {
     return <span>Complete</span>;
   }
-
-  return <LabelledButton buttonText={taskName} to={taskURLs[taskName]} />;
+  
+  return <LabelledButton 
+  className={isComplete ? "task-button decline-button" : "task-button approve-button"}
+  buttonText={taskLabel} 
+  to={taskURLs[taskName]} />;
 }

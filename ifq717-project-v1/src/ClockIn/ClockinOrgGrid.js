@@ -27,6 +27,10 @@ export default function OrganisationGrid() {
 
   return (
     <div className="w-full">
+      {rowData.length < 1 ? (
+        <div className="text-center">No sites to display</div>
+      ) : (
+        <>
       <table className="table-auto w-full">
         <thead>
           <tr>
@@ -62,8 +66,10 @@ export default function OrganisationGrid() {
           totalItems={rowData.length}
           paginate={setCurrentPage}
           currentPage={currentPage}
-        />
-      </div>
-      </div>
-    );
-    }
+          />
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
