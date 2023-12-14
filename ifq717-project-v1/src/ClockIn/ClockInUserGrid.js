@@ -1,26 +1,19 @@
 // getting a list of active users only & building table to display if user invited, active, clocked in etc. 
 
 import React, { useState, useEffect } from 'react';
-import { AgGridReact } from 'ag-grid-react';
-import '../../node_modules/ag-grid-community/styles/ag-grid.css';
-import '../../node_modules/ag-grid-community/styles/ag-theme-alpine.css'; 
-import { getUsers, sendAppReminder } from '../API/Utilities';
+import { getUsers } from '../API/Utilities';
 import LabelledButton from '../Components/Buttons/LabelledButton';
 import unixTimeToEmployeeTime from '../API/Utilities/unixTimeToEmployeeTime';
 import calculateShiftDate  from '../API/Utilities/calculateShiftDate';
 import calculateClockin from '../API/Utilities/calculateClockin';
 import calculateNextSchedule from '../API/Utilities/calculateNextSchedule';
+import RemindButton from './RemindButton';
+import Pagination from '../Components/Pagination';
+import '../App.css';
 
 function ClockInUserGrid() {
-  const [gridApi, setGridApi] = useState(null);
-  const [gridColumnApi, setGridColumnApi] = useState(null);
   const [rowData, setRowData] = useState([]);
   const [error, setError] = useState(null);
-
-  const onGridReady = (params) => {
-    setGridApi(params.api);
-    setGridColumnApi(params.columnApi);
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,7 +27,7 @@ function ClockInUserGrid() {
         const isInvited = user.last_synced_mobile_app !== null;
         const isAppActive = isInvited ? user.last_synced_mobile_app !== 0 : false;
         const invited = isInvited ? "Invited" : "Send invite";
-        const mobileApp = isAppActive ? unixTimeToEmployeeTime(user.last_synced_mobile_app, user.timezone) : (user.last_synced_mobile_app === 0 ? "Never" : null);
+        const mobileApp = isAppActive ? unixTimeToEmployeeTime(user.last_synced_mobile_app, user.timezone) : '';
         
         // next shift, last shift 
         let prevShiftStart = null; 
@@ -61,7 +54,6 @@ function ClockInUserGrid() {
         // CLOCKIN REMINDERS AND WARNINGS
         const hasClockinData = clockinData.lastClockin;
         const clockinOverdue = prevShift && !hasClockinData;
-        //const firstClockin = hasClockinData ? clockinData.firstClockin : (clockinOverdue ? "remind" : null);
         const lastClockin = hasClockinData ? clockinData.lastClockin : (clockinOverdue ? "remind" : null);
 
 
@@ -80,24 +72,12 @@ function ClockInUserGrid() {
             mobileAppStatus = "reinvite";
         }
 
-        /*/// SEND REMINDERS 
-        let sendReminder;
-        if (user.invited && !user.mobileApp && nextScheduleStart) {
-          sendReminder = "REMIND";
-        } else if (mobileAppWarning) {
-          sendReminder = "REMIND";
-        } else if (mobileAppRemind) {
-          sendReminder = "REINVITE";
-        } else {
-          sendReminder = "OPTIONAL";
-        }*/
-
         let sendReminder = "send email"
 
         return { ...user, isInvited, isAppActive, invited, mobileApp: mobileAppStatus, nextSchedule: nextScheduleStart, prevShift: prevShiftStart, clockinOverdue, lastClockin, mobileAppRemind, mobileAppWarning, sendReminder };
         } catch (error) {
           console.error(`Error processing user ${user.id}:`, error);
-          return null; // or some default user object
+          return null; 
         }
       }));
 
@@ -113,38 +93,60 @@ function ClockInUserGrid() {
 
   const columns = [
     { headerName: "Name", field: "name", sortable: true, filter: true, floatingFilter: true },
-    { headerName: "Invited", field: "invited", sortable: true, filter: true, floatingFilter: true, width: 120 },
+    { headerName: "Invited", field: "isInvited", sortable: true, filter: true, floatingFilter: true, width: 120, cellRenderer: 'inviteIconRenderer', cellRendererParams: { isInvited: (params) => params.data.isInvited,
+    }, 
+  },
     { headerName: "Start date", field: "employment_start_date", sortable: true, filter: true, floatingFilter: true, width: 120 },
     { headerName: "Last app use", field: "mobileApp", sortable: true, filter: true, width: 140 },
     { headerName: "Recent clockin", field: "lastClockin", sortable: true, filter: true },
     { headerName: "Previous shift", field: "prevShift", sortable: true, filter: true }, 
-    { headerName: "Next scheduled", field: "nextSchedule", sortable: true, filter: true },
-    { headerName: "Send reminder", field: "sendReminder", sortable: true, filter: true }
+    { headerName: "Next scheduled", field: "nextSchedule", sortable: true, filter: true }
   ];
+
+  // pagination 
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 20;
+    
 
   return (
     <>
     {error && <p>Error: {error}</p>}
-    <div className="ag-theme-alpine grid-container mt-4" style={{ height: '500px', width: '100%' }}>
-    <AgGridReact
-        onGridReady={onGridReady}
-        columnDefs={columns}
-        rowData={rowData}
-        pagination={true}
-        paginationPageSize={10}
-        getRowStyle={params => {
-          if (params.data.clockinOverdue) {
-            return { backgroundColor: '#FFA07A' }; // salmon color for clockinOverdue
-          } else if (params.data.invited && !params.data.mobileApp && params.data.nextSchedule) {
-            return { backgroundColor: '#FFFFE0' }; // yellow color for mobileApp warning
-          } else if (params.data.mobileAppRemind) {
-            return { backgroundColor: '#FFFFE0' }; // placeholder yellow color
-          } else if (params.data.mobileAppWarning) {
-            return { backgroundColor: '#FFA07A' }; // placeholder colour salmon
+    <div className="mt-4">
+      <table className="table-auto w-full">
+        <thead>
+          <tr>
+            {columns.map((column, index) => (
+              <th key={index} className="px-4 py-2">{column.headerName}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+        {rowData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((row, index) => (
+          <tr key={index}>
+          <td className="border px-4 py-2">{row.name}</td>
+          <td className="border px-4 py-2">
+          {row.isInvited ? 
+            "Invited" : 
+            <LabelledButton buttonText="Invite" to="http://localhost:3000/root/EmployeeManagement/" className="approve-button" />
           }
-          return {};
-        }}
+          </td>
+          <td className="border px-4 py-2">{row.employment_start_date}</td>
+          <td className="border px-4 py-2">{!row.isAppActive && row.isInvited ? <RemindButton userId={row.id} isClockinOverdue={false} /> : row.mobileApp}</td>
+          <td className="border px-4 py-2">{row.lastClockin === 'remind' ? <RemindButton userId={row.id} isClockinOverdue={true} /> : row.lastClockin}</td>
+          <td className="border px-4 py-2">{row.prevShift}</td>
+          <td className="border px-4 py-2">{row.nextSchedule}</td>
+        </tr>
+        ))}
+      </tbody>
+      </table>
+      <div className="flex justify-center">
+        <Pagination
+          itemsPerPage={itemsPerPage}
+          totalItems={rowData.length}
+          paginate={setCurrentPage}
+          currentPage={currentPage}
         />
+      </div>
     </div>
     </>
   );
