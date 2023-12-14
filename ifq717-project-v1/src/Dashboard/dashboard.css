@@ -9,8 +9,10 @@
     background-color: var(--secondary-color);
     border-radius: 5px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
+    flex-wrap: wrap;
+    padding: 1rem;
     color: var(--primary-color);
     height: 90px;
     font-size: 3rem; 
