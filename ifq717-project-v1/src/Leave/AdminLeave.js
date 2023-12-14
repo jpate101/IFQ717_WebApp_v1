@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Dropdown, Card, Button } from 'react-bootstrap';
 import { DatePicker, Upload, message, Button as AntButton} from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+//import { UploadOutlined } from '@ant-design/icons';
 import LeaveSidebar from '../Components/Leave/LeaveSidebar';
 import UnavailabilitySidebar from '../Components/Leave/UnavailabilitySidebar';
 import { 
@@ -206,7 +206,6 @@ const LeaveRequestTabs = () => {
   
     const formatLeaveRequestCard = (request) => {
       const userName = findUserNameById(request.user_id);
-      const formattedUpdatedAt = dayjs.unix(request.updated_at).format('YYYY-MM-DD');
       const formattedStartDate = dayjs(request.start).format('DD MMM YYYY');
       const formattedFinishDate = dayjs(request.finish).format('DD MMM YYYY');
       const period = formattedStartDate === formattedFinishDate
@@ -233,14 +232,18 @@ const LeaveRequestTabs = () => {
 
       return (
         <Card key={request.id} className="mb-3">
-          <Card.Header>
+          <Card.Header className="mt-1">
             <div>{userName}</div>
             {/*<div>Requested on: {formattedUpdatedAt}</div>*/}
           </Card.Header>
-          <Card.Body className="less-column-padding">
+          <Card.Body className="less-column-padding smaller-font">
             <div className="row">
               <div className="col-6 font-weight-bold">Period:</div>
               <div className="col-6">{period}</div>
+            </div>
+            <div className="row">
+              <div className="col-6 font-weight-bold">Times:</div>
+              <div className="col-6">{}</div>
             </div>
             <div className="row">
               <div className="col-6 font-weight-bold">Type:</div>
@@ -252,25 +255,11 @@ const LeaveRequestTabs = () => {
               <div className="col-6">{}</div>
             </div>
             <div className="row">
-              <div className="col-6 font-weight-bold">Current Balance:</div>
-              <div className="col-6">{}</div>
-            </div>
-            <div className="row">
-              <div className="col-6 font-weight-bold">Document:</div>
-              <div className="col-6">
-                <Upload {...uploadProps}>
-                  <AntButton size="sm" variant="primary">
-                    <UploadOutlined /> {fileUploads[request.id] ? 'Replace file' : 'Upload'}
-                  </AntButton>
-                </Upload>
-              </div>
-              </div>
-            <div className="row">
               <div className="col-6 font-weight-bold">Reason:</div>
               <div className="col-6">{request.reason}</div>
             </div>
           </Card.Body>
-          <Card.Footer className="d-flex justify-content-between">
+          <Card.Footer className="d-flex justify-content-between  smaller-font">
             {activeTab === 'pending' && (
               <>
                 <Button 
@@ -326,7 +315,7 @@ const LeaveRequestTabs = () => {
 
     const formatUnavailabilityRequestCard = (request) => {
       const userName = findUserNameById(request.user_id);
-      //const formattedUpdatedAt = dayjs.unix(request.updated_at).format('YYYY-MM-DD');
+
       console.log('request updated_at:', request.updated_at)
       const startDate = dayjs.unix(request.start).format('DD MMM YYYY');
       const finishDate = dayjs.unix(request.finish).format('DD MMM YYYY');
@@ -338,7 +327,7 @@ const LeaveRequestTabs = () => {
         : 'N/A';
 
       return (
-        <Card key={request.id} className="mb-3">
+        <Card key={request.id} className="mb-3 -mr-2">
           <Card.Header>
             <div className="d-flex justify-content-between align-items-center">
               <div>
@@ -347,7 +336,7 @@ const LeaveRequestTabs = () => {
               </div>
               {(activeTab === 'pending' || activeTab === 'approved') && (
                 <Button 
-                  className="decline-button"
+                  className="decline-button px-3"
                   variant="danger" 
                   size="sm"
                   onClick={() => handleDeleteUnavailability(request.id)}
@@ -357,7 +346,7 @@ const LeaveRequestTabs = () => {
               )}
             </div>
           </Card.Header>
-          <Card.Body className="">
+          <Card.Body className="less-column-padding smaller-font">
             <div className="row">
               <div className="col-6 font-weight-bold">Period:</div>
               <div className="col-6">{period}</div>
@@ -375,15 +364,11 @@ const LeaveRequestTabs = () => {
               <div className="col-6">{repeatsOn}</div>
             </div>
             <div className="row">
-              <div className="col-6 font-weight-bold">Type:</div>
-              <div className="col-6">Unavailability</div>
-            </div>
-            <div className="row">
               <div className="col-6 font-weight-bold">Reason:</div>
               <div className="col-6">{request.title}</div>
             </div>
           </Card.Body>
-          <Card.Footer className="d-flex justify-content-between">
+          <Card.Footer className="d-flex justify-content-between smaller-font">
             {activeTab === 'pending' && (
               <>
                 <Button 

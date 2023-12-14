@@ -8,7 +8,7 @@ const { RangePicker } = DatePicker;
 
 const BASE_URL = 'https://my.tanda.co';
 
-const LeaveSidebar = ({ show, handleClose }) => {
+const LeaveSidebar = ({ show, handleClose, onNewLeaveRequest }) => {
     const [currentUser, setCurrentUser] = useState({});
     const [leaveTypes, setLeaveTypes] = useState([]);
     const [isAllDay, setIsAllDay] = useState(true);
@@ -84,6 +84,9 @@ const LeaveSidebar = ({ show, handleClose }) => {
             console.log('Leave Request Created:', response);
             handleClose();
             alert('Leave Request Successfully Submitted');
+            if (onNewLeaveRequest) {
+                onNewLeaveRequest(response);
+            }
         } catch (error) {
             console.error('Error creating leave request:', error);
             console.error('Error details:', error.response || error);

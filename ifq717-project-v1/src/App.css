@@ -627,6 +627,7 @@ img.profile-pic {
   background-color:#f6ffed !important;
   border-color: #6bcc43 !important;
   color: #6bcc43 !important;
+  font-size: 0.8em; 
 }
 
 .approve-button:active {
@@ -640,6 +641,7 @@ img.profile-pic {
   background-color:#fff2f0 !important;
   border-color: #ff595b !important;
   color: #ff595b !important;
+  font-size: 0.8em; 
 }
 
 .decline-button:active {
@@ -719,4 +721,19 @@ input:focus {
   color: #3498db;
   border-bottom: 3px solid  #3498db ;
   font-weight: bold;
+}
+
+.smaller-font {
+  font-size: 0.8em;
+}
+
+.small-upload-button {
+  padding: 6px;
+  font-size: 0.8em;
+}
+
+.icon-upward {
+  display: inline-block;
+  vertical-align: middle;
+  transform: translateY(-1px);
 }
