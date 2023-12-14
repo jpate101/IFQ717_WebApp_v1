@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DynamicBanner from '../Components/DynamicBanner';
 import RocketIcon from '../Components/Icons/RocketIcon';
 import ClockInUserGrid from './ClockInUserGrid';
 import ClockinOrgGrid from './ClockinOrgGrid'; 
 
 export default function ClockIn() {
-  const [activeTab, setActiveTab] = useState('organisation');
+  const [activeTab, setActiveTab] = useState(localStorage.getItem('activeTab') || 'organisation');
+
+  useEffect(() => {
+    localStorage.setItem('activeTab', activeTab);
+  }, [activeTab]);
 
   return (
     <main className="flex-grow-1">
