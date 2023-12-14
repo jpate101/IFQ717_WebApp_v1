@@ -127,7 +127,7 @@ function ClockInUserGrid() {
           <td className="border px-4 py-2">
           {row.isInvited ? 
             "Invited" : 
-            <LabelledButton buttonText="Invite" to="http://localhost:3000/root/EmployeeManagement/" className="approve-button" />
+            <LabelledButton buttonText="Invite" to="http://localhost:3000/root/EmployeeManagement/" className="approve-button remind-button" />
           }
           </td>
           <td className="border px-4 py-2">{row.employment_start_date}</td>

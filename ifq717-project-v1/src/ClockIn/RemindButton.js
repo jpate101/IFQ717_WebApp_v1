@@ -13,7 +13,7 @@ function RemindButton({ userId, isClockinOverdue }) {
     }
   };
 
-  const buttonClass = isClockinOverdue ? 'decline-button' : 'approve-button';
+  const buttonClass = isClockinOverdue ? 'decline-button remind-button' : 'approve-button remind-button';
 
   return (
     <LabelledButton 
