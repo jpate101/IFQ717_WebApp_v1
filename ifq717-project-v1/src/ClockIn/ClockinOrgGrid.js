@@ -56,11 +56,14 @@ export default function OrganisationGrid() {
           ))}
           </tbody>
         </table>
-        <div>
-          {Array.from({length: Math.ceil(rowData.length / itemsPerPage)}, (_, i) => (
-            <button onClick={() => changePage(i + 1)}>{i + 1}</button>
-          ))}
-        </div>
+        <div className="flex justify-center">
+        <Pagination
+          itemsPerPage={itemsPerPage}
+          totalItems={rowData.length}
+          paginate={setCurrentPage}
+          currentPage={currentPage}
+        />
+      </div>
       </div>
     );
     }
