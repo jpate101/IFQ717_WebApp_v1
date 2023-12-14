@@ -40,8 +40,10 @@ export default function AwardsButton({ award, setIsAwardEnabled, setAwardButtonE
   return (
     <LabelledButton
       className={isError ? "award-button decline-button" : "award-button approve-button"}
-      buttonText={isLoading ? "Loading..." : "Enable"}
+      buttonText={isLoading ? "Loading..." : isError ? "Retry" : "Enable"}
       onClick={handleClick}
+      isError={isError} 
     />
   );
+
 }
