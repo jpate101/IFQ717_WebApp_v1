@@ -114,10 +114,10 @@ const EmployeeAwardsList = () => {
                 </div>
                 <div style={{ flex: '0.15', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
                 {employee.award_template_id != null && !isUnlocked[employee.id] && (
-  <a href="#" onClick={(event) => handleUnlock(event, employee.id)}>
-    <Unlock size="20" alt="unlock icon" />
-  </a>
-)}
+                <a href="#" onClick={(event) => handleUnlock(event, employee.id)}>
+                  <Unlock size="20" alt="unlock icon" />
+                </a>
+              )}
                 <EmployeeAwardsButton 
                     employee={employee} 
                     setIsAwardAdded={setIsAwardAdded} 
