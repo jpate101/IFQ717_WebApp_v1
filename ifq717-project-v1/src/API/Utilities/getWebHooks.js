@@ -1,5 +1,5 @@
 function getWebHooks() {
-  return fetch(`https://localhost:5000/data`)
+  return fetch(`http://localhost:5000/data`)
     .then(response => response.json())
     .then(data => {
       let isClockin = false;
