@@ -5,10 +5,11 @@ import DateFormItem from './DateFormItem';
 import TimePickerComponent from './TimePicker';
 import { getUsers, getAllDepartments } from '../../API/Utilities';
 import { ReactComponent as BinIcon } from '../../svg/trash3.svg';
-import { ReactComponent as DotDotDot } from '../../svg/three-dots.svg';
+//import { ReactComponent as DotDotDot } from '../../svg/three-dots.svg';
 import { ReactComponent as Repeat } from '../../svg/arrow-repeat.svg';
 import { ReactComponent as Person } from '../../svg/person-circle.svg';
 import { Tooltip } from 'antd';
+import MultipleDatePicker from './RepeatShift';
 import dayjs from 'dayjs';
 
 const RosterModal = ({ 
@@ -24,7 +25,6 @@ const RosterModal = ({
   teamId,
   scheduleId,
   currentShiftDetails,
-
 }) => {
 
   const [selectedEmployee, setSelectedEmployee] = useState(null);
@@ -33,6 +33,8 @@ const RosterModal = ({
   const [allTeams, setAllTeams] = useState([]);
   const [users, setUsers] = useState(null);
   const [hoursWorked, setHoursWorked] = useState('');
+  const [selectedDates, setSelectedDates] = useState([]);
+  const [showRepeatDatePicker, setShowRepeatDatePicker] = useState(false);  
   const [shiftDetails, setShiftDetails] = useState({
     startTime: '',
     finishTime: '',
@@ -141,8 +143,6 @@ const RosterModal = ({
   } catch (error) {
       console.error('Error saving/updating shift:', error);
   }
-
-  
 };
 
 const handleDeleteShift = async () => {
@@ -160,10 +160,6 @@ useEffect(() => {
     console.log("Current Schedule ID in Modal: ", scheduleId);
 }, [scheduleId]);
 
-const handleReminderCreated = (reminder) => {
-  console.log('Reminder has been set with data:', reminder);
-};
-
 const handleTeamChange = (newTeamId) => {
   console.log(`Team changed to: ${newTeamId}`);
   const newSelectedTeam = allTeams.find(team => team.id === parseInt(newTeamId, 10));
@@ -172,10 +168,24 @@ const handleTeamChange = (newTeamId) => {
 
 const isUpdatingShift = currentShiftDetails && currentShiftDetails.shiftId;
 
+const handleRepeatClick = () => {
+  setShowRepeatDatePicker(!showRepeatDatePicker);
+};
+
+const handleDatesSelected = (dates) => {
+  setSelectedDates(dates);
+};
+
+useEffect(() => {
+  if (shiftDate) {
+    console.log("Creating/updating shift for date:", shiftDate);
+  }
+}, [shiftDate]);
+
   return isOpen && (
     <>
       <div className="fixed  bg-black bg-opacity-10 inset-0 flex justify-center items-center">
-      <div className="relative bg-white p-5 rounded-lg h-auto max-h-[80vh] overflow-y-auto">
+      <div className="relative bg-white p-5 rounded-lg h-auto max-h-[80vh] ">
         <button 
           onClick={onClose}
           className="absolute top-2 right-2 text-xl font-bold cursor-pointer"
@@ -213,22 +223,32 @@ const isUpdatingShift = currentShiftDetails && currentShiftDetails.shiftId;
           >
           </TeamsDropdown>
         </div>
+        {showRepeatDatePicker && (
+          
+            <MultipleDatePicker onDatesSelected={handleDatesSelected}/>
+          )}
         <div className="flex justify-between my-2">
           <div>{}</div>
-          <div className="flex items-center"
+          <div className="my-2 flex items-center"
             style={{ marginTop: '10px' }}
             >
             <Tooltip title="Repeat shift" placement="bottom" color="#3498db">
-              <Repeat className="tanda-icon cursor-pointer"/>
+              <Repeat 
+                onClick={handleRepeatClick}
+                className="tanda-icon cursor-pointer mr-2" // Adjust spacing as needed
+              />
             </Tooltip>
             <Tooltip title="View staff profile" placement="bottom" color="#3498db">
               <Person className="tanda-icon cursor-pointer"/>
             </Tooltip>
             {isUpdatingShift && (
-            <BinIcon
-              onClick={handleDeleteShift}
-              className="w-6 h-6 mr-3 cursor-pointer roster-icon"
-            />
+            <Tooltip title="Delete shift" placement="bottom" color="#3498db">
+              <BinIcon
+                onClick={handleDeleteShift}
+                className="w-6 h-6 mr-3 cursor-pointer roster-icon"
+              />
+            </Tooltip>
+
           )}
           <button
             onClick={handleSaveShift}
