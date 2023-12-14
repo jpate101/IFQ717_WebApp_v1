@@ -254,7 +254,6 @@ const Roster = () => {
   
       if (createdShift && createdShift.user_id) {
         setRosterData(currentRosterData => [...currentRosterData, createdShift]);
-        alert('Shift saved successfully!');
         setIsModalOpen(false);
         fetchRoster(users);
       } else {
