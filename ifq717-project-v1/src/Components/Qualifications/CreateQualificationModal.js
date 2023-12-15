@@ -24,6 +24,12 @@ const NewQualificationModal = ({ isOpen, onClose, createOrUpdateQualification, e
         await createOrUpdateQualification(payload);
     };
 
+    const handleDeleteClick = async () => {
+        if (editQualification && editQualification.id) {
+            onDeleteQualification(editQualification.id); 
+        }
+    };
+
     if (!isOpen) {
         return null;
     }
@@ -67,7 +73,10 @@ const NewQualificationModal = ({ isOpen, onClose, createOrUpdateQualification, e
                     <div className={`flex ${editQualification ? 'justify-between' : 'justify-end'} mt-3`}>
                         {editQualification && (
                             <Tooltip title="Delete qualification" placement="bottom" color="#3498db">
-                                <Trash className="mr-3 cursor-pointer tanda-icon mt-1"></Trash>
+                                <Trash 
+                                    className="mr-3 cursor-pointer tanda-icon mt-1"
+                                    onClick={handleDeleteClick}>
+                                </Trash>
                             </Tooltip>
                         )}
                         <Button
