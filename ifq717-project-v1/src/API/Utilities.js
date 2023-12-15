@@ -148,6 +148,7 @@ export const getUsers = async (employeeId = null) => {
     return usersData.map(user => ({
       id: user.id,
       name: user.name,
+      photo: user.photo,
       hourly_rate: user.hourly_rate,
       department_ids: user.department_ids,
       date_of_birth: user.date_of_birth,
