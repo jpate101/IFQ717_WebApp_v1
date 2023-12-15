@@ -66,8 +66,8 @@ const EmployeeAwardsList = () => {
         award_template_id: awardTemplateId
       };
       setEmployees(updatedEmployees);
-      // Make the dropdown uneditable again
-      setIsEditable(prevState => ({ ...prevState, [employeeId]: false }));
+      // Stop lock from appearing before saved
+      setIsEditable(prevState => ({ ...prevState, [employeeId]: true }));
     }
   };
 
@@ -113,22 +113,22 @@ const EmployeeAwardsList = () => {
                  </Dropdown>
                 </div>
                 <div style={{ flex: '0.15', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
-                {employee.award_template_id != null && !isUnlocked[employee.id] && (
-                <a href="#" onClick={(event) => handleUnlock(event, employee.id)}>
-                  <Unlock size="20" alt="unlock icon" />
-                </a>
-              )}
+                {!isEditable[employee.id] && (
+                  <a href="#" onClick={(event) => handleUnlock(event, employee.id)}>
+                    <Unlock size="20" alt="unlock icon" />
+                  </a>
+                )}
                 <EmployeeAwardsButton 
-                    employee={employee} 
-                    setIsAwardAdded={setIsAwardAdded} 
-                    setAwardAddError={setAwardAddError} 
-                    setAwardButtonError={setAwardButtonError}
-                    isEditable={isEditable[employee.id]}
-                    originalAwardId={employee.original_award_template_id}
-                    isDisabled={employee.award_template_id && employee.award_template_id === employee.original_award_template_id && !isUnlocked[employee.id]}
-                    isAwardAdded={isAwardAdded} 
-              />
-                </div>
+                  employee={employee}
+                  setIsAwardAdded={setIsAwardAdded}
+                  setAwardAddError={setAwardAddError}
+                  setAwardButtonError={setAwardButtonError}
+                  isEditable={isEditable[employee.id]}
+                  originalAwardId={employee.original_award_template_id}
+                  isDisabled={employee.award_template_id && employee.award_template_id === employee.original_award_template_id && !isUnlocked[employee.id]}
+                  isAwardAdded={isAwardAdded}
+                />
+              </div>
               </div>
             </div>
           ))}
