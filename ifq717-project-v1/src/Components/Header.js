@@ -57,7 +57,6 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }) {
                   <HighlightLink to="/Compliance" as={Link}>
                     Compliance
                   </HighlightLink>
-                    {/* Need to fix spacing issue here */}
                   <NavDropdown title="Timesheets" id="timesheets-nav-dropdown" className="timesheets-nav-dropdown">
                     <NavDropdown.Item as={NavLink} to="/Timesheets/approveTimesheets" className="dropdown-item">
                       Approve Timesheets
