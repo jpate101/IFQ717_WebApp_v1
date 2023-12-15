@@ -162,22 +162,6 @@ const LeaveRequestTabs = () => {
     }
   };
   
-  const handleDeclineUnavailability = async (request) => {
-    try {
-      const updateData = {
-        status: 'rejected',
-        title: request.title,
-        start: request.start,
-        finish: request.finish
-      };
-      await updateUnavailabilityRequest(request.id, updateData);
-      setPendingUnavailabilityRequests(prev => prev.filter(req => req.id !== request.id));
-      setRejectedUnavailabilityRequests(prev => [...prev, { ...request, status: 'rejected' }]);
-    } catch (error) {
-      console.error(`Error declining unavailability request:`, error);
-    }
-  };
-  
   const handleDeleteUnavailability = async (unavailabilityId) => {
     try {
       await deleteUnavailability(unavailabilityId);
@@ -229,7 +213,6 @@ const LeaveRequestTabs = () => {
         showUploadList: false,
       };
        
-
       return (
         <Card key={request.id} className="mb-3">
           <Card.Header className="mt-1">
@@ -381,7 +364,7 @@ const LeaveRequestTabs = () => {
                 <Button 
                   className="decline-button"
                   variant="danger"
-                  onClick={() => handleDeclineUnavailability(request)}
+                  //onClick={() => handleDeclineUnavailability(request)}
                 >
                   Decline
                 </Button>
@@ -428,7 +411,7 @@ const LeaveRequestTabs = () => {
                 ) : (
                   <p>No pending unavailability requests.</p>
                 )}
-              </div>
+                </div>
             </div>
           </div>
         );
