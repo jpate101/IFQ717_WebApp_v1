@@ -300,11 +300,16 @@ textarea:focus {
 .timesheets-nav-dropdown .dropdown-menu {
   border: none !important;
   box-shadow: none !important;
-  background-color: transparent !important;
+  background-color: #3fafd7 !important;
+  font-size: small;
 }
 
 .timesheets-nav-dropdown .dropdown-item {
   font-weight: bold;
+}
+
+.timesheets-nav-dropdown .dropdown-item .text-primary{
+  background-color: transparent !important;
 }
 
 .timesheets-nav-dropdown .dropdown-item:hover {
@@ -312,7 +317,7 @@ textarea:focus {
 }
 
 .timesheets-nav-dropdown .dropdown-item:active {
-  background-color: transparent !important;
+  background-color: #3fafd7 !important;
 }
 
 .custom-search .ant-btn.ant-input-search-button .anticon-search svg{
@@ -488,13 +493,13 @@ textarea:focus {
 }
 
 .dropdown-menu .dropdown-item {
-  color: #3498db !important; 
-  background-color: white !important;
+  color: white !important; 
+  background-color: #3fafd7 !important;
 }
 
 .dropdown-menu .dropdown-item:hover, .dropdown-menu .dropdown-item:focus {
-  color: white !important;
-  background-color: #3498db !important;
+  color:  #104860 !important;
+  background-color: #3fafd7 !important;
   font-weight: bold;
 }
 
@@ -689,4 +694,8 @@ input:focus {
   display: inline-block;
   vertical-align: middle;
   transform: translateY(-1px);
+}
+
+.timesheets-nav-dropdown {
+  width: auto;
 }
