@@ -5,7 +5,7 @@ import '../../App.css';
 
 const EditButton = ({ onClick }) => {
     return (
-        <Tooltip title="Update qualification" placement="left" color="#3498db">
+        <Tooltip title="Update qualification" placement="left" color="#3fafd7">
             <Button
                 variant="outline-primary"
                 onClick={onClick}
@@ -15,7 +15,7 @@ const EditButton = ({ onClick }) => {
                     xmlns="http://www.w3.org/2000/svg" 
                     width="16" 
                     height="16" 
-                    fill="#3498db" 
+                    fill="#3fafd7" 
                     class="bi bi-pencil" 
                     viewBox="0 0 16 16">
                     <path 

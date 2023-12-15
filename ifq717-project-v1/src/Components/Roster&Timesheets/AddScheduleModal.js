@@ -232,17 +232,17 @@ useEffect(() => {
           <div className="my-2 flex items-center"
             style={{ marginTop: '10px' }}
             >
-            <Tooltip title="Repeat shift" placement="bottom" color="#3498db">
+            <Tooltip title="Repeat shift" placement="bottom" color="#3fafd7">
               <Repeat 
                 onClick={handleRepeatClick}
-                className="tanda-icon cursor-pointer mr-2" // Adjust spacing as needed
+                className="tanda-icon cursor-pointer mr-2"
               />
             </Tooltip>
-            <Tooltip title="View staff profile" placement="bottom" color="#3498db">
+            <Tooltip title="View staff profile" placement="bottom" color="#3fafd7">
               <Person className="tanda-icon cursor-pointer"/>
             </Tooltip>
             {isUpdatingShift && (
-            <Tooltip title="Delete shift" placement="bottom" color="#3498db">
+            <Tooltip title="Delete shift" placement="bottom" color="#3fafd7">
               <BinIcon
                 onClick={handleDeleteShift}
                 className="w-6 h-6 mr-3 cursor-pointer roster-icon"

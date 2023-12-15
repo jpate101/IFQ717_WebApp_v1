@@ -148,13 +148,14 @@ const Roster = () => {
         const teamId = schedule.department_id;
         const scheduleId = schedule.id;
         const team = departments.find(dept => dept.id === teamId);
-        const teamName = team ? team.name : 'Unknown Team';
+        const teamName = team ? team.name : 'No Team Assigned';
   
         if (!userShiftMap[schedule.user_id]) {
           const user = currentUsers.find(u => u.id === schedule.user_id);
           userShiftMap[schedule.user_id] = {
             userId: schedule.user_id,
             name: user ? user.name : 'Unknown',
+            photo: user ? user.photo : null,
             shiftDetails: {},
             monday: [], tuesday: [], wednesday: [], thursday: [], friday: [], saturday: [], sunday: [],
           };
@@ -169,7 +170,7 @@ const Roster = () => {
         userShiftMap[schedule.user_id].shiftDetails[dayOfWeek].push({
           time: shiftTime,
           teamName,
-          scheduleId
+          scheduleId,
         });
       });
     });
@@ -182,6 +183,7 @@ const Roster = () => {
       return {
         userId: userShifts.userId,
         name: userShifts.name,
+        photo: userShifts.photo,
         ...userShifts.shiftDetails
       };
     });
@@ -419,22 +421,22 @@ const Roster = () => {
   const closeShiftReminderModal = () => {
     setIsShiftReminderModalOpen(false);
   };
-  
-    return (
-      <div className="roster-container">
-        <div className="flex items-center justify-between">
-          <WeekPickerComponent
-            selectedDate={selectedDate}
-            onDateChange={handleDateChange}
-          />
+
+  return (
+    <div className="roster-container">
+      <div className="flex items-center justify-between">
+        <WeekPickerComponent
+          selectedDate={selectedDate}
+          onDateChange={handleDateChange}
+        />
         <div>
           <button
             onClick={openShiftReminderModal}
-            className="tanda-button p-2 rounded background text-white h-10 -mt-2 mr-2"
-            style={{backgroundColor: '#3498db'}}>
+            className="tanda-button p-2 rounded background text-white h-10 -mt-2 mr-2 m1-2"
+            style={{ backgroundColor: '#3498db' }}>
             Shift Reminders
           </button>
-          <button 
+          <button
             onClick={() => {
               console.log('Publish Shift Button Clicked');
               if (hasShiftsInSelectedWeek()) {
@@ -443,65 +445,75 @@ const Roster = () => {
                 alert('No shifts to publish for the selected week.');
               }
             }}
-            className="tanda-button p-2 rounded background text-white h-10 -mt-2"
-            style={{backgroundColor: '#3498db'}}
-            >
+            className="tanda-button p-2 rounded background text-white h-10 -mt-2 mr-1"
+            style={{ backgroundColor: '#3498db' }}>
             Publish shifts
           </button>
         </div>
       </div>
-        <div className="overflow-x-auto">
-          {loading ? (
-            <p>Loading...</p>
-            ) : (
-              <div className="w-full">
-                <div className="grid grid-cols-8 gap-1">
-                  <div
-                    className="day bg-gray-100 border p-2 rounded m-1 overflow-hidden">
-                      Staff
-                  </div>
-                  {dayAbbreviations.map((dayAbbrev, index) => (
-                    <div 
-                      key={index}
-                      className="day bg-gray-100 border p-2 rounded m-1 overflow-hidden">
-                      <div>
-                        {dayAbbrev}
-                      </div>
-                      <div>
-                        {dayjs(weekDates[index]).format('DD MMM')}
-                      </div>
-                    </div>
-                  ))}
-                {rosterData.map((row, rowIndex) => (
-                  <React.Fragment key={rowIndex}>
-                    <div className="day bg-gray-100 border p-2 rounded m-1 overflow-hidden">{row.name}</div>
-                    {[row.monday, row.tuesday, row.wednesday, row.thursday, row.friday, row.saturday, row.sunday].map((shifts, dayIndex) => (
-                      <div key={dayIndex} className="roster-table-font day p-2 rounded m-1 overflow-hidden relative">
-                        {(!shifts || shifts.length === 0) ? (
-                      <div className="flex justify-center items-center h-full w-full">
-                        <PlusCircleIcon
-                          className="cursor-pointer hover:text-primary"
-                          onClick={() => openModalToAddShift(row.userId, dayIndex)}>
-                        </PlusCircleIcon>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col justify-center h-full w-full text-center">
-                        {shifts.map((shift, shiftIndex) => (
-                          <div key={shiftIndex} onClick={() => openModalWithShiftDetails(row.userId, dayIndex)} className="cursor-pointer">
-                            <div className="shift-details">
-                              {shift.time}
-                            </div>
-                            <div className="shift-details">
-                              {shift.teamName}
+      <div className="overflow-x-auto">
+        {loading ? (
+          <p>Loading...</p>
+        ) : (
+      <div className="flex ">
+        <div className="grid gap-1 staff-column">
+          <div className="day staff bg-gray-100 border p-2 rounded m-1"  style={{ fontWeight: 'bold', color: '#3fafd7' }}>
+            Staff
+          </div>
+        {rosterData.map((row, rowIndex) => (
+          <div key={rowIndex} className="staff-cell bg-gray-100 border p-2 rounded m-1 flex flex-col items-center justify-center">
+            <img 
+              src={row.photo ? row.photo : 'https://via.placeholder.com/50'}
+              alt={row.name || 'Default Name'} 
+              style={{ width: '50px', height: '50px'}}
+              className="profile-pic roster-profile-pic mb-2"
+            />
+            <div className="roster-name" style={{ fontWeight: 'bold', color: '#3fafd7' }}>{row.name}</div>
+          </div>
+        ))}
+      </div>
+      <div className="shifts-column overflow-x-auto">
+        <div className="min-w-max">
+          <div className="grid grid-cols-7 gap-1">
+            {dayAbbreviations.map((dayAbbrev, index) => (
+              <div key={index} className="day bg-gray-100 border p-2 rounded m-1 ">
+                <div style={{ fontWeight: 'bold', color: '#3fafd7' }}>{dayAbbrev}</div>
+                <div style={{ fontWeight: 'bold', color: '#3fafd7' }}>{dayjs(weekDates[index]).format('DD MMM')}</div>
+              </div>
+            ))}
+              {rosterData.map((row, rowIndex) => (
+                <React.Fragment key={rowIndex}>
+                  {[row.monday, row.tuesday, row.wednesday, row.thursday, row.friday, row.saturday, row.sunday].map((shifts, dayIndex) => (
+                    <div key={dayIndex} className=" shift-cell roster-table-font day p-2 rounded m-1 overflow-hidden relative">
+                      {(!shifts || shifts.length === 0) ? (
+                          <div className="flex justify-center items-center h-full w-full">
+                            <div className="large-icon">
+                              <PlusCircleIcon
+                                className="cursor-pointer hover:text-primary"
+                                onClick={() => openModalToAddShift(row.userId, dayIndex)}>
+                              </PlusCircleIcon>
                             </div>
                           </div>
-                        ))}
+                        ) : (
+                          <div className="flex flex-col justify-center h-full w-full text-center">
+                            {shifts.map((shift, shiftIndex) => (
+                              <div key={shiftIndex} onClick={() => openModalWithShiftDetails(row.userId, dayIndex)} className="cursor-pointer hover:text-primary">
+                                <div className="shift-details">
+                                  {shift.time}
+                                </div>
+                                <div className="shift-details">
+                                  {shift.teamName}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
+                    ))}
+                  </React.Fragment>
                 ))}
-              </React.Fragment>
-            ))}
+              </div>
+            </div>
             {isModalOpen && ReactDOM.createPortal(
               <AddScheduleModal
                 isOpen={isModalOpen}
