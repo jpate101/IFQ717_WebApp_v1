@@ -160,7 +160,7 @@ const ExportTimesheets = () => {
         try {
             const response = await fetch(exportUrl, {
                 method: 'GET',
-                headers: getHeaders()``
+                headers: getHeaders()
             });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
