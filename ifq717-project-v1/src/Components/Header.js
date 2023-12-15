@@ -59,10 +59,10 @@ export default function Header({ isLoggedIn, setIsLoggedIn, userRole }) {
                   </HighlightLink>
                     {/* Need to fix spacing issue here */}
                   <NavDropdown title="Timesheets" id="timesheets-nav-dropdown" className="timesheets-nav-dropdown">
-                    <NavDropdown.Item as={NavLink} to="/Timesheets/approveTimesheets" className="timesheets-nav-dropdown text-primary">
+                    <NavDropdown.Item as={NavLink} to="/Timesheets/approveTimesheets" className="dropdown-item">
                       Approve Timesheets
                     </NavDropdown.Item>
-                    <NavDropdown.Item as={NavLink} to="/Timesheets/exportTimesheets" className="timesheets-nav-dropdown text-primary">
+                    <NavDropdown.Item as={NavLink} to="/Timesheets/exportTimesheets" className="dropdown-item">
                       Export Timesheets
                     </NavDropdown.Item>
                   </NavDropdown>
